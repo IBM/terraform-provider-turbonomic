@@ -1,0 +1,50 @@
+---
+layout: ""
+page_title: "Provider: " {{ .RenderedProviderName }}
+description: |-
+  The Turbonomic provider provides data resources to interact with the Turbonomic API.
+---
+
+# {{ .RenderedProviderName }} Provider
+
+The Turbonomic provider is used to interact with resources within Turbonomic. The provider
+needs to be configured with the hostname and proper credentials before it can be used.
+
+The provider enables you to use Turbonomic as the source of truth for scaling decisions for
+your cloud entities deployed through Terraform.  The data source of the provider will return
+the tier size based on the recommendation Turbonomic is making, or the current size if no
+scaling actions exist.  It is also recommended to include a default for cases where the
+entity has not yet been deployed.
+
+## Example Usage
+
+### Configure the Provider
+
+{{ tffile "examples/provider/provider.tf" }}
+
+### Configuring Data Sources
+
+{{ tffile "examples/data-sources/turbonomic_cloud_entity_recommendation/data-source.tf" }}
+
+### AWS Example
+
+The _instance_type_ is configured to use the turbonomic_cloud_entity_recommendation data source unless
+null is returned.  If this happens, a default of "t3.nano" is used.
+
+{{ tffile "examples/aws-ec2/main.tf" }}
+
+### Azure Example
+
+The _size_ is configured to use the _turbonomic_cloud_entity_recommendation_ data source unless null is
+returned.  If this happens, a default of "Standard_B1s" is used.
+
+{{ tffile "examples/azure/main.tf" }}
+
+### GCP Example
+
+The _machine_type_ is set to use the _turbonomic_cloud_entity_recommendation_ data source unless null is
+returned.  If this happens, a default of "e2-micro" is used.
+
+{{ tffile "examples/gcp/main.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}

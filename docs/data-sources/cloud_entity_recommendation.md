@@ -2,12 +2,12 @@
 page_title: "turbonomic_cloud_entity_recommendation Data Source - IBM Turbonomic"
 subcategory: ""
 description: |-
-  Use an entity type and name to get the best tier for an entity.
+  The following example demonstrates the syntax for the turbonomic_cloud_entity_recommendation data source.
 ---
 
 # turbonomic_cloud_entity_recommendation (Data Source)
 
-Use an entity type and name to get the best tier for an entity.
+The following example demonstrates the syntax for the `turbonomic_cloud_entity_recommendation` data source.
 
 ## Example Usage
 

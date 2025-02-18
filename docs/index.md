@@ -1,30 +1,33 @@
 ---
 layout: ""
-page_title: "Provider: " IBM Turbonomic
+page_title: "Provider: IBM Turbonomic"
 description: |-
-  The Turbonomic provider provides data sources to interact with the Turbonomic API.
+  The Turbonomic provider supplies data resources to interact with the Turbonomic API.
 ---
 
-# IBM Turbonomic Provider
+# IBM Turbonomic provider
 
-The Turbonomic provider is used to interact with resources within Turbonomic. The provider
-needs to be configured with the hostname and proper credentials before it can be used.
+The Turbonomic provider supplies data resources to interact with the Turbonomic API.
 
-The provider enables you to use Turbonomic as the source of truth for scaling decisions for
-your cloud entities deployed through Terraform.  The data source of the provider will return
-the tier size based on the recommendation Turbonomic is making, or the current size if no
-scaling actions exist.  It is also recommended to include a default for cases where the
-entity has not yet been deployed.
+The provider sets Turbonomic as the source of truth for scaling decisions about cloud
+entities that are deployed through Terraform. The data source of the provider returns
+the tier size based on Turbonomic scaling action recommendations, or the current size
+if no scaling action exists. We recommend you include a default tier size for cases
+where the entity is not deployed yet.
 
-## Example Usage
+## Examples
 
-### Configure the Provider
+The following examples demonstrate the Terraform code to configure the provider and use it in different cloud environments.
+
+### Configure the provider credentials
+
+Before you can use the provider, you must configure it with the hostname and credentials.
 
 ```terraform
 terraform {
   required_providers {
     turbonomic = {
-      source  = "github.ibm.com/turbonomic/terraform-provider-turbonomic"
+      source  = "ibm-software/turbonomic"
       version = "1.0.0"
     }
   }
@@ -38,7 +41,9 @@ provider "turbonomic" {
 }
 ```
 
-### Configuring Data Sources
+### Example data source configuration
+
+The following example shows the Turbonomic data source struct that you can use in different cloud environments.
 
 ```terraform
 data "turbonomic_cloud_entity_recommendation" "example" {
@@ -47,7 +52,7 @@ data "turbonomic_cloud_entity_recommendation" "example" {
 }
 ```
 
-### AWS Example
+### AWS example
 
 The _instance_type_ is configured to use the turbonomic_cloud_entity_recommendation data source unless
 null is returned.  If this happens, a default of "t3.nano" is used.
@@ -75,10 +80,10 @@ resource "aws_instance" "terraform-demo-ec2" {
 }
 ```
 
-### Azure Example
+### Azure example
 
-The _size_ is configured to use the _turbonomic_cloud_entity_recommendation_ data source unless null is
-returned.  If this happens, a default of "Standard_B1s" is used.
+The `size` is configured to use the `turbonomic_cloud_entity_recommendation` data source unless null is
+returned, in which case it uses `Standard_B1s` by default.
 
 ```terraform
 provider "azurerm" {
@@ -121,10 +126,9 @@ resource "azurerm_linux_virtual_machine" "exampleVirtualMachine" {
 }
 ```
 
-### GCP Example
+### GCP example
 
-The _machine_type_ is set to use the _turbonomic_cloud_entity_recommendation_ data source unless null is
-returned.  If this happens, a default of "e2-micro" is used.
+The `machine_type` is set to use the `turbonomic_cloud_entity_recommendation` data source unless null is returned, in which case it uses `e2-micro` by default.
 
 ```terraform
 provider "google" {

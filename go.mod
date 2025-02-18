@@ -1,4 +1,4 @@
-module github.ibm.com/turbonomic/terraform-provider-turbonomic
+module github.com/IBM/terraform-provider-turbonomic
 
 go 1.22.2
 

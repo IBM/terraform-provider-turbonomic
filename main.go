@@ -20,8 +20,7 @@ import (
 	"flag"
 	"log"
 
-	"github.ibm.com/turbonomic/terraform-provider-turbonomic/internal/provider"
-
+	"github.com/IBM/terraform-provider-turbonomic/internal/provider"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 )
 
@@ -36,9 +35,7 @@ func main() {
 	flag.Parse()
 
 	opts := providerserver.ServeOpts{
-		// TODO: Update this string with the published name of your provider.
-		// Address: "registry.terraform.io/ibm/turbonomic",
-		Address: "ibm.com/terraform/turbonomic",
+		Address: "registry.terraform.io/ibm-software/turbonomic",
 		Debug:   debug,
 	}
 

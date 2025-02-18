@@ -56,7 +56,7 @@ func (d *CloudDataSource) Metadata(ctx context.Context, req datasource.MetadataR
 
 func (d *CloudDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Use an entity type and name to get the best tier for an entity.",
+		Description: "The following example demonstrates the syntax for the `turbonomic_cloud_entity_recommendation` data source.",
 		Attributes: map[string]schema.Attribute{
 			"entity_uuid": schema.StringAttribute{
 				MarkdownDescription: "Turbonomic UUID of the cloud entity",

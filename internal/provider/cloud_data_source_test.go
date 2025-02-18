@@ -15,6 +15,8 @@
 
 package provider
 
+// const entityName, entityType, currentInstanceType, newInstanceType stored in separate file for security
+
 import (
 	"testing"
 

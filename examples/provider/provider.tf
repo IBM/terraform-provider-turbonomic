@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     turbonomic = {
-      source  = "github.ibm.com/turbonomic/terraform-provider-turbonomic"
+      source  = "ibm-software/turbonomic"
       version = "1.0.0"
     }
   }

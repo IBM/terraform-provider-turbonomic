@@ -1,6 +1,6 @@
-# Terraform Provider Scaffolding (Terraform Plugin Framework)
+# IBM Turbonomic Terraform Provider
 
-See Documentation:
+Use this repository to build the IBM Turbonomic Terraform Provider, which supplies data resources to interact with the Turbonomic API. For more information about the provider, see the [documentation](https://registry.terraform.io/providers/IBM-Software/turbonomic/latest/docs).
 
 ## Requirements
 
@@ -9,9 +9,9 @@ See Documentation:
 
 ## Building The Provider
 
-1. Clone the repository
-1. Enter the repository directory
-1. Build the provider using the Go `install` command:
+1. Clone this repository.
+1. Go to the `terraform-provider-turbonomic` directory.
+1. Build the provider by running the Go `install` command:
 
 ```shell
 go install
@@ -19,4 +19,4 @@ go install
 
 ## Using the provider
 
-See the Turbonomic Provider documentation to get started using the Turbonomic provider.
+ To get started using the Turbonomic provider, see the [documentation](https://registry.terraform.io/providers/IBM-Software/turbonomic/latest/docs).

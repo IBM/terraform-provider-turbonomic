@@ -27,7 +27,7 @@ Before you can use the provider, you must configure it with the hostname and cre
 terraform {
   required_providers {
     turbonomic = {
-      source  = "ibm-software/turbonomic"
+      source  = "IBM/turbonomic"
       version = "1.0.0"
     }
   }

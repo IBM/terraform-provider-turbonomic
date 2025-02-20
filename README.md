@@ -1,6 +1,6 @@
 # IBM Turbonomic Terraform Provider
 
-Use this repository to build the IBM Turbonomic Terraform Provider, which supplies data resources to interact with the Turbonomic API. For more information about the provider, see the [documentation](https://registry.terraform.io/providers/IBM-Software/turbonomic/latest/docs).
+Use this repository to build the IBM Turbonomic Terraform Provider, which supplies data resources to interact with the Turbonomic API. For more information about the provider, see the [documentation](https://registry.terraform.io/providers/IBM/turbonomic/latest/docs).
 
 ## Requirements
 
@@ -19,4 +19,4 @@ go install
 
 ## Using the provider
 
- To get started using the Turbonomic provider, see the [documentation](https://registry.terraform.io/providers/IBM-Software/turbonomic/latest/docs).
+ To get started using the Turbonomic provider, see the [documentation](https://registry.terraform.io/providers/IBM/turbonomic/latest/docs).

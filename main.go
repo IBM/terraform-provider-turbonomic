@@ -35,7 +35,7 @@ func main() {
 	flag.Parse()
 
 	opts := providerserver.ServeOpts{
-		Address: "registry.terraform.io/ibm-software/turbonomic",
+		Address: "registry.terraform.io/IBM/turbonomic",
 		Debug:   debug,
 	}
 

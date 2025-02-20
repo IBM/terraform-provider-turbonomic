@@ -25,18 +25,45 @@ import (
 
 // Test turbonomic_cloud_data_source
 func TestAccCloudDataSource(t *testing.T) {
-	resource.Test(t, resource.TestCase{
-		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: providerConfig,
-				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("data.turbonomic_cloud_entity_recommendation.test", "entity_name", entityName),
-					resource.TestCheckResourceAttr("data.turbonomic_cloud_entity_recommendation.test", "entity_type", entityType),
-					resource.TestCheckResourceAttr("data.turbonomic_cloud_entity_recommendation.test", "current_instance_type", currentInstanceType),
-					resource.TestCheckResourceAttr("data.turbonomic_cloud_entity_recommendation.test", "new_instance_type", newInstanceType),
-				),
+	for _, tc := range validTestCases {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config: providerConfig + `
+					data "turbonomic_cloud_entity_recommendation" "test" {
+						entity_name = "` + tc.testEntity + `"
+						entity_type = "` + tc.testEntityType + `"
+					}`,
+					Check: resource.ComposeAggregateTestCheckFunc(
+						resource.TestCheckResourceAttr("data.turbonomic_cloud_entity_recommendation.test", "entity_name", tc.entityName),
+						resource.TestCheckResourceAttr("data.turbonomic_cloud_entity_recommendation.test", "entity_type", tc.entityType),
+						resource.TestCheckResourceAttr("data.turbonomic_cloud_entity_recommendation.test", "current_instance_type", tc.currentInstanceType),
+						resource.TestCheckResourceAttr("data.turbonomic_cloud_entity_recommendation.test", "new_instance_type", tc.newInstanceType),
+					),
+				},
 			},
-		},
-	})
+		})
+		// Test non existing entities
+		for _, tc := range invalidTestCases {
+			resource.Test(t, resource.TestCase{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Steps: []resource.TestStep{
+					{
+						Config: providerConfig + `
+						data "turbonomic_cloud_entity_recommendation" "test" {
+							entity_name = "` + tc.testEntity + `"
+							entity_type = "` + tc.testEntityType + `"
+						}`,
+						Check: resource.ComposeAggregateTestCheckFunc(
+							resource.TestCheckResourceAttr("data.turbonomic_cloud_entity_recommendation.test", "entity_name", tc.entityName),
+							resource.TestCheckResourceAttr("data.turbonomic_cloud_entity_recommendation.test", "entity_type", tc.entityType),
+							resource.TestCheckNoResourceAttr("data.turbonomic_cloud_entity_recommendation.test", "current_instance_type"),
+							resource.TestCheckNoResourceAttr("data.turbonomic_cloud_entity_recommendation.test", "new_instance_type"),
+						),
+					},
+				},
+			})
+		}
+	}
 }

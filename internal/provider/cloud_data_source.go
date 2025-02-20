@@ -165,6 +165,8 @@ func (d *CloudDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 			detailMsg = fmt.Sprintf("Entitiy %s of type %s not found in Turbonomic instance",
 				state.Name.ValueString(),
 				state.EntityType.ValueString())
+
+			tflog.Debug(ctx, detailMsg)
 		} else {
 			msg = "Multiple Entities with provided name found"
 			detailMsg = fmt.Sprintf("Multiple Entities with the name %s of type %s found in Turbonomic instance",
@@ -172,10 +174,10 @@ func (d *CloudDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 				state.EntityType.ValueString())
 
 			tflog.Debug(ctx, "Too many entities returned", map[string]any{"dtoResponse": searchVM})
+			resp.Diagnostics.AddError(msg, detailMsg)
+			return
 		}
 
-		resp.Diagnostics.AddError(msg, detailMsg)
-		return
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)

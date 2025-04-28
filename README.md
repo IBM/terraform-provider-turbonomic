@@ -5,7 +5,7 @@ Use this repository to build the IBM Turbonomic Terraform Provider, which suppli
 ## Requirements
 
 - [Terraform](https://developer.hashicorp.com/terraform/downloads) >= 1.5.7
-- [Go](https://golang.org/doc/install) >= 1.22.2
+- [Go](https://golang.org/doc/install) >= 1.23.7
 
 ## Building The Provider
 

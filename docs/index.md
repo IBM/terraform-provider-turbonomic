@@ -12,16 +12,16 @@ The Turbonomic provider supplies data resources to interact with the Turbonomic 
 The provider sets Turbonomic as the source of truth for scaling decisions about cloud
 entities that are deployed through Terraform. The data source of the provider returns
 the tier size based on Turbonomic scaling action recommendations, or the current size
-if no scaling action exists. We recommend you include a default tier size for cases
+if no scaling action exists. It is reccommended that you include a default tier size for cases
 where the entity is not deployed yet.
 
 ## Examples
 
-The following examples demonstrate the Terraform code to configure the provider and use it in different cloud environments.
+The following examples demonstrate the Terraform code to configure the provider and the uses in different cloud environments.
 
-### Configure the provider credentials
+### Configuring the provider credentials
 
-Before you can use the provider, you must configure it with the hostname and credentials.
+Before you can use the provider, you must configure the provider with the hostname and credentials.
 
 ```terraform
 terraform {
@@ -43,7 +43,7 @@ provider "turbonomic" {
 
 ### Example data source configuration
 
-The following example shows the Turbonomic data source struct that you can use in different cloud environments.
+The following example shows the Turbonomic data source struct that you can use in different cloud environments:
 
 ```terraform
 data "turbonomic_cloud_entity_recommendation" "example" {
@@ -163,7 +163,7 @@ resource "google_compute_instance" "exampleVirtualMachine" {
 
 ### Optional
 
-- `hostname` (String) Hostname or IP Address of Turbonomic Instance
-- `password` (String, Sensitive) Password for the username to access the Turbonomic Instance
+- `hostname` (String) Hostname or IP Address of Turbonomic instance
+- `password` (String, sensitive) password for the username to access the Turbonomic instance
 - `skipverify` (Boolean) Boolean on whether to verify the SSL/TLS certificate for the hostname
-- `username` (String) Username to access the Turbonomic Instance
+- `username` (String) Username to access the Turbonomic instance

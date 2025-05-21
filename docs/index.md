@@ -17,7 +17,7 @@ where the entity is not deployed yet.
 
 ## Examples
 
-The following examples demonstrate the Terraform code to configure the provider and the uses in different cloud environments.
+The following examples demonstrate the Terraform code to configure and use the provider in different cloud environments.
 
 ### Configuring the provider credentials
 

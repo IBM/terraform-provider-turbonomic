@@ -163,7 +163,7 @@ resource "google_compute_instance" "exampleVirtualMachine" {
 
 ### Optional
 
-- `hostname` (String) Hostname or IP Address of Turbonomic instance
-- `password` (String, sensitive) password for the username to access the Turbonomic instance
-- `skipverify` (Boolean) Boolean on whether to verify the SSL/TLS certificate for the hostname
-- `username` (String) Username to access the Turbonomic instance
+- `hostname` (String) Hostname or IP address of Turbonomic instance
+- `password` (String, Sensitive) password for the username to access the Turbonomic instance
+- `skipverify` (Boolean) boolean on whether to verify the SSL/TLS certificate for the hostname
+- `username` (String) username to access the Turbonomic instance

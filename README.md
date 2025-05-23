@@ -10,12 +10,9 @@ Use this repository to build the IBM Turbonomic Terraform Provider, which suppli
 ## Building The Provider
 
 1. Clone this repository.
-1. Go to the `terraform-provider-turbonomic` directory.
-1. Build the provider by running the Go `install` command:
-
-```shell
-go install
-```
+2. Go to the `terraform-provider-turbonomic` directory.
+3. Update `providerConfig` and `vmName` in `internal/provider/cloud_data_source_test.go`.
+4. Build the provider by running the `make build` command / or run command `go build -o terraform-provider-turbonomic` directly to skip tests.
 
 ## Using the provider
 

@@ -2,14 +2,14 @@ terraform {
   required_providers {
     turbonomic = {
       source  = "IBM/turbonomic"
-      version = "1.0.2"
+      version = "1.1.0"
     }
   }
 }
 
 provider "turbonomic" {
+  hostname   = var.hostname
   username   = var.username
   password   = var.password
-  hostname   = var.hostname
   skipverify = var.skipverify
 }

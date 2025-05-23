@@ -24,23 +24,24 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 )
 
-var (
-	version string = "1.0.2"
+const (
+	version           = "1.1.0"
+	typeName          = "turbonomic"
+	tfProviderAddress = "registry.terraform.io/IBM/turbonomic"
 )
 
-func main() {
-	var debug bool
+var debug bool
 
+func main() {
 	flag.BoolVar(&debug, "debug", false, "set to true to run the provider with support for debuggers like delve")
 	flag.Parse()
 
 	opts := providerserver.ServeOpts{
-		Address: "registry.terraform.io/IBM/turbonomic",
+		Address: tfProviderAddress,
 		Debug:   debug,
 	}
 
-	err := providerserver.Serve(context.Background(), provider.New(version), opts)
-
+	err := providerserver.Serve(context.Background(), provider.New(version, typeName), opts)
 	if err != nil {
 		log.Fatal(err.Error())
 	}

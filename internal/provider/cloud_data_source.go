@@ -30,15 +30,15 @@ import (
 )
 
 var (
-	_ datasource.DataSource              = &CloudDataSource{}
-	_ datasource.DataSourceWithConfigure = &CloudDataSource{}
+	_ datasource.DataSource              = &cloudDataSource{}
+	_ datasource.DataSourceWithConfigure = &cloudDataSource{}
 )
 
 func NewCloudDataSource() datasource.DataSource {
-	return &CloudDataSource{}
+	return &cloudDataSource{}
 }
 
-type CloudDataSource struct {
+type cloudDataSource struct {
 	client *turboclient.Client
 }
 
@@ -48,13 +48,14 @@ type CloudModel struct {
 	EntityType          types.String `tfsdk:"entity_type"`
 	CurrentInstanceType types.String `tfsdk:"current_instance_type"`
 	NewInstanceType     types.String `tfsdk:"new_instance_type"`
+	DefaultInstanceSize types.String `tfsdk:"default_size"`
 }
 
-func (d *CloudDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+func (d *cloudDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_cloud_entity_recommendation"
 }
 
-func (d *CloudDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *cloudDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: "The following example demonstrates the syntax for the `turbonomic_cloud_entity_recommendation` data source.",
 		Attributes: map[string]schema.Attribute{
@@ -63,29 +64,33 @@ func (d *CloudDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 				Computed:            true,
 			},
 			"entity_name": schema.StringAttribute{
-				MarkdownDescription: "Name of the cloud entity",
+				MarkdownDescription: "name of the cloud entity",
 				Required:            true,
 			},
 			"entity_type": schema.StringAttribute{
-				MarkdownDescription: "Type of the cloud entity",
+				MarkdownDescription: "type of the cloud entity",
 				Required:            true,
 				Validators: []validator.String{
 					stringvalidator.OneOf("VirtualMachine", "VirtualVolume", "Database", "DatabaseServer"),
 				},
 			},
 			"current_instance_type": schema.StringAttribute{
-				MarkdownDescription: "Current tier of the cloud entity",
+				MarkdownDescription: "current tier of the cloud entity",
 				Computed:            true,
 			},
 			"new_instance_type": schema.StringAttribute{
-				MarkdownDescription: "Recommended tier of the cloud entity",
+				MarkdownDescription: "recommended tier of the cloud entity",
 				Computed:            true,
+			},
+			"default_size": schema.StringAttribute{
+				MarkdownDescription: "default tier of the cloud entity",
+				Optional:            true,
 			},
 		},
 	}
 }
 
-func (d *CloudDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *cloudDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -103,7 +108,7 @@ func (d *CloudDataSource) Configure(_ context.Context, req datasource.ConfigureR
 	d.client = client
 }
 
-func (d *CloudDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *cloudDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var state CloudModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &state)...)
@@ -118,7 +123,7 @@ func (d *CloudDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 	searchVM, err := d.client.SearchEntityByName(searchReq)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Unable to Search Turbonomic",
+			"Unable to search Turbonomic",
 			err.Error(),
 		)
 		return
@@ -135,7 +140,7 @@ func (d *CloudDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 		entityActions, err := d.client.GetActionsByUUID(newActionReq)
 		if err != nil {
 			resp.Diagnostics.AddError(
-				"Unable to Retrive actions from Turbonomic",
+				"Unable to retrieve actions from Turbonomic",
 				err.Error(),
 			)
 			return
@@ -146,7 +151,7 @@ func (d *CloudDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 		} else if len(entityActions) <= 0 {
 			state.NewInstanceType = types.StringValue(searchVM[0].Template.DisplayName)
 		} else {
-			detailMsg := fmt.Sprintf("Entitiy %s of type %s returned more than one scaling action...this is unexpected",
+			detailMsg := fmt.Sprintf("Entity %s of type %s returned more than one scaling action...this is unexpected",
 				state.Name.ValueString(),
 				state.EntityType.ValueString())
 			resp.Diagnostics.AddError("More than one scale action found.", detailMsg)
@@ -154,19 +159,19 @@ func (d *CloudDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 			tflog.Debug(ctx, "Too many actions returned", map[string]any{"dtoResponse": entityActions})
 			return
 		}
-
 	} else {
 		var (
 			msg       string
 			detailMsg string
 		)
 		if len(searchVM) <= 0 {
-			msg = "Entitiy not found in Turbonomic instance"
-			detailMsg = fmt.Sprintf("Entitiy %s of type %s not found in Turbonomic instance",
+			detailMsg = fmt.Sprintf("Entity %s of type %s not found in Turbonomic instance",
 				state.Name.ValueString(),
 				state.EntityType.ValueString())
 
 			tflog.Debug(ctx, detailMsg)
+			resp.Diagnostics.AddError(msg, detailMsg)
+			return
 		} else {
 			msg = "Multiple Entities with provided name found"
 			detailMsg = fmt.Sprintf("Multiple Entities with the name %s of type %s found in Turbonomic instance",
@@ -177,7 +182,11 @@ func (d *CloudDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 			resp.Diagnostics.AddError(msg, detailMsg)
 			return
 		}
+	}
 
+	// use default instance size from data block if turbo api can't set it properly above
+	if len(state.NewInstanceType.ValueString()) == 0 && len(state.DefaultInstanceSize.String()) > 0 {
+		state.NewInstanceType = state.DefaultInstanceSize
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)

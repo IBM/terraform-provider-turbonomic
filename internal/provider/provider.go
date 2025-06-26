@@ -26,6 +26,7 @@ import (
 	turboclient "github.com/IBM/turbonomic-go-client"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
@@ -34,14 +35,17 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-var _ provider.Provider = &turbonomicProvider{}
+var (
+	_ provider.Provider              = &turbonomicProvider{}
+	_ provider.ProviderWithFunctions = &turbonomicProvider{}
+)
 
 type turbonomicProvider struct {
 	version  string
 	typeName string
 }
 
-type TurbonomicProviderModel struct {
+type turbonomicProviderModel struct {
 	Hostname     types.String `tfsdk:"hostname"`
 	Username     types.String `tfsdk:"username"`
 	Password     types.String `tfsdk:"password"`
@@ -116,7 +120,7 @@ func (p *turbonomicProvider) Schema(ctx context.Context, req provider.SchemaRequ
 func (p *turbonomicProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
 	tflog.Info(ctx, "Configuring Turbonomic client")
 
-	var config TurbonomicProviderModel
+	var config turbonomicProviderModel
 	diags := req.Config.Get(ctx, &config)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -275,18 +279,24 @@ func (p *turbonomicProvider) Configure(ctx context.Context, req provider.Configu
 
 	// Create a new Turbonomic client using the configuration values
 
-	var newClientOpts turboclient.ClientParameters
-	if username != "" {
-		newClientOpts = turboclient.ClientParameters{Hostname: hostname, Username: username, Password: password, Skipverify: skipverify}
+	newClientOpts := turboclient.ClientParameters{
+		Hostname:   hostname,
+		Skipverify: skipverify,
+		ApiInfo: turboclient.ApiInfo{
+			ApiOrigin: "turbonomic-terraform-provider",
+			Version:   p.version,
+		},
+	}
 
+	if username != "" {
+		newClientOpts.Username = username
+		newClientOpts.Password = password
 	} else if clientId != "" {
-		newClientOpts = turboclient.ClientParameters{
-			Hostname: hostname,
-			OAuthCreds: turboclient.OAuthCreds{
-				ClientId:     clientId,
-				ClientSecret: clientSecret,
-				Role:         turboclient.GetRolefromString(strings.ToUpper(role))},
-			Skipverify: skipverify}
+		newClientOpts.OAuthCreds = turboclient.OAuthCreds{
+			ClientId:     clientId,
+			ClientSecret: clientSecret,
+			Role:         turboclient.GetRolefromString(strings.ToUpper(role)),
+		}
 	} else {
 		resp.Diagnostics.AddError(
 			"Unable to Create Turbonomic API Client",
@@ -329,6 +339,10 @@ func (p *turbonomicProvider) Resources(ctx context.Context) []func() resource.Re
 func (p *turbonomicProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
 		NewCloudDataSource,
+		NewRDSDataSource,
+		NewAzureManagedDiskDataSource,
+		NewEBSVolumeDataSource,
+		NewGoogleComputeDiskDataSource,
 	}
 }
 
@@ -338,5 +352,11 @@ func New(version, typeName string) func() provider.Provider {
 			version:  version,
 			typeName: typeName,
 		}
+	}
+}
+
+func (p *turbonomicProvider) Functions(_ context.Context) []func() function.Function {
+	return []func() function.Function{
+		NewGetTagFunction,
 	}
 }

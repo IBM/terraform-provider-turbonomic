@@ -1,0 +1,8 @@
+[
+    {
+        "key": "turbonomic_optimized_by",
+        "values": [
+        "turbonomic-terraform-provider"
+        ]
+    }
+]

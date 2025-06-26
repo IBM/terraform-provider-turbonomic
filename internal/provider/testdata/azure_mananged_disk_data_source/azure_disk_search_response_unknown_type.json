@@ -1,0 +1,63 @@
+[
+    {
+        "uuid": "75995965642194",
+        "displayName": "testVolume1",
+        "className": "VirtualVolume",
+        "environmentType": "CLOUD",
+        "discoveredBy": {
+            "uuid": "75878940124306",
+            "displayName": "Test AzureAccount",
+            "category": "Public Cloud",
+            "isProbeRegistered": false,
+            "type": "Azure Subscription",
+            "readonly": false
+        },
+        "vendorIds": {
+            "Test AzureAccount": "/subscriptions/a123b4cd-1aaa-11cc-2222-aa111111a111/resourceGroups/TEST-RESOURCE_GROUP/providers/Microsoft.Compute/disks/testVolume1"
+        },
+        "state": "ACTIVE",
+        "severity": "Critical",
+        "severityBreakdown": {
+            "CRITICAL": 1
+        },
+        "template": {
+            "uuid": "75878940367882",
+            "displayName": "Managed Standard Fastest Ever",
+            "discovered": false,
+            "enableMatch": false
+        },
+        "aspects": {
+            "cloudAspect": {
+                "region": {
+                    "uuid": "75878941118546",
+                    "displayName": "azure-East US",
+                    "className": "Region"
+                },
+                "businessAccount": {
+                    "uuid": "75878941495325",
+                    "displayName": "Test AzureAccount",
+                    "className": "BusinessAccount"
+                },
+                "resourceGroup": {
+                    "uuid": "287102204043618",
+                    "displayName": "test-resource_group",
+                    "className": "ResourceGroup"
+                },
+                "template": {
+                    "uuid": "75878940367882",
+                    "displayName": "Managed Standard Fastest Ever",
+                    "className": "StorageTier"
+                },
+                "cloudServiceName": "AZURE_DISK_STORAGE",
+                "resourceId": "/subscriptions/a123b4cd-1aaa-11cc-2222-aa111111a111/resourceGroups/TEST-RESOURCE_GROUP/providers/Microsoft.Compute/disks/testVolume1",
+                "type": "CloudAspectApiDTO"
+            }
+        },
+        "tags": {
+            " turbo_owner": [
+                "test.user@example.com"
+            ]
+        },
+        "controllable": true
+    }
+]

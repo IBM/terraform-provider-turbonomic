@@ -1,0 +1,14 @@
+[
+    {
+        "key": "Turbo_Owner",
+        "values": [
+        "Turbonomic_Appinfra_Integrations"
+        ]
+    },
+    {
+        "key": "turbonomic_optimized_by",
+        "values": [
+        "turbonomic-terraform-provider"
+        ]
+    }
+]

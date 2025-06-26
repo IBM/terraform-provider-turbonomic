@@ -1,0 +1,338 @@
+{
+  "uuid": "638828920781978",
+  "displayName": "MANUAL",
+  "actionImpactID": 638828920781978,
+  "marketID": 777777,
+  "createTime": "2025-04-08T06:34:56Z",
+  "actionType": "SCALE",
+  "actionState": "READY",
+  "actionMode": "MANUAL",
+  "details": "Scale down IOPS for Volume ae-test-q4hqn-master-0-vol on GP3 from 3,472 IOPS to 3,224 IOPS, IO Throughput up from 218 MB/s to 299 MB/s in Containers",
+  "importance": -1.0,
+  "target": {
+      "uuid": "75878942123064",
+      "displayName": "ae-test-q4hqn-master-0-vol",
+      "className": "VirtualVolume",
+      "environmentType": "CLOUD",
+      "discoveredBy": {
+          "uuid": "75878939204870",
+          "displayName": "Containers - 001844731978",
+          "isProbeRegistered": false,
+          "type": "AWS",
+          "readonly": false
+      },
+      "vendorIds": {
+          "Containers - 001844731978": "vol-0d90c47ab1e714741"
+      },
+      "state": "ACTIVE",
+      "aspects": {
+          "cloudAspect": {
+              "businessAccount": {
+                  "uuid": "75878942104375",
+                  "displayName": "Containers",
+                  "className": "BusinessAccount"
+              },
+              "resourceId": "arn:aws:ec2:us-west-2:001844731978:volume/vol-0d90c47ab1e714741",
+              "type": "CloudAspectApiDTO"
+          }
+      },
+      "tags": {
+          "red-hat-clustertype": [
+              "rosa"
+          ],
+          "kubernetes.io/cluster/ae-test-q4hqn": [
+              "owned"
+          ],
+          "red-hat-managed": [
+              "true"
+          ]
+      }
+  },
+  "currentEntity": {
+      "uuid": "75878942128232",
+      "displayName": "GP3",
+      "className": "StorageTier",
+      "environmentType": "CLOUD",
+      "discoveredBy": {
+          "uuid": "75878941389217",
+          "displayName": "Government_US",
+          "isProbeRegistered": false,
+          "type": "AWS Infrastructure",
+          "readonly": false
+      },
+      "vendorIds": {
+          "Standard": "aws::ST::GP3"
+      },
+      "state": "ACTIVE"
+  },
+  "newEntity": {
+      "uuid": "75878942128232",
+      "displayName": "GP3",
+      "className": "StorageTier",
+      "environmentType": "CLOUD",
+      "discoveredBy": {
+          "uuid": "75878941389217",
+          "displayName": "Government_US",
+          "isProbeRegistered": false,
+          "type": "AWS Infrastructure",
+          "readonly": false
+      },
+      "vendorIds": {
+          "Standard": "aws::ST::GP3"
+      },
+      "state": "ACTIVE"
+  },
+  "currentValue": "75878942128232",
+  "newValue": "75878942128232",
+  "template": {
+      "uuid": "75878942128232",
+      "displayName": "GP3",
+      "className": "StorageTier",
+      "discovered": false,
+      "enableMatch": false
+  },
+  "risk": {
+      "subCategory": "Performance Assurance",
+      "description": "IO Throughput Congestion",
+      "severity": "CRITICAL",
+      "importance": 0.0,
+      "reasonCommodities": [
+          "IOThroughput"
+      ]
+  },
+  "stats": [
+      {
+          "name": "costPrice",
+          "filters": [
+              {
+                  "type": "savingsType",
+                  "value": "savings",
+                  "displayName": null
+              }
+          ],
+          "units": "$/h",
+          "value": -0.0027397
+      }
+  ],
+  "currentLocation": {
+      "uuid": "75878942121243",
+      "displayName": "aws-US West (Oregon)",
+      "className": "Region",
+      "environmentType": "CLOUD",
+      "discoveredBy": {
+          "uuid": "75878946158192",
+          "displayName": "Standard",
+          "category": "Public Cloud",
+          "isProbeRegistered": false,
+          "type": "AWS Infrastructure",
+          "readonly": false
+      },
+      "vendorIds": {
+          "Standard": "aws::us-west-2::DC::us-west-2"
+      }
+  },
+  "newLocation": {
+      "uuid": "75878942121243",
+      "displayName": "aws-US West (Oregon)",
+      "className": "Region",
+      "environmentType": "CLOUD",
+      "discoveredBy": {
+          "uuid": "75878946158192",
+          "displayName": "Standard",
+          "category": "Public Cloud",
+          "isProbeRegistered": false,
+          "type": "AWS Infrastructure",
+          "readonly": false
+      },
+      "vendorIds": {
+          "Standard": "aws::us-west-2::DC::us-west-2"
+      }
+  },
+  "virtualDisks": [
+      {
+          "uuid": "75878942123064",
+          "displayName": "ae-test-q4hqn-master-0-vol",
+          "tier": "GP3",
+          "stats": [
+              {
+                  "name": "costPrice",
+                  "filters": [
+                      {
+                          "type": "relation",
+                          "value": "bought",
+                          "displayName": null
+                      },
+                      {
+                          "type": "costComponent",
+                          "value": "STORAGE",
+                          "displayName": null
+                      }
+                  ],
+                  "units": "$/h",
+                  "values": {
+                      "max": 0.049424656,
+                      "min": 0.049424656,
+                      "avg": 0.049424656,
+                      "total": 0.049424656
+                  },
+                  "value": 0.049424656
+              },
+              {
+                  "name": "StorageAmount",
+                  "capacity": {
+                      "max": 350.0,
+                      "min": 350.0,
+                      "avg": 350.0,
+                      "total": 350.0
+                  },
+                  "filters": [
+                      {
+                          "type": "key",
+                          "value": "ae-test-q4hqn-master-0-vol",
+                          "displayName": null
+                      },
+                      {
+                          "type": "relation",
+                          "value": "bought",
+                          "displayName": null
+                      }
+                  ],
+                  "relatedEntity": {
+                      "uuid": "75878942128232",
+                      "displayName": "GP3",
+                      "className": "StorageTier"
+                  },
+                  "units": "GiB",
+                  "values": {
+                      "max": 350.0,
+                      "min": 350.0,
+                      "avg": 350.0,
+                      "total": 350.0
+                  },
+                  "value": 350.0
+              },
+              {
+                  "name": "StorageAccess",
+                  "capacity": {
+                      "max": 3472.0,
+                      "min": 3472.0,
+                      "avg": 3472.0,
+                      "total": 3472.0
+                  },
+                  "filters": [
+                      {
+                          "type": "key",
+                          "value": "ae-test-q4hqn-master-0-vol",
+                          "displayName": null
+                      },
+                      {
+                          "type": "relation",
+                          "value": "bought",
+                          "displayName": null
+                      }
+                  ],
+                  "relatedEntity": {
+                      "uuid": "75878942128232",
+                      "displayName": "GP3",
+                      "className": "StorageTier"
+                  },
+                  "units": "IOPS",
+                  "values": {
+                      "max": 1399.55,
+                      "min": 1399.55,
+                      "avg": 1399.55,
+                      "total": 1399.55
+                  },
+                  "value": 1399.55
+              },
+              {
+                  "name": "IOThroughput",
+                  "capacity": {
+                      "max": 223232.0,
+                      "min": 223232.0,
+                      "avg": 223232.0,
+                      "total": 223232.0
+                  },
+                  "filters": [
+                      {
+                          "type": "key",
+                          "value": "ae-test-q4hqn-master-0-vol",
+                          "displayName": null
+                      },
+                      {
+                          "type": "relation",
+                          "value": "bought",
+                          "displayName": null
+                      }
+                  ],
+                  "relatedEntity": {
+                      "uuid": "75878942128232",
+                      "displayName": "GP3",
+                      "className": "StorageTier"
+                  },
+                  "units": "KByte/sec",
+                  "values": {
+                      "max": 78335.91,
+                      "min": 78335.91,
+                      "avg": 78335.91,
+                      "total": 78335.91
+                  },
+                  "value": 78335.91
+              }
+          ],
+          "attachedVirtualMachine": {
+              "uuid": "75878942104516",
+              "displayName": "ae-test-q4hqn-master-0",
+              "className": "VirtualMachine"
+          },
+          "provider": {
+              "uuid": "75878942128232",
+              "displayName": "GP3",
+              "className": "StorageTier"
+          },
+          "dataCenter": {
+              "uuid": "75878942121243",
+              "displayName": "aws-US West (Oregon)",
+              "className": "Region"
+          },
+          "environmentType": "CLOUD",
+          "lastModified": 1742404270000,
+          "businessAccount": {
+              "uuid": "75878942104375",
+              "displayName": "Containers",
+              "className": "BusinessAccount",
+              "environmentType": "CLOUD",
+              "discoveredBy": {
+                  "uuid": "75878938917696",
+                  "displayName": "engineering.aws.amazon.com_billing",
+                  "category": "Public Cloud",
+                  "isProbeRegistered": false,
+                  "type": "AWS Cloud Billing",
+                  "readonly": false
+              },
+              "vendorIds": {
+                  "Containers - 001844731978": "001844731978"
+              },
+              "state": "ACTIVE",
+              "tags": {
+                  "tag_adv_eng": [
+                      "aws"
+                  ]
+              },
+              "staleness": "CURRENT"
+          },
+          "snapshotId": "snap-0b41c2c5bc78bd2a1",
+          "encryption": "Enabled",
+          "attachmentState": "ATTACHED",
+          "hourlyBilledOps": 3007973.1626344086,
+          "creationTimeStamp": 1685484801121,
+          "resourceId": "arn:aws:ec2:us-west-2:001844731978:volume/vol-0d90c47ab1e714741"
+      }
+  ],
+  "executionCharacteristics": {
+      "disruptiveness": "NON_DISRUPTIVE",
+      "reversibility": "REVERSIBLE"
+  },
+  "source": "MARKET",
+  "actionID": 638828920781978
+}

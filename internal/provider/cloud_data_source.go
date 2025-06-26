@@ -18,6 +18,8 @@ package provider
 import (
 	"context"
 	"fmt"
+	"regexp"
+	"strings"
 
 	turboclient "github.com/IBM/turbonomic-go-client"
 
@@ -42,7 +44,7 @@ type cloudDataSource struct {
 	client *turboclient.Client
 }
 
-type CloudModel struct {
+type cloudModel struct {
 	UUID                types.String `tfsdk:"entity_uuid"`
 	Name                types.String `tfsdk:"entity_name"`
 	EntityType          types.String `tfsdk:"entity_type"`
@@ -66,6 +68,9 @@ func (d *cloudDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 			"entity_name": schema.StringAttribute{
 				MarkdownDescription: "name of the cloud entity",
 				Required:            true,
+				Validators: []validator.String{
+					stringvalidator.LengthAtLeast(1),
+				},
 			},
 			"entity_type": schema.StringAttribute{
 				MarkdownDescription: "type of the cloud entity",
@@ -85,6 +90,13 @@ func (d *cloudDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 			"default_size": schema.StringAttribute{
 				MarkdownDescription: "default tier of the cloud entity",
 				Optional:            true,
+				Validators: []validator.String{
+					stringvalidator.LengthAtMost(20),
+					stringvalidator.RegexMatches(
+						regexp.MustCompile(`^[A-Za-z0-9.-]+$`),
+						"must contain only alphanumeric, '.' or '-' characters",
+					),
+				},
 			},
 		},
 	}
@@ -109,85 +121,60 @@ func (d *cloudDataSource) Configure(_ context.Context, req datasource.ConfigureR
 }
 
 func (d *cloudDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var state CloudModel
+	var state cloudModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &state)...)
 
-	searchReq := turboclient.SearchRequest{
-		Name:             state.Name.ValueString(),
-		EntityType:       state.EntityType.ValueString(),
-		EnvironmentType:  "CLOUD",
-		CaseSensitive:    true,
-		SearchParameters: map[string]string{"query_type": "EXACT"}}
+	entityName, entityType := state.Name.ValueString(), state.EntityType.ValueString()
+	entity, errDiag := GetEntitiesByNameAndType(d.client, entityName, entityType, "CLOUD", "")
+	if errDiag != nil {
+		tflog.Error(ctx, errDiag.Detail())
+		resp.Diagnostics.AddError(errDiag.Summary(), errDiag.Detail())
+		return
+	} else if len(entity) == 0 {
+		errDetail := fmt.Sprintf("Entity %s of type %s not found in Turbonomic instance", entityName, entityType)
+		tflog.Warn(ctx, errDetail)
 
-	searchVM, err := d.client.SearchEntityByName(searchReq)
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Unable to search Turbonomic",
-			err.Error(),
-		)
+		// if entity doesn't exist, update new instance type
+		state = d.populateNewType(state)
+
+		state.EntityType = types.StringNull()
+
+		resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 		return
 	}
 
-	if len(searchVM) == 1 {
-		state.UUID = types.StringValue(searchVM[0].UUID)
-		state.CurrentInstanceType = types.StringValue(searchVM[0].Template.DisplayName)
-		newActionReq := turboclient.ActionsRequest{
-			Uuid:        searchVM[0].UUID,
-			ActionState: []string{"READY"},
-			ActionType:  []string{"SCALE"}}
+	tflog.Debug(ctx, fmt.Sprintf("Entity id found: %s\n", entity[0].UUID))
+	state.UUID = types.StringValue(entity[0].UUID)
+	state.CurrentInstanceType = types.StringValue(entity[0].Template.DisplayName)
 
-		entityActions, err := d.client.GetActionsByUUID(newActionReq)
-		if err != nil {
-			resp.Diagnostics.AddError(
-				"Unable to retrieve actions from Turbonomic",
-				err.Error(),
-			)
-			return
-		}
-
-		if len(entityActions) == 1 {
-			state.NewInstanceType = types.StringValue(entityActions[0].NewEntity.DisplayName)
-		} else if len(entityActions) <= 0 {
-			state.NewInstanceType = types.StringValue(searchVM[0].Template.DisplayName)
-		} else {
-			detailMsg := fmt.Sprintf("Entity %s of type %s returned more than one scaling action...this is unexpected",
-				state.Name.ValueString(),
-				state.EntityType.ValueString())
-			resp.Diagnostics.AddError("More than one scale action found.", detailMsg)
-
-			tflog.Debug(ctx, "Too many actions returned", map[string]any{"dtoResponse": entityActions})
-			return
-		}
+	actions, errDiag := GetActionsByEntityUUIDAndType(d.client, entity[0].UUID, "SCALE")
+	if errDiag != nil {
+		tflog.Error(ctx, errDiag.Detail())
+		resp.Diagnostics.AddError(errDiag.Summary(), errDiag.Detail())
+		return
+	} else if len(actions) == 0 {
+		tflog.Trace(ctx, fmt.Sprintf("No matching action found for entity id: %s\n", entity[0].UUID))
+		state.NewInstanceType = types.StringValue(strings.ToLower(entity[0].Template.DisplayName))
 	} else {
-		var (
-			msg       string
-			detailMsg string
-		)
-		if len(searchVM) <= 0 {
-			detailMsg = fmt.Sprintf("Entity %s of type %s not found in Turbonomic instance",
-				state.Name.ValueString(),
-				state.EntityType.ValueString())
-
-			tflog.Debug(ctx, detailMsg)
-			resp.Diagnostics.AddError(msg, detailMsg)
-			return
-		} else {
-			msg = "Multiple Entities with provided name found"
-			detailMsg = fmt.Sprintf("Multiple Entities with the name %s of type %s found in Turbonomic instance",
-				state.Name.ValueString(),
-				state.EntityType.ValueString())
-
-			tflog.Debug(ctx, "Too many entities returned", map[string]any{"dtoResponse": searchVM})
-			resp.Diagnostics.AddError(msg, detailMsg)
-			return
-		}
+		tflog.Debug(ctx, fmt.Sprintf("Action id found: %d\n", actions[0].ActionID))
+		state.NewInstanceType = types.StringValue(strings.ToLower(actions[0].NewEntity.DisplayName))
 	}
 
-	// use default instance size from data block if turbo api can't set it properly above
-	if len(state.NewInstanceType.ValueString()) == 0 && len(state.DefaultInstanceSize.String()) > 0 {
-		state.NewInstanceType = state.DefaultInstanceSize
+	state = d.populateNewType(state)
+
+	if err := TagEntity(d.client, state.UUID.ValueString()); err != nil {
+		resp.Diagnostics.AddError("Error while tagging an entity", err.Error())
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+}
+
+// update new-instance-size with default-size if it's still empty
+func (*cloudDataSource) populateNewType(state cloudModel) cloudModel {
+	if (state.NewInstanceType.IsNull() || len(state.NewInstanceType.ValueString()) == 0) && !state.DefaultInstanceSize.IsNull() {
+		state.NewInstanceType = types.StringValue(strings.ToLower(state.DefaultInstanceSize.ValueString()))
+	}
+
+	return state
 }

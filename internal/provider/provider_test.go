@@ -32,15 +32,19 @@ var testAccProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServe
 
 const (
 	resourceConfig = `data "turbonomic_cloud_entity_recommendation" "test" {
-							entity_name  = "testEntity"
-							entity_type  = "VirtualMachine"
-							default_size = "testDefaultSize"
-						}
-						`
+		entity_name  = "testEntity"
+		entity_type  = "VirtualMachine"
+		default_size = "testDefaultSize"
+	}
+	`
 )
 
 func TestProviderUsernamePassword(t *testing.T) {
-	mockServer := createLocalServer(t, loadTestFile(t, searchRespFileLoc), loadTestFile(t, actionRespFileLoc))
+	mockServer := createLocalServer(t,
+		loadTestFile(t, cloudTestDataBaseDir, searchRespTestData),
+		loadTestFile(t, cloudTestDataBaseDir, validVmActionRespTestData),
+		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
+		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
 	defer mockServer.Close()
 
 	testConfig := `provider "turbonomic" {
@@ -50,7 +54,7 @@ func TestProviderUsernamePassword(t *testing.T) {
 								skipverify = true
 								}
 					`
-	providerConfig := fmt.Sprintf(testConfig, strings.TrimLeft(mockServer.URL, "htps:/"))
+	providerConfig := fmt.Sprintf(testConfig, strings.TrimPrefix(mockServer.URL, "https://"))
 
 	t.Run("test1", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
@@ -65,7 +69,11 @@ func TestProviderUsernamePassword(t *testing.T) {
 }
 
 func TestProviderOAuth(t *testing.T) {
-	mockServer := createLocalServer(t, loadTestFile(t, searchRespFileLoc), loadTestFile(t, actionRespFileLoc))
+	mockServer := createLocalServer(t,
+		loadTestFile(t, cloudTestDataBaseDir, searchRespTestData),
+		loadTestFile(t, cloudTestDataBaseDir, validVmActionRespTestData),
+		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
+		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
 	defer mockServer.Close()
 
 	testConfig := `provider "turbonomic" {
@@ -76,7 +84,7 @@ func TestProviderOAuth(t *testing.T) {
 								skipverify = true
 								}
 					`
-	providerConfig := fmt.Sprintf(testConfig, strings.TrimLeft(mockServer.URL, "htps:/"))
+	providerConfig := fmt.Sprintf(testConfig, strings.TrimPrefix(mockServer.URL, "https://"))
 
 	t.Run("test1", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{

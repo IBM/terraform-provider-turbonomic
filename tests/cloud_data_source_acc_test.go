@@ -16,10 +16,21 @@
 package provider
 
 import (
+	"fmt"
 	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+)
+
+const (
+	vmConfig = `
+	data "turbonomic_cloud_entity_recommendation" "test" {
+		entity_name  = "%s"
+		entity_type  = "%s"
+		default_size = "%s"
+	}
+	`
 )
 
 // Test turbonomic_cloud_data_source
@@ -50,12 +61,7 @@ func TestAccCloudDataSource(t *testing.T) {
 				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 				Steps: []resource.TestStep{
 					{
-						Config: providerConfig +
-							`data "turbonomic_cloud_entity_recommendation" "test" {
-							entity_name  = "` + tc.testEntity + `"
-							entity_type  = "` + tc.testEntityType + `"
-							default_size = "` + tc.defaultSize + `"
-						}`,
+						Config: providerConfig + fmt.Sprintf(vmConfig, tc.testEntity, tc.testEntityType, tc.defaultSize),
 						Check: resource.ComposeAggregateTestCheckFunc(
 							resource.TestCheckResourceAttr("data.turbonomic_cloud_entity_recommendation.test", "entity_name", tc.entityName),
 							resource.TestCheckResourceAttr("data.turbonomic_cloud_entity_recommendation.test", "entity_type", tc.entityType),

@@ -1,0 +1,60 @@
+[
+    {
+        "uuid": "75923180018321",
+        "displayName": "multiregion",
+        "className": "DatabaseServer",
+        "environmentType": "CLOUD",
+        "discoveredBy": {
+            "uuid": "75923160883984",
+            "displayName": "Dev",
+            "category": "Public Cloud",
+            "isProbeRegistered": false,
+            "type": "AWS",
+            "readonly": false
+        },
+        "vendorIds": {
+            "Dev": "arn:aws:rds:us-east-2:192821421245:db:multiregion"
+        },
+        "state": "ACTIVE",
+        "severity": "Critical",
+        "costPrice": 0.065,
+        "severityBreakdown": {
+            "CRITICAL": 1
+        },
+        "template": {
+            "uuid": "75923190251413",
+            "displayName": "db.t4g.medium-gp3",
+            "price": 0.065,
+            "discovered": false,
+            "enableMatch": false
+        },
+        "aspects": {
+            "cloudAspect": {
+                "zone": {
+                    "uuid": "75923190250706",
+                    "displayName": "aws-us-east-2b",
+                    "className": "AvailabilityZone"
+                },
+                "region": {
+                    "uuid": "75923190250481",
+                    "displayName": "aws-US East (Ohio)",
+                    "className": "Region"
+                },
+                "businessAccount": {
+                    "uuid": "75923180018400",
+                    "displayName": "Development",
+                    "className": "BusinessAccount"
+                },
+                "template": {
+                    "uuid": "75923190251413",
+                    "displayName": "db.t4g.medium-gp3",
+                    "className": "DatabaseServerTier"
+                },
+                "cloudServiceName": "AMAZON_RDS",
+                "resourceId": "arn:aws:rds:us-east-2:192821421245:db:multiregion",
+                "type": "CloudAspectApiDTO"
+            }
+        },
+        "controllable": true
+    }
+]

@@ -11,7 +11,11 @@ data "turbonomic_cloud_entity_recommendation" "example" {
 resource "aws_instance" "terraform-demo-ec2" {
   ami           = "ami-079db87dc4c10ac91"
   instance_type = data.turbonomic_cloud_entity_recommendation.example.new_instance_type
-  tags = {
-    Name = "terraform-demo-ec2"
-  }
+
+  tags = merge(
+    {
+      Name = "exampleVirtualMachine"
+    },
+    provider::turbonomic::get_tag() //tag the resource as optimized by Turbonomic provider
+  )
 }

@@ -1,0 +1,51 @@
+[
+  {
+  "uuid": "76018805203831",
+  "displayName": "terraform-demo-instance-1",
+  "className": "VirtualVolume",
+  "environmentType": "CLOUD",
+  "discoveredBy": {
+    "uuid": "76018804236928",
+    "displayName": "Turbonomic Engineering",
+    "category": "Public Cloud",
+    "isProbeRegistered": false,
+    "type": "GCP Project",
+    "readonly": false
+  },
+  "vendorIds": {
+    "Turbonomic Engineering": "https://www.googleapis.com/compute/v1/projects/turbonomic-eng/zones/us-central1-a/disks/terraform-demo-instance-1"
+  },
+  "state": "ACTIVE",
+  "severity": "Critical",
+  "costPrice": 0.0005479452,
+  "severityBreakdown": {
+    "CRITICAL": 1
+  },
+  "providers": [
+    {
+      "uuid": "76018806013699",
+      "displayName": "Standard Persistent Disk",
+      "className": "StorageTier"
+    }
+  ],
+  "consumers": [
+    {
+      "uuid": "76018805203718",
+      "displayName": "terraform-demo-instance-1",
+      "className": "VirtualMachine"
+    }
+  ],
+  "template": {
+    "uuid": "76018806013699",
+    "displayName": "Standard Persistent Disk",
+    "discovered": false,
+    "enableMatch": false
+  },
+  "tags": {
+    "turbonomic_optimized_by": [
+      "turbonomic-terraform-provider"
+    ]
+  },
+  "staleness": "CURRENT"
+  }
+]

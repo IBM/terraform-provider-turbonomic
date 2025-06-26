@@ -24,7 +24,6 @@ import (
 const (
 	// user specific fields to be set when checking acceptance testing
 	// use local/fyre turbo app details and a VM name available in the app
-
 	providerConfig = `
         provider "turbonomic" {
             username = "<username>"
@@ -42,9 +41,39 @@ const (
             skipverify = true
         }
 	`
+
+	// VM related values, used to test expected current and new size
+	// Requires a new VM, since it executes the plan
 	vmName     = "<vm-name>"
 	vmCurrSize = "<vmCurrSize>"
 	vmNewSize  = "<vmNewSize>"
+
+	// AWS EBS volume related values, used to test expected current and new type
+	// Requires a new volume, since it executes the plan
+	ebsVolName     = "<vol-name>"
+	ebsVolCurrType = "<volume-current-type>"
+	ebsVolNewType  = "<volume-new-type>"
+
+	// AWS RDS related values, used to test expected current and new type.
+	rdsName                = "<rdsName>"
+	rdsCurrComputeClass    = "<rdsCurrComputeSize>"
+	rdsNewComputeClass     = "<rdsNewComputeSize>"
+	rdsDefaultComputeClass = "<rdsDefaultComputeSize>"
+	rdsCurrStorageType     = "<rdsCurrStorageSize>"
+	rdsNewStorageType      = "<rdsNewStorageSize>"
+	rdsDefaultStorageType  = "<rdsDefaultStorageSize>"
+
+	// Azure Managed Disks related values, used to test expected current and new type.
+	azureDiskName        = "<azureDisksName>"
+	azureDiskCurrentType = "<azureDisksCurrentType>"
+	azureDiskNewType     = "<azureDisksNewType>"
+	azureDiskDefaultType = "<azureDisksDefaultType>"
+
+	// Google Compute Disk related values, used to test expected, current and new type
+	googleComputeDiskName        = "<googleComputeDiskName>"
+	googleComputeDiskCurrentType = "<googleComputeDiskCurrentType>"
+	googleComputeDiskNewType     = "<googleComputeDiskNewType>"
+	googleComputeDiskDefaultType = "<googleComputeDiskDefaultType>"
 )
 
 var testAccProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServer, error){

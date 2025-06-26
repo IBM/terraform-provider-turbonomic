@@ -15,6 +15,7 @@ resource "azurerm_linux_virtual_machine" "exampleVirtualMachine" {
   size                  = data.turbonomic_cloud_entity_recommendation.example.new_instance_type
   admin_username        = "azureuser"
   network_interface_ids = [azurerm_network_interface.nic.id]
+  tags                  = provider::turbonomic::get_tag() //tag the resource as optimized by Turbonomic provider
 
   admin_ssh_key {
     username   = "azureuser"

@@ -21,11 +21,32 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
 
-func createLocalServer(t *testing.T, searchResp, actionResp string) *httptest.Server {
+const (
+	config = `
+	provider "turbonomic" {
+		username = "administrator"
+		password = "12345"
+		hostname = "%s"
+		skipverify = true
+	}
+	`
+
+	testDataBaseDir                 = "testdata"
+	cloudTestDataBaseDir            = "cloud_data_source"
+	entityTagTestDataBaseDir        = "entity_tags"
+	rdsTestDataBaseDir              = "rds_data_source"
+	ebsTestDataBaseDir              = "ebs_data_source"
+	azureManagedDiskTestDataBaseDir = "azure_mananged_disk_data_source"
+	googleComputeDiskDataBaseDir    = "google_compute_disk_data_source"
+)
+
+// creates a mock turbo client which responds with provided search and action result
+func createLocalServer(t *testing.T, searchResp, actionResp, entityTagsResp, entityTagResp string) *httptest.Server {
 	return httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch {
 		case r.Method == http.MethodPost && r.URL.Path == "/api/v3/login":
@@ -40,23 +61,35 @@ func createLocalServer(t *testing.T, searchResp, actionResp string) *httptest.Se
 			strings.HasSuffix(r.URL.Path, "/actions"):
 			w.WriteHeader(http.StatusOK)
 			fmt.Fprint(w, actionResp)
+		case r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, "/api/v3/entities/") && strings.HasSuffix(r.URL.Path, "/tags"):
+			w.WriteHeader(http.StatusOK)
+			fmt.Fprint(w, entityTagsResp)
+		case r.Method == http.MethodPost && strings.HasPrefix(r.URL.Path, "/api/v3/entities/") && strings.HasSuffix(r.URL.Path, "/tags"):
+			w.WriteHeader(http.StatusOK)
+			fmt.Fprint(w, entityTagResp)
 		case r.Method == http.MethodPost && r.URL.Path == "/oauth2/token":
 			body, _ := io.ReadAll(r.Body)
 			defer r.Body.Close()
 			w.WriteHeader(http.StatusOK)
 			fmt.Fprintf(w, `{"result":"POST success", "received": "%s"}`, string(body))
 		default:
+			// Endpoint not defined
 			http.NotFound(w, r)
+			t.FailNow()
 		}
 	}))
 }
 
-func loadTestFile(t *testing.T, filename string) string {
-	data, err := os.ReadFile(filename)
+func loadTestFile(t *testing.T, pathParts ...string) string {
+	t.Helper()
+
+	p := filepath.Join(append([]string{testDataBaseDir}, pathParts...)...)
+	d, err := os.ReadFile(p)
 	if err != nil {
-		t.Fatalf("failed to read test file: %v", err)
+		t.Fatalf("failed to read test file %q: %v", p, err)
 	}
-	return string(data)
+
+	return string(d)
 }
 
 func init() {

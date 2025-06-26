@@ -1,0 +1,330 @@
+[
+  {
+    "uuid": "638967532350224",
+    "displayName": "MANUAL",
+    "actionImpactID": 638967532350224,
+    "marketID": 777777,
+    "createTime": "2025-06-04T21:32:37Z",
+    "actionType": "SCALE",
+    "actionState": "READY",
+    "actionMode": "MANUAL",
+    "details": "Scale up Disk size for Volume testVolume on Managed Premium SSD from 256 GB to 512 GB in TestAccount",
+    "importance": 0.5,
+    "target": {
+      "uuid": "76009872228514",
+      "displayName": "testVolume",
+      "className": "VirtualVolume",
+      "environmentType": "CLOUD",
+      "discoveredBy": {
+        "uuid": "75720330709169",
+        "displayName": "TestAccount",
+        "isProbeRegistered": false,
+        "type": "Azure Subscription",
+        "readonly": false
+      },
+      "vendorIds": {
+        "TestAccount": "/subscriptions/a111a1aa-2bbb-33cc-4444-ee555555e555/resourceGroups/Test-Group-RG-1/providers/Microsoft.Compute/disks/testVolume"
+      },
+      "state": "ACTIVE",
+      "aspects": {
+        "cloudAspect": {
+          "businessAccount": {
+            "uuid": "75720333641785",
+            "displayName": "TestAccount",
+            "className": "BusinessAccount"
+          },
+          "resourceGroup": {
+            "uuid": "287016855403120",
+            "displayName": "Test-Group-RG-1",
+            "className": "ResourceGroup"
+          },
+          "resourceId": "/subscriptions/a111a1aa-2bbb-33cc-4444-ee555555e555/resourceGroups/Test-Group-RG-1/providers/Microsoft.Compute/disks/testVolume",
+          "type": "CloudAspectApiDTO"
+        }
+      },
+      "tags": {
+        " test_tag": ["test"]
+      }
+    },
+    "currentEntity": {
+      "uuid": "75720331534027",
+      "displayName": "Managed Premium SSD",
+      "className": "StorageTier",
+      "environmentType": "CLOUD",
+      "discoveredBy": {
+        "uuid": "75720330709168",
+        "displayName": "EA - Development 1",
+        "isProbeRegistered": false,
+        "type": "Azure Subscription",
+        "readonly": false
+      },
+      "vendorIds": {
+        "EA - Development 1": "azure::ST::MANAGED_PREMIUM"
+      },
+      "state": "ACTIVE"
+    },
+    "newEntity": {
+      "uuid": "75720331534027",
+      "displayName": "Managed Premium SSD",
+      "className": "StorageTier",
+      "environmentType": "CLOUD",
+      "discoveredBy": {
+        "uuid": "75720330709168",
+        "displayName": "EA - Development 1",
+        "isProbeRegistered": false,
+        "type": "Azure Subscription",
+        "readonly": false
+      },
+      "vendorIds": {
+        "EA - Development 1": "azure::ST::MANAGED_PREMIUM"
+      },
+      "state": "ACTIVE"
+    },
+    "currentValue": "75720331534027",
+    "newValue": "75720331534027",
+    "template": {
+      "uuid": "75720331534027",
+      "displayName": "Managed Premium SSD",
+      "className": "StorageTier",
+      "discovered": false,
+      "enableMatch": false
+    },
+    "risk": {
+      "subCategory": "Performance Assurance",
+      "description": "IOPS Congestion",
+      "severity": "CRITICAL",
+      "importance": 0.0,
+      "reasonCommodities": ["StorageAccess"]
+    },
+    "stats": [
+      {
+        "name": "costPrice",
+        "filters": [
+          {
+            "type": "savingsType",
+            "value": "savings",
+            "displayName": null
+          }
+        ],
+        "units": "$/h",
+        "value": -0.0482299
+      }
+    ],
+    "currentLocation": {
+      "uuid": "75720333159027",
+      "displayName": "azure-Korea South",
+      "className": "Region",
+      "environmentType": "CLOUD",
+      "discoveredBy": {
+        "uuid": "75720331534208",
+        "displayName": "1a1a1111-2bbb-3cc3-44d4-e5e55555ee5e-f6f6f6f6-7a77-8888-c8cc-9dd9999dddd9",
+        "category": "Public Cloud",
+        "isProbeRegistered": false,
+        "type": "Azure Infrastructure",
+        "readonly": false
+      },
+      "vendorIds": {
+        "1a1a1111-2bbb-3cc3-44d4-e5e55555ee5e-f6f6f6f6-7a77-8888-c8cc-9dd9999dddd9": "azure::koreasouth::DC::koreasouth"
+      }
+    },
+    "newLocation": {
+      "uuid": "75720333159027",
+      "displayName": "azure-Korea South",
+      "className": "Region",
+      "environmentType": "CLOUD",
+      "discoveredBy": {
+        "uuid": "75720331534208",
+        "displayName": "1a1a1111-2bbb-3cc3-44d4-e5e55555ee5e-f6f6f6f6-7a77-8888-c8cc-9dd9999dddd9",
+        "category": "Public Cloud",
+        "isProbeRegistered": false,
+        "type": "Azure Infrastructure",
+        "readonly": false
+      },
+      "vendorIds": {
+        "1a1a1111-2bbb-3cc3-44d4-e5e55555ee5e-f6f6f6f6-7a77-8888-c8cc-9dd9999dddd9": "azure::koreasouth::DC::koreasouth"
+      }
+    },
+    "virtualDisks": [
+      {
+        "uuid": "76009872228514",
+        "displayName": "testVolume",
+        "tier": "Managed Premium SSD",
+        "stats": [
+          {
+            "name": "costPrice",
+            "filters": [
+              {
+                "type": "relation",
+                "value": "bought",
+                "displayName": null
+              },
+              {
+                "type": "costComponent",
+                "value": "STORAGE",
+                "displayName": null
+              }
+            ],
+            "units": "$/h",
+            "values": {
+              "max": 0.10030137,
+              "min": 0.10030137,
+              "avg": 0.10030137,
+              "total": 0.10030137
+            },
+            "value": 0.10030137
+          },
+          {
+            "name": "StorageAmount",
+            "capacity": {
+              "max": 256.0,
+              "min": 256.0,
+              "avg": 256.0,
+              "total": 256.0
+            },
+            "filters": [
+              {
+                "type": "key",
+                "value": "testVolume",
+                "displayName": null
+              },
+              {
+                "type": "relation",
+                "value": "bought",
+                "displayName": null
+              }
+            ],
+            "relatedEntity": {
+              "uuid": "75720331534027",
+              "displayName": "Managed Premium SSD",
+              "className": "StorageTier"
+            },
+            "units": "GiB",
+            "values": {
+              "max": 256.0,
+              "min": 256.0,
+              "avg": 256.0,
+              "total": 256.0
+            },
+            "value": 256.0
+          },
+          {
+            "name": "StorageAccess",
+            "capacity": {
+              "max": 1100.0,
+              "min": 1100.0,
+              "avg": 1100.0,
+              "total": 1100.0
+            },
+            "filters": [
+              {
+                "type": "key",
+                "value": "testVolume",
+                "displayName": null
+              },
+              {
+                "type": "relation",
+                "value": "bought",
+                "displayName": null
+              }
+            ],
+            "relatedEntity": {
+              "uuid": "75720331534027",
+              "displayName": "Managed Premium SSD",
+              "className": "StorageTier"
+            },
+            "units": "IOPS",
+            "values": {
+              "max": 0.0,
+              "min": 0.0,
+              "avg": 0.0,
+              "total": 0.0
+            },
+            "value": 0.0
+          },
+          {
+            "name": "IOThroughput",
+            "capacity": {
+              "max": 128000.0,
+              "min": 128000.0,
+              "avg": 128000.0,
+              "total": 128000.0
+            },
+            "filters": [
+              {
+                "type": "key",
+                "value": "testVolume",
+                "displayName": null
+              },
+              {
+                "type": "relation",
+                "value": "bought",
+                "displayName": null
+              }
+            ],
+            "relatedEntity": {
+              "uuid": "75720331534027",
+              "displayName": "Managed Premium SSD",
+              "className": "StorageTier"
+            },
+            "units": "KByte/sec",
+            "values": {
+              "max": 0.0,
+              "min": 0.0,
+              "avg": 0.0,
+              "total": 0.0
+            },
+            "value": 0.0
+          }
+        ],
+        "attachedVirtualMachine": {
+          "uuid": "76009872228512",
+          "displayName": "cr-scale-down",
+          "className": "VirtualMachine"
+        },
+        "provider": {
+          "uuid": "75720331534027",
+          "displayName": "Managed Premium SSD",
+          "className": "StorageTier"
+        },
+        "dataCenter": {
+          "uuid": "75720333159027",
+          "displayName": "azure-Korea South",
+          "className": "Region"
+        },
+        "environmentType": "CLOUD",
+        "lastModified": 0,
+        "businessAccount": {
+          "uuid": "75720333641785",
+          "displayName": "TestAccount",
+          "className": "BusinessAccount",
+          "environmentType": "CLOUD",
+          "discoveredBy": {
+            "uuid": "75720330709169",
+            "displayName": "TestAccount",
+            "category": "Public Cloud",
+            "isProbeRegistered": false,
+            "type": "Azure Subscription",
+            "readonly": false
+          },
+          "vendorIds": {
+            "TestAccount": "a111a1aa-2bbb-33cc-4444-ee555555e555"
+          },
+          "state": "ACTIVE",
+          "staleness": "CURRENT"
+        },
+        "attachmentState": "ATTACHED",
+        "diskRole": "Data Disk",
+        "creationTimeStamp": 1748590451012,
+        "attachedVMStorageCompatibility": "PREMIUM",
+        "resourceId": "/subscriptions/a111a1aa-2bbb-33cc-4444-ee555555e555/resourceGroups/Test-Group-RG-1/providers/Microsoft.Compute/disks/testVolume",
+        "redundancyType": "LRS"
+      }
+    ],
+    "executionCharacteristics": {
+      "disruptiveness": "DISRUPTIVE",
+      "reversibility": "IRREVERSIBLE"
+    },
+    "source": "MARKET",
+    "actionID": 638967532350224
+  }
+]

@@ -1,0 +1,331 @@
+[
+    {
+       "uuid": "638877190762822",
+       "displayName": "MANUAL",
+       "actionImpactID": 638877190762822,
+       "marketID": 777777,
+       "createTime": "2025-04-28T06:28:57Z",
+       "actionType": "SCALE",
+       "actionState": "READY",
+       "actionMode": "MANUAL",
+       "details": "Scale Database Server testRDS from db.t4g.medium-gp3 to db.t4g.small-standard in Development",
+       "importance": -1.0,
+       "target": {
+           "uuid": "75919430323056",
+           "displayName": "testRDS",
+           "className": "DatabaseServer",
+           "environmentType": "CLOUD",
+           "discoveredBy": {
+               "uuid": "75878938985584",
+               "displayName": "engineering.aws.amazon.com",
+               "isProbeRegistered": false,
+               "type": "AWS",
+               "readonly": false
+           },
+           "vendorIds": {
+               "engineering.aws.amazon.com": "arn:aws:rds:us-east-2:1111111111111:db:testRDS"
+           },
+           "state": "ACTIVE",
+           "aspects": {
+               "cloudAspect": {
+                   "businessAccount": {
+                       "uuid": "75878942104371",
+                       "displayName": "Development",
+                       "className": "BusinessAccount"
+                   },
+                   "resourceId": "arn:aws:rds:us-east-2:111111111111:db:testRDS",
+                   "type": "CloudAspectApiDTO"
+               }
+           }
+       },
+       "currentEntity": {
+           "uuid": "75878943524357",
+           "displayName": "db.t4g.medium-gp3",
+           "className": "DatabaseServerTier",
+           "environmentType": "CLOUD",
+           "discoveredBy": {
+               "uuid": "75878941389217",
+               "displayName": "ExampleTarget",
+               "isProbeRegistered": false,
+               "type": "AWS Infrastructure",
+               "readonly": false
+           },
+           "vendorIds": {
+               "Standard": "F111E11F-BCC1-11F1-111A-1111DFA1FDC1"
+           },
+           "state": "ACTIVE"
+       },
+       "newEntity": {
+           "uuid": "75878943524709",
+           "displayName": "db.t4g.small-standard",
+           "className": "DatabaseServerTier",
+           "environmentType": "CLOUD",
+           "discoveredBy": {
+               "uuid": "75878941389217",
+               "displayName": "ExampleTarget",
+               "isProbeRegistered": false,
+               "type": "AWS Infrastructure",
+               "readonly": false
+           },
+           "vendorIds": {
+               "Standard": "F222E22F-BCC2-22F2-222A-2222DFA2FDC2"
+           },
+           "state": "ACTIVE"
+       },
+       "currentValue": "75878943524357",
+       "newValue": "75878943524709",
+       "template": {
+           "uuid": "75878943524709",
+           "displayName": "db.t4g.small-standard",
+           "className": "DatabaseServerTier",
+           "discovered": false,
+           "enableMatch": false
+       },
+       "risk": {
+           "subCategory": "Efficiency Improvement",
+           "description": "Underutilized VMem, IOPS",
+           "severity": "MINOR",
+           "importance": 0.0,
+           "reasonCommodities": [
+               "VMem",
+               "StorageAccess"
+           ]
+       },
+       "stats": [
+           {
+               "name": "costPrice",
+               "filters": [
+                   {
+                       "type": "savingsType",
+                       "value": "savings",
+                       "displayName": null
+                   }
+               ],
+               "units": "$/h",
+               "value": 0.0412466
+           }
+       ],
+       "currentLocation": {
+           "uuid": "75878942121261",
+           "displayName": "aws-US East (Ohio)",
+           "className": "Region",
+           "environmentType": "CLOUD",
+           "discoveredBy": {
+               "uuid": "75878946158192",
+               "displayName": "Standard",
+               "category": "Public Cloud",
+               "isProbeRegistered": false,
+               "type": "AWS Infrastructure",
+               "readonly": false
+           },
+           "vendorIds": {
+               "Standard": "aws::us-east-2::DC::us-east-2"
+           }
+       },
+       "newLocation": {
+           "uuid": "75878942121261",
+           "displayName": "aws-US East (Ohio)",
+           "className": "Region",
+           "environmentType": "CLOUD",
+           "discoveredBy": {
+               "uuid": "75878946158192",
+               "displayName": "Standard",
+               "category": "Public Cloud",
+               "isProbeRegistered": false,
+               "type": "AWS Infrastructure",
+               "readonly": false
+           },
+           "vendorIds": {
+               "Standard": "aws::us-east-2::DC::us-east-2"
+           }
+       },
+       "compoundActions": [
+           {
+               "displayName": "MANUAL",
+               "actionType": "SCALE",
+               "actionState": "READY",
+               "actionMode": "MANUAL",
+               "details": "Scale Database Server testRDS from db.t4g.medium-gp3 to db.t4g.small-standard",
+               "target": {
+                   "uuid": "75919430323056",
+                   "displayName": "testRDS",
+                   "className": "DatabaseServer",
+                   "environmentType": "CLOUD",
+                   "discoveredBy": {
+                       "uuid": "75878938985584",
+                       "displayName": "engineering.aws.amazon.com",
+                       "isProbeRegistered": false,
+                       "type": "AWS",
+                       "readonly": false
+                   },
+                   "vendorIds": {
+                       "engineering.aws.amazon.com": "arn:aws:rds:us-east-2:111111111111:db:testRDS"
+                   },
+                   "state": "ACTIVE"
+               },
+               "currentEntity": {
+                   "uuid": "75878943524357",
+                   "displayName": "db.t4g.medium-gp3",
+                   "className": "DatabaseServerTier",
+                   "environmentType": "CLOUD",
+                   "discoveredBy": {
+                       "uuid": "75878941389217",
+                       "displayName": "ExampleTarget",
+                       "isProbeRegistered": false,
+                       "type": "AWS Infrastructure",
+                       "readonly": false
+                   },
+                   "vendorIds": {
+                       "Standard": "F111E11F-BCC1-11F1-111A-1111DFA1FDC1"
+                   },
+                   "state": "ACTIVE"
+               },
+               "newEntity": {
+                   "uuid": "75878943524709",
+                   "displayName": "db.t4g.small-standard",
+                   "className": "DatabaseServerTier",
+                   "environmentType": "CLOUD",
+                   "discoveredBy": {
+                       "uuid": "75878941389217",
+                       "displayName": "ExampleTarget",
+                       "isProbeRegistered": false,
+                       "type": "AWS Infrastructure",
+                       "readonly": false
+                   },
+                   "vendorIds": {
+                       "Standard": "F222E22F-BCC2-22F2-222A-2222DFA2FDC2"
+                   },
+                   "state": "ACTIVE"
+               },
+               "currentValue": "75878943524357",
+               "newValue": "75878943524709"
+           },
+           {
+               "displayName": "MANUAL",
+               "actionType": "SCALE",
+               "actionState": "READY",
+               "actionMode": "MANUAL",
+               "details": "Scale Database Server testRDS from db.t4g.medium to db.t4g.small",
+               "target": {
+                   "uuid": "75919430323056",
+                   "displayName": "testRDS",
+                   "className": "DatabaseServer",
+                   "environmentType": "CLOUD",
+                   "discoveredBy": {
+                       "uuid": "75878938985584",
+                       "displayName": "engineering.aws.amazon.com",
+                       "isProbeRegistered": false,
+                       "type": "AWS",
+                       "readonly": false
+                   },
+                   "vendorIds": {
+                       "engineering.aws.amazon.com": "arn:aws:rds:us-east-2:111111111111:db:testRDS"
+                   },
+                   "state": "ACTIVE"
+               },
+               "currentEntity": {
+                   "uuid": "75878942128299",
+                   "displayName": "db.t4g.medium",
+                   "className": "ComputeTier",
+                   "environmentType": "CLOUD",
+                   "discoveredBy": {
+                       "uuid": "75878941389217",
+                       "displayName": "ExampleTarget",
+                       "isProbeRegistered": false,
+                       "type": "AWS Infrastructure",
+                       "readonly": false
+                   },
+                   "vendorIds": {
+                       "Standard": "aws::DBS_VMPROFILE::db.t4g.medium"
+                   },
+                   "state": "ACTIVE"
+               },
+               "newEntity": {
+                   "uuid": "75878942128251",
+                   "displayName": "db.t4g.small",
+                   "className": "ComputeTier",
+                   "environmentType": "CLOUD",
+                   "discoveredBy": {
+                       "uuid": "75878941389217",
+                       "displayName": "ExampleTarget",
+                       "isProbeRegistered": false,
+                       "type": "AWS Infrastructure",
+                       "readonly": false
+                   },
+                   "vendorIds": {
+                       "Standard": "aws::DBS_VMPROFILE::db.t4g.small"
+                   },
+                   "state": "ACTIVE"
+               },
+               "currentValue": "75878942128299",
+               "newValue": "75878942128251"
+           },
+           {
+               "displayName": "MANUAL",
+               "actionType": "SCALE",
+               "actionState": "READY",
+               "actionMode": "MANUAL",
+               "details": "Move Database Server testRDS from gp3 to standard",
+               "target": {
+                   "uuid": "75919430323056",
+                   "displayName": "testRDS",
+                   "className": "DatabaseServer",
+                   "environmentType": "CLOUD",
+                   "discoveredBy": {
+                       "uuid": "75878938985584",
+                       "displayName": "engineering.aws.amazon.com",
+                       "isProbeRegistered": false,
+                       "type": "AWS",
+                       "readonly": false
+                   },
+                   "vendorIds": {
+                       "engineering.aws.amazon.com": "arn:aws:rds:us-east-2:111111111111:db:testRDS"
+                   },
+                   "state": "ACTIVE"
+               },
+               "currentEntity": {
+                   "uuid": "75878942128239",
+                   "displayName": "gp3",
+                   "className": "StorageTier",
+                   "environmentType": "CLOUD",
+                   "discoveredBy": {
+                       "uuid": "75878941389217",
+                       "displayName": "ExampleTarget",
+                       "isProbeRegistered": false,
+                       "type": "AWS Infrastructure",
+                       "readonly": false
+                   },
+                   "vendorIds": {
+                       "Standard": "aws::DBS_ST::GP3"
+                   },
+                   "state": "ACTIVE"
+               },
+               "newEntity": {
+                   "uuid": "75878942128328",
+                   "displayName": "standard",
+                   "className": "StorageTier",
+                   "environmentType": "CLOUD",
+                   "discoveredBy": {
+                       "uuid": "75878941389217",
+                       "displayName": "ExampleTarget",
+                       "isProbeRegistered": false,
+                       "type": "AWS Infrastructure",
+                       "readonly": false
+                   },
+                   "vendorIds": {
+                       "Standard": "aws::DBS_ST::STANDARD"
+                   },
+                   "state": "ACTIVE"
+               },
+               "currentValue": "75878942128239",
+               "newValue": "75878942128328"
+           }
+       ],
+       "executionCharacteristics": {
+           "disruptiveness": "DISRUPTIVE",
+           "reversibility": "REVERSIBLE"
+       },
+       "source": "MARKET",
+       "actionID": 638877190762822
+   }
+]

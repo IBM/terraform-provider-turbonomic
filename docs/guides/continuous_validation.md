@@ -45,7 +45,7 @@ terraform {
   required_providers {
     turbonomic = {
       source  = "IBM/turbonomic"
-      version = "1.1.0"
+      version = "1.2.0"
     }
   }
 }
@@ -77,7 +77,7 @@ resource "aws_instance" "terraform-instance-1" {
   }
 }
 
-//Gives a warning incase of failure and display on the continous health check
+//Gives a warning incase of failure and display on the continuous health check
 check "turbonomic_recommendation_check"{
 
   assert {

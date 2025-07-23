@@ -1,20 +1,19 @@
 ---
-page_title: "Enabling HCP Continuous Validation"
+page_title: "Enabling HCP Continuous validation"
 subcategory: ""
 description: |-
-  The following demonstrates configuring your Terraform Repository and HCP to use Continuous Validation.
+  The following demonstrates configuring your Terraform Repository and HCP to use Continuous validation.
 ---
 
-# HashiCorp Cloud Platform Continuous Validation
-The Continuous Validation feature of HashiCorp Cloud Platform (HCP) Terraform can be used, along with the Turbonomic Terraform Provider setup, to periodically assess and identify adherence of Terraform resource configurations with Turbonomic's recommendation.  The periodic assessment runs every 24 hours and can also be run manually from the specific page of the Continuous Validation in HCP.
+# HashiCorp Cloud Platform Continuous validation
+The Continuous validation feature of HashiCorp Cloud Platform (HCP) Terraform can be used, along with the Turbonomic Terraform Provider setup, to periodically assess and identify adherence of Terraform resource configurations with Turbonomic's recommendation.  The periodic assessment runs every 24 hours and can also be run manually from the specific page of the Continuous validation in HCP.
 
-The steps to be followed are as follows
-Use the following sections to setup Continuous Validation:
-- [Enable health assessment](#enable-health-check---continuous-validation-in-hcp) in the workspace you wish to use Continuous Validation
+Use the following sections to setup Continuous validation:
+- [Enable health assessment](#enable-health-check---continuous-validation-in-hcp) in the workspace you wish to use Continuous validation
 - [Add check blocks](#add-check-blocks-in-terraform-configuration-file-as-shown-below) to your Terraform configuration code in those workspaces
-- [Verify](#after-applying-the-configuration---check-assertion-result-will-be-available-in-continuous-validation-link-of-hcp) that the Continuous Validation is working as expected in HCP under Health Continuous Validation section
+- [Verify](#after-applying-the-configuration---check-assertion-result-will-be-available-in-continuous-validation-link-of-hcp) that the Continuous validation is working as expected in HCP under Health Continuous validation section
 
-## Enable health check
+## Enabling health check
 
 To enable health check in your HCP Terraform workspace, use the following steps:
 
@@ -30,11 +29,11 @@ Once enabled, HCP Terraform periodically runs health assessments to ensure your 
 
 ![HCP Health Settings](https://github.com/IBM/terraform-provider-turbonomic/blob/main/imgs/hcp-healthsettings-enable.png?raw=true)
 
-Ref: https://developer.hashicorp.com/terraform/cloud-docs/workspaces/health
+For more information, see [Health assessment](https://developer.hashicorp.com/terraform/cloud-docs/workspaces/health).
 
-## Add check blocks
+## Adding check blocks
 
-The following shows the configuration setup to be added to perform the assertion check of an AWS EC2 instance with Turbonomic recommendation:
+Use the following configuration setup to perform the assertion check of an AWS EC2 instance with Turbonomic recommendation:
 
 1. Add the provider configuration and define the resources.
 1. Set datasource for getting the Turbonomic recommendations.
@@ -88,17 +87,17 @@ check "turbonomic_recommendation_check"{
 }
 ```
 
-Note: Ensure the Turbonomic provider is added as per the [provider configuration](https://registry.terraform.io/providers/IBM/turbonomic/latest/docs#configure-the-provider-credentials).  For more details regarding the location of your Terraform code, please contact your Terraform code owners.
+Note: Ensure the Turbonomic provider is added as per the [provider configuration](https://registry.terraform.io/providers/IBM/turbonomic/latest/docs#configure-the-provider-credentials).  For more details about the location of your Terraform code, contact your Terraform code owners.
 
-## Verify
-After applying the configuration, check assertion result is available in Continuous Validation link of HCP.
+## Verifying
+After applying the configuration, check assertion result is available in Continuous validation link of HCP.
 
-To view and verify the assertions,follow these steps:
+To view and verify the assertions, use the following steps:
 
 1. Log into your HCP Terraform or Terraform Enterprise account.
 1. Go to the specific workspace where you have enabled health assessments.
-1. Click on the **Health** tab within the workspace settings.
-1. Within the **Health** section, click on **Continuous Validation** to view the results of the latest health assessments.
-1. Click on **Start health assessment** to do a manual check.
+1. Click **Health** tab within the workspace settings.
+1. Within the **Health** section, click **Continuous validation** to view the results of the latest health assessments.
+1. Click **Start health assessment** to do a manual check.
 
 ![HCP Health Settings](https://github.com/IBM/terraform-provider-turbonomic/blob/main/imgs/continous_validation_hcp.png?raw=true)

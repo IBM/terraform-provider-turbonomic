@@ -45,8 +45,19 @@ const (
 	googleComputeDiskDataBaseDir    = "google_compute_disk_data_source"
 )
 
-// creates a mock turbo client which responds with provided search and action result
+type Response struct {
+	Message    string
+	HttpStatus int
+}
+
 func createLocalServer(t *testing.T, searchResp, actionResp, entityTagsResp, entityTagResp string) *httptest.Server {
+	return createLocalServerWithResponse(t, searchResp, actionResp, entityTagsResp, Response{
+		Message:    entityTagResp,
+		HttpStatus: http.StatusOK})
+}
+
+// creates a mock turbo client which responds with provided search and action result
+func createLocalServerWithResponse(t *testing.T, searchResp, actionResp, entityTagsResp string, entityTagResp Response) *httptest.Server {
 	return httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch {
 		case r.Method == http.MethodPost && r.URL.Path == "/api/v3/login":
@@ -65,8 +76,8 @@ func createLocalServer(t *testing.T, searchResp, actionResp, entityTagsResp, ent
 			w.WriteHeader(http.StatusOK)
 			fmt.Fprint(w, entityTagsResp)
 		case r.Method == http.MethodPost && strings.HasPrefix(r.URL.Path, "/api/v3/entities/") && strings.HasSuffix(r.URL.Path, "/tags"):
-			w.WriteHeader(http.StatusOK)
-			fmt.Fprint(w, entityTagResp)
+			w.WriteHeader(entityTagResp.HttpStatus)
+			fmt.Fprint(w, entityTagResp.Message)
 		case r.Method == http.MethodPost && r.URL.Path == "/oauth2/token":
 			body, _ := io.ReadAll(r.Body)
 			defer r.Body.Close()

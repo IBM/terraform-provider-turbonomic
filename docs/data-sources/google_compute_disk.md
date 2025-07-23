@@ -34,3 +34,5 @@ data "turbonomic_google_compute_disk" "example" {
 - `entity_type` (String) type of the virtual volume entity
 - `entity_uuid` (String) Turbonomic UUID of the virtual volume entity
 - `new_type` (String) recommended tier of the virtual volume entity
+
+

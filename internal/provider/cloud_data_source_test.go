@@ -17,6 +17,7 @@ package provider
 
 import (
 	"fmt"
+	"net/http"
 	"regexp"
 	"strings"
 	"testing"
@@ -373,31 +374,106 @@ func TestCloudDataSourceTagEntityError(t *testing.T) {
 	})
 }
 
-// Tests error while tagging already tagged entity with different "optimized by" tag value
-func TestCloudDataSourceTagEntity(t *testing.T) {
+// Tests no error while tagging already tagged entity with discovered "optimized by" tag value
+func TestCloudDataSourceTagEntityAlreadyTaggedDiscovered(t *testing.T) {
 	mockServer := createLocalServer(t,
 		loadTestFile(t, cloudTestDataBaseDir, searchRespTestData),
 		loadTestFile(t, cloudTestDataBaseDir, validVmActionRespTestData),
-		`[{"key": "turbonomic_optimized_by","values": ["Different from Turbonomic Terraform Provider"]}]`,
-		"INVALID_ARGUMENT: Trying to insert a tag with a key that already exists")
+		`[{"key": "turbonomic_optimized_by","values": ["turbonomic-terraform-provider"]}]`,
+		"")
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
-	resourceConfig := `data "turbonomic_cloud_entity_recommendation" "test" {
-		entity_name  = "testVM"
-		entity_type  = "VirtualMachine"
-		default_size = "t3a.micro"
-	}`
-
-	t.Run("Valid VM Recommendation", func(t *testing.T) {
-		resource.Test(t, resource.TestCase{
-			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
-			Steps: []resource.TestStep{
-				{
-					Config:      providerConfig + resourceConfig,
-					ExpectError: regexp.MustCompile(`Unable to tag an entity in Turbonomic`),
+	for _, tc := range []struct {
+		name                        string
+		testEntity                  string
+		testEntityType              string
+		expectedEntityName          string
+		expectedEntityType          string
+		expectedCurrentInstanceType string
+		expectedNewInstanceType     string
+		expectedDefaultSize         string
+	}{
+		{
+			name:                        "Valid VM Recommendation",
+			testEntity:                  vmName,
+			testEntityType:              vmType,
+			expectedEntityName:          vmName,
+			expectedEntityType:          vmType,
+			expectedCurrentInstanceType: vmCurrSize,
+			expectedNewInstanceType:     vmNewSize,
+			expectedDefaultSize:         vmNewSize,
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			resource.Test(t, resource.TestCase{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Steps: []resource.TestStep{
+					{
+						Config: providerConfig + fmt.Sprintf(vmConfig, tc.testEntity, tc.testEntityType, tc.expectedDefaultSize),
+						Check: resource.ComposeAggregateTestCheckFunc(
+							resource.TestCheckResourceAttr("data.turbonomic_cloud_entity_recommendation.test", "entity_name", tc.expectedEntityName),
+							resource.TestCheckResourceAttr("data.turbonomic_cloud_entity_recommendation.test", "entity_type", tc.expectedEntityType),
+							resource.TestCheckResourceAttr("data.turbonomic_cloud_entity_recommendation.test", "current_instance_type", tc.expectedCurrentInstanceType),
+							resource.TestCheckResourceAttr("data.turbonomic_cloud_entity_recommendation.test", "new_instance_type", tc.expectedNewInstanceType),
+							resource.TestCheckResourceAttr("data.turbonomic_cloud_entity_recommendation.test", "default_size", tc.expectedDefaultSize),
+						),
+					},
 				},
-			},
+			})
 		})
-	})
+	}
+}
+
+// Tests no error while tagging already tagged entity with not discovered "optimized by" tag value
+func TestCloudDataSourceTagEntityAlreadyTaggedNotDiscovered(t *testing.T) {
+	mockServer := createLocalServerWithResponse(t,
+		loadTestFile(t, cloudTestDataBaseDir, searchRespTestData),
+		loadTestFile(t, cloudTestDataBaseDir, validVmActionRespTestData),
+		`[]`,
+		Response{
+			Message:    "Entity service RPC call failed to complete request: INVALID_ARGUMENT: Trying to insert a tag with a key that already exists: turbonomic_optimized_by",
+			HttpStatus: http.StatusBadRequest})
+	defer mockServer.Close()
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+	for _, tc := range []struct {
+		name                        string
+		testEntity                  string
+		testEntityType              string
+		expectedEntityName          string
+		expectedEntityType          string
+		expectedCurrentInstanceType string
+		expectedNewInstanceType     string
+		expectedDefaultSize         string
+	}{
+		{
+			name:                        "Valid VM Recommendation",
+			testEntity:                  vmName,
+			testEntityType:              vmType,
+			expectedEntityName:          vmName,
+			expectedEntityType:          vmType,
+			expectedCurrentInstanceType: vmCurrSize,
+			expectedNewInstanceType:     vmNewSize,
+			expectedDefaultSize:         vmNewSize,
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			resource.Test(t, resource.TestCase{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Steps: []resource.TestStep{
+					{
+						Config: providerConfig + fmt.Sprintf(vmConfig, tc.testEntity, tc.testEntityType, tc.expectedDefaultSize),
+						Check: resource.ComposeAggregateTestCheckFunc(
+							resource.TestCheckResourceAttr("data.turbonomic_cloud_entity_recommendation.test", "entity_name", tc.expectedEntityName),
+							resource.TestCheckResourceAttr("data.turbonomic_cloud_entity_recommendation.test", "entity_type", tc.expectedEntityType),
+							resource.TestCheckResourceAttr("data.turbonomic_cloud_entity_recommendation.test", "current_instance_type", tc.expectedCurrentInstanceType),
+							resource.TestCheckResourceAttr("data.turbonomic_cloud_entity_recommendation.test", "new_instance_type", tc.expectedNewInstanceType),
+							resource.TestCheckResourceAttr("data.turbonomic_cloud_entity_recommendation.test", "default_size", tc.expectedDefaultSize),
+						),
+					},
+				},
+			})
+		})
+	}
 }

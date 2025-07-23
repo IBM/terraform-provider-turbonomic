@@ -14,13 +14,17 @@ entities that are deployed through Terraform. The data source of the provider re
 the tier size based on Turbonomic scaling action recommendations, or the current size
 if no scaling action exists.
 
-## Examples
+## Example usage
+
+{{ tffile "examples/provider/provider.tf" }}
+
+## Authentication and configuration
 
 The following examples demonstrate the Terraform code to and use the provider in different cloud environments.
 
 ### Configuring the provider credentials
 
-Before you can use the provider, you must configure it with credentials.  You can use either username and password or OAuth 2.0.
+Before you can use the provider, you must configure it with credentials.  You can use either `username` and `password` or `OAuth 2.0`.
 
 #### Example using username/password credentials
 
@@ -30,97 +34,22 @@ Before you can use the provider, you must configure it with credentials.  You ca
 
 In order to authenticate to Turbonomic's API using OAuth 2.0, you first need to create an OAuth client.
 For more information, see [Creating and authenticating an OAuth 2.0 client](https://www.ibm.com/docs/en/tarm/8.15.0?topic=cookbook-authenticating-oauth-20-clients-api#cookbook_administration_oauth_authentication__title__4)
-to create the client.  Note, you must create the OAuth 2.0 client using `client_secret_basic` as the `clientAuthenticationMethods`. The output from the preceeding documentation will result in the following parameters:
+to create the client. The output from the preceeding documentation will result in the following parameters:
 - clientId
 - clientSecret
 - role
 
 {{ tffile "examples/provider/providerOAuth.tf" }}
 
-**Note:** Valid roles are ADMINISTRATOR, SITE_ADMIN, AUTOMATOR, DEPLOYER, ADVISOR, OBSERVER, OPERATIONAL_OBSERVER, SHARED_ADVISOR, SHARED_OBSERVER and REPORT_EDITOR.
+-> **NOTE:** Valid roles are ADMINISTRATOR, SITE_ADMIN, AUTOMATOR, DEPLOYER, ADVISOR, OBSERVER, OPERATIONAL_OBSERVER, SHARED_ADVISOR and SHARED_OBSERVER.
 
-{{ .SchemaMarkdown | trimspace }}
+## Features and bug requests
 
-### Example data source configuration
+If you have a bug or feature request, then use one of the following resources to create an issue:
 
-The following example shows the Turbonomic data source struct that you can use in different cloud environments.
+* If an existing feature of the provider is working in an unexpected way, [raise a support case] (https://ibm.biz/turbonomic-support).
 
-{{ tffile "examples/data-sources/turbonomic_cloud_entity_recommendation/data-source.tf" }}
+* If you'd like the provider to support a new feature, [raise an idea] (https://ibm.biz/turbonomic-ideas)
+ to the Turbonomic product team.
 
-### Tagging the resources as optimized by Turbonomic provider
-
-To identify resources as optimized by the Turbonomic provider, it is recommended to add a Turbonomic-specific tag to the resources, as shown below.
-
-#### Option 1 (Recommended)
-
-```hcl
-tags = provider::turbonomic::get_tag()  //merge function can be used for adding multiple tags
-```
-
-In case of GCP, labels need to be used as shown below
-
-```hcl
-labels = provider::turbonomic::get_tag()  //merge function can be used for adding multiple tags
-```
-
-#### Option 2
-
-```hcl
-tags = {
-    turbonomic_optimized_by = "turbonomic-terraform-provider"
-  }
-```
-
-In case of GCP, labels need to be used as shown below
-
-```hcl
-  labels = {
-    turbonomic_optimized_by = "turbonomic-terraform-provider"
-  }
-```
-
-### AWS EC2 example
-
-The `instance_type` is configured to use the turbonomic_cloud_entity_recommendation data source unless
-null is returned.  If null is returned, then the default size defined in data block of "t3.nano" is used.
-
-{{ tffile "examples/aws-ec2/main.tf" }}
-
-### Azure example
-
-The `size` is configured to use the `turbonomic_cloud_entity_recommendation` data source unless null is
-returned, in which case it uses `Standard_B1s` by default.
-
-{{ tffile "examples/azure/main.tf" }}
-
-### GCP example
-
-The `machine_type` is set to use the `turbonomic_cloud_entity_recommendation` data source unless null is returned, in which case it uses `e2-micro` by default.
-
-{{ tffile "examples/gcp/main.tf" }}
-
-### AWS RDS example
-
-The AWS RDS resource is confgured to use the `turbonomic_aws_db_instance` data source unless null is returned, in which case it defaults to `db.t3.small` for the
-`default_instance_class` and `gp2` for the `default_storage_type`.
-
-{{ tffile "examples/aws-rds/main.tf" }}
-
-### AWS EBS example
-
-The AWS EBS resource is confgured to use the `turbonomic_aws_ebs_volume` data source unless null is returned, in which case it defaults to `gp2` for the `default_type`.
-
-{{ tffile "examples/aws-ebs/main.tf" }}
-
-### Azure Managed Disks example
-
-The `storage_account_type` is set to use the `turbonomic_azurerm_managed_disk` data source unless null is returned, in which case it uses `Standard_LRS` by default.
-
-{{ tffile "examples/azure_managed_disks/main.tf" }}
-
-### Google Persistent Disk example
-
-The Google Persistent Disk resource is confgured to use the `turbonomic_google_compute_disk` data source unless null is returned,
-in which case it uses `pd-standard` by default.
-
-{{ tffile "examples/google-compute-disk/main.tf" }}
+{{ .SchemaMarkdown | trimspace}}

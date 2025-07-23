@@ -1,3 +1,15 @@
+## 1.3.0
+
+FEATURES:
+
+- Added support for `client_secret_post` as the `clientAuthenticationMethods` when using OAuth 2.0 authentication
+
+NOTES:
+
+- Added guide with examples to use Turbonomic provider with modules
+- Reorganised the Turbonomic Provider Registry documentation.
+- Update provier to use `github.com/IBM/turbonomic-go-client-v1.3.0`
+
 ## 1.2.0 (Beta Release)
 
 FEATURES:
@@ -6,13 +18,13 @@ FEATURES:
 - **New Data Resource:** `turbonomic_azurerm_managed_disk`
 - **New Data Resource:** `turbonomic_aws_ebs_volume`
 - **New Data Resource:** `turbonomic_google_compute_disk`
-- Added `ApiInfo` to send the basic metadata info to the go-client.
 - **New Function:** `provider::turbonomic::get_tag()`
+- Added `ApiInfo` to send the basic metadata info to the go-client.
 
 NOTES:
 
 - Provider now requires `Terraform v1.8.5`
-- Update provier to use `github.com/IBM/turbonomic-go-client-v1.2.0`
+- Update provider to use `github.com/IBM/turbonomic-go-client-v1.2.0`
 
 ## 1.1.0 (Beta Release)
 

@@ -23,8 +23,11 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/IBM/terraform-provider-turbonomic/pkg/logger"
 	turboclient "github.com/IBM/turbonomic-go-client"
+	turboLogging "github.com/IBM/turbonomic-go-client/logging"
 
+	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -306,7 +309,14 @@ func (p *turbonomicProvider) Configure(ctx context.Context, req provider.Configu
 		return
 	}
 
-	client, err := turboclient.NewClient(&newClientOpts)
+	goClientCtx := tflog.NewSubsystem(ctx, "turbo-go-client", tflog.WithLevel(hclog.Debug))
+	logAdapter := logger.TfLogAdapter{}
+
+	client, err := turboclient.NewClient(
+		&newClientOpts,
+		turboLogging.WithContext(goClientCtx),
+		turboLogging.WithLogger(&logAdapter))
+
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Unable to Create Turbonomic API Client",

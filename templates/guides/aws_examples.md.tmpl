@@ -1,0 +1,26 @@
+---
+layout: ""
+page_title: "AWS Examples"
+description: |-
+ This guide focuses on different aws resources examples.
+---
+
+This guide focuses on using Turbonomic data sources with [AWS](https://registry.terraform.io/providers/hashicorp/aws/latest/docs) resources, enabling dynamic resource configuration based on Turbonomic recommendations.
+
+## AWS EC2 example
+
+The `instance_type` is configured to use the turbonomic_cloud_entity_recommendation data source unless
+null is returned.  If null is returned, then the default size defined in data block of "t3.nano" is used.
+
+{{ tffile "examples/aws-ec2/main.tf" }}
+## AWS RDS example
+
+The AWS RDS resource is configured to use the `turbonomic_aws_db_instance` data source unless null is returned, in which case it defaults to `db.t3.small` for the
+`default_instance_class` and `gp2` for the `default_storage_type`.
+
+{{ tffile "examples/aws-rds/main.tf" }}
+## AWS EBS example
+
+The AWS EBS resource is configured to use the `turbonomic_aws_ebs_volume` data source unless null is returned, in which case it defaults to `gp2` for the `default_type`.
+
+{{ tffile "examples/aws-ebs/main.tf" }}

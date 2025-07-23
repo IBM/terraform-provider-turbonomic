@@ -34,3 +34,5 @@ data "turbonomic_aws_ebs_volume" "example" {
 - `entity_type` (String) type of the volume entity
 - `entity_uuid` (String) turbonomic uuid of the volume entity
 - `new_type` (String) recommended type of the volume entity
+
+

@@ -1,0 +1,20 @@
+---
+layout: ""
+page_title: "Google Cloud Examples"
+description: |-
+ This guide focuses on different google cloud resources examples.
+---
+This guide focuses on using Turbonomic data sources with [Google Cloud](https://registry.terraform.io/providers/hashicorp/google/latest/docs) resources, enabling dynamic resource configuration based on Turbonomic recommendations.
+
+## Google compute engine example
+
+The `machine_type` is set to use the `turbonomic_cloud_entity_recommendation` data source unless null is returned, in which case it uses `e2-micro` by default.
+
+{{ tffile "examples/gcp/main.tf" }}
+
+## Google persistent disk example
+
+The Google Persistent Disk resource is confgured to use the `turbonomic_google_compute_disk` data source unless null is returned,
+in which case it uses `pd-standard` by default.
+
+{{ tffile "examples/google-compute-disk/main.tf" }}

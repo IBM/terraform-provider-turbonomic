@@ -1,0 +1,20 @@
+---
+layout: ""
+page_title: "Azure Examples"
+description: |-
+ This guide focuses on different azure resources examples.
+---
+
+This guide focuses on using Turbonomic data sources with [Azure](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs) resources, enabling dynamic resource configuration based on Turbonomic recommendations.
+
+## Azure virtual machines example
+
+The `size` is configured to use the `turbonomic_cloud_entity_recommendation` data source unless null is
+returned, in which case it uses `Standard_B1s` by default.
+
+{{ tffile "examples/azure/main.tf" }}
+
+## Azure managed disks example
+
+The `storage_account_type` is set to use the `turbonomic_azurerm_managed_disk` data source unless null is returned, in which case it uses `Standard_LRS` by default.
+{{ tffile "examples/azure_managed_disks/main.tf" }}

@@ -35,3 +35,5 @@ data "turbonomic_cloud_entity_recommendation" "example" {
 - `current_instance_type` (String) current tier of the cloud entity
 - `entity_uuid` (String) Turbonomic UUID of the cloud entity
 - `new_instance_type` (String) recommended tier of the cloud entity
+
+

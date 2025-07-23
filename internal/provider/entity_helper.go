@@ -18,14 +18,16 @@ package provider
 import (
 	"fmt"
 	"slices"
+	"strings"
 
 	turboclient "github.com/IBM/turbonomic-go-client"
 )
 
 // Tag key and value for "optimized by" tag
 const (
-	OptimizedByTagName  = "turbonomic_optimized_by"
-	OptimizedByTagValue = "turbonomic-terraform-provider"
+	OptimizedByTagName      = "turbonomic_optimized_by"
+	OptimizedByTagValue     = "turbonomic-terraform-provider"
+	TagAlredyExistsErrorMsg = "INVALID_ARGUMENT: Trying to insert a tag with a key that already exists: turbonomic_optimized_by"
 )
 
 func TagEntity(client *turboclient.Client, uuid string) error {
@@ -58,6 +60,9 @@ func TagEntity(client *turboclient.Client, uuid string) error {
 
 			_, err := client.TagEntity(tagEntityReq)
 			if err != nil {
+				if strings.Contains(err.Error(), TagAlredyExistsErrorMsg) {
+					return nil
+				}
 				return fmt.Errorf("Unable to tag an entity in Turbonomic: %v", err)
 			}
 		}

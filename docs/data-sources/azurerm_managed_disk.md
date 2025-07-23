@@ -34,3 +34,5 @@ data "turbonomic_azurerm_managed_disk" "example" {
 - `entity_type` (String) type of the Azure Managed Disk entity
 - `entity_uuid` (String) Turbonomic UUID of the Azure Managed Disk entity
 - `new_storage_account_type` (String) recommended storage type of the Azure Managed Disk entity
+
+

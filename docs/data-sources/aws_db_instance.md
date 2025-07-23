@@ -38,3 +38,5 @@ data "turbonomic_aws_db_instance" "testRDS2" {
 - `entity_uuid` (String) Turbonomic UUID of the AWS RDS entity
 - `new_instance_class` (String) recommended instance class of the AWS RDS entity
 - `new_storage_type` (String) recommended storage type of the AWS RDS entity
+
+

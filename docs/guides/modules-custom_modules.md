@@ -13,23 +13,22 @@ description: |-
 
 Assume that you have a [custom module](https://developer.hashicorp.com/terraform/language/modules/develop) named `ec2_turbonomic_module` for creating AWS EC2 instances. Turbonomic provider data block can be configured in the custom module as shown in the following example:
 
-Here,`turbonomic_cloud_entity_recommendation` data block fetches the `instance_type` recommendation from Turbonomic. The `entity_name`, which is passed as input to the module for creating the EC2 resource has to be re-used for Turbonomic data block as well. The `instance_type` is configured to use the `turbonomic_cloud_entity_recommendation` data block unless null is returned. If null is returned, then the `default_size` defined in data block of Turbonomic is used.
+Here,`turbonomic_aws_instance` data block fetches the `new_instance_type` recommendation from Turbonomic. The `entity_name`, which is passed as input to the module for creating the EC2 resource has to be re-used for Turbonomic data block as well. The `instance_type` is configured to use the `turbonomic_aws_instance` data block unless null is returned. If null is returned, then the `default_instance_type` defined in data block of Turbonomic is used.
 
 ```diff
 
 resource "aws_instance" "ec2_instance" {
   ami           = var.ami
-<span style='color:green'>+ instance_type = data.turbonomic_cloud_entity_recommendation.ec2_instance_recommendation.new_instance_type </span>
+<span style='color:green'>+ instance_type = data.turbonomic_aws_instance.ec2_instance_recommendation.new_instance_type </span>
   tags          = merge({
     Name        = var.name                            //name of the EC2 instance
   },var.tags
   )
 }
 <span style='color:green'>
-+ data "turbonomic_cloud_entity_recommendation" "ec2_instance_recommendation" {
++ data "turbonomic_aws_instance" "ec2_instance_recommendation" {
 +    entity_name  = var.name                         //name of the EC2 instance
-+    entity_type  = "VirtualMachine"
-+    default_size = var.default_instance_type       //default instance type to be used
++    default_instance_type  = var.default_instance_type       //default instance type to be used
 +}
 </span>
 ```
@@ -38,7 +37,7 @@ If Turbonomic recommendation for instance types is needed by external callers, t
 
 ```hcl
 output "turbonomic_module_out" {
-  value = data.turbonomic_cloud_entity_recommendation.ec2_instance_recommendation
+  value = data.turbonomic_aws_instance.ec2_instance_recommendation
 }
 ```
 

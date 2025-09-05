@@ -1,0 +1,362 @@
+[
+    {
+        "uuid": "639054921252942",
+        "displayName": "RECOMMEND",
+        "actionImpactID": 639054921252942,
+        "marketID": 777777,
+        "createTime": "2025-08-07T02:42:43Z",
+        "actionType": "RESIZE",
+        "actionState": "READY",
+        "actionMode": "RECOMMEND",
+        "details": "Resize VMem Request,VMem Limit,VCPU Request for Workload Controller licensing-service-instance",
+        "importance": -1.0,
+        "target": {
+            "uuid": "76084922964120",
+            "displayName": "licensing-service-instance",
+            "className": "WorkloadController",
+            "environmentType": "HYBRID",
+            "discoveredBy": {
+                "uuid": "75878878480048",
+                "displayName": "Kubernetes-Turbonomic",
+                "isProbeRegistered": false,
+                "type": "Kubernetes",
+                "readonly": false
+            },
+            "vendorIds": {
+                "Kubernetes-Turbonomic": "3e3e3e3e-7cfc-446f-9616-3ea3ea3ea3ea"
+            },
+            "state": "ACTIVE",
+            "aspects": {
+                "workloadControllerAspect": {
+                    "controllerReplicaCount": 1,
+                    "type": "WorkloadControllerAspectApiDTO"
+                },
+                "containerPlatformContextAspect": {
+                    "namespace": "common-services",
+                    "containerPlatformCluster": "Kubernetes-Turbonomic",
+                    "namespaceEntity": {
+                        "uuid": "75878878702732",
+                        "displayName": "common-services",
+                        "className": "Namespace"
+                    },
+                    "containerClusterEntity": {
+                        "uuid": "75878878702992",
+                        "displayName": "Kubernetes-Turbonomic",
+                        "className": "ContainerPlatformCluster"
+                    },
+                    "serviceEntity": {},
+                    "type": "ContainerPlatformContextAspectApiDTO"
+                }
+            },
+            "tags": {
+                "app.kubernetes.io/managed-by": [
+                    "operator"
+                ],
+                "app.kubernetes.io/name": [
+                    "licensing-service-instance"
+                ],
+                "release": [
+                    "licensing-service"
+                ],
+                "app.kubernetes.io/instance": [
+                    "licensing-service"
+                ],
+                "app.kubernetes.io/component": [
+                    "licensing-service-svc"
+                ],
+                "VirtualMachine": [
+                    "false"
+                ]
+            }
+        },
+        "currentEntity": {
+            "uuid": "76084922964120",
+            "displayName": "licensing-service-instance",
+            "className": "WorkloadController",
+            "environmentType": "HYBRID",
+            "discoveredBy": {
+                "uuid": "75878878480048",
+                "displayName": "Kubernetes-Turbonomic",
+                "isProbeRegistered": false,
+                "type": "Kubernetes",
+                "readonly": false
+            },
+            "vendorIds": {
+                "Kubernetes-Turbonomic": "3e3e3e3e-7cfc-446f-9616-3ea3ea3ea3ea"
+            },
+            "state": "ACTIVE",
+            "aspects": {
+                "workloadControllerAspect": {
+                    "controllerReplicaCount": 1,
+                    "type": "WorkloadControllerAspectApiDTO"
+                },
+                "containerPlatformContextAspect": {
+                    "namespace": "common-services",
+                    "containerPlatformCluster": "Kubernetes-Turbonomic",
+                    "namespaceEntity": {
+                        "uuid": "75878878702732",
+                        "displayName": "common-services",
+                        "className": "Namespace"
+                    },
+                    "containerClusterEntity": {
+                        "uuid": "75878878702992",
+                        "displayName": "Kubernetes-Turbonomic",
+                        "className": "ContainerPlatformCluster"
+                    },
+                    "serviceEntity": {},
+                    "type": "ContainerPlatformContextAspectApiDTO"
+                }
+            },
+            "tags": {
+                "app.kubernetes.io/managed-by": [
+                    "operator"
+                ],
+                "app.kubernetes.io/name": [
+                    "licensing-service-instance"
+                ],
+                "release": [
+                    "licensing-service"
+                ],
+                "app.kubernetes.io/instance": [
+                    "licensing-service"
+                ],
+                "app.kubernetes.io/component": [
+                    "licensing-service-svc"
+                ],
+                "VirtualMachine": [
+                    "false"
+                ]
+            }
+        },
+        "newEntity": {
+            "uuid": "76084922964120",
+            "displayName": "licensing-service-instance",
+            "className": "WorkloadController",
+            "environmentType": "HYBRID",
+            "discoveredBy": {
+                "uuid": "75878878480048",
+                "displayName": "Kubernetes-Turbonomic",
+                "isProbeRegistered": false,
+                "type": "Kubernetes",
+                "readonly": false
+            },
+            "vendorIds": {
+                "Kubernetes-Turbonomic": "3e3e3e3e-7cfc-446f-9616-3ea3ea3ea3ea"
+            },
+            "state": "ACTIVE",
+            "aspects": {
+                "workloadControllerAspect": {
+                    "controllerReplicaCount": 1,
+                    "type": "WorkloadControllerAspectApiDTO"
+                },
+                "containerPlatformContextAspect": {
+                    "namespace": "common-services",
+                    "containerPlatformCluster": "Kubernetes-Turbonomic",
+                    "namespaceEntity": {
+                        "uuid": "75878878702732",
+                        "displayName": "common-services",
+                        "className": "Namespace"
+                    },
+                    "containerClusterEntity": {
+                        "uuid": "75878878702992",
+                        "displayName": "Kubernetes-Turbonomic",
+                        "className": "ContainerPlatformCluster"
+                    },
+                    "serviceEntity": {},
+                    "type": "ContainerPlatformContextAspectApiDTO"
+                }
+            },
+            "tags": {
+                "app.kubernetes.io/managed-by": [
+                    "operator"
+                ],
+                "app.kubernetes.io/name": [
+                    "licensing-service-instance"
+                ],
+                "release": [
+                    "licensing-service"
+                ],
+                "app.kubernetes.io/instance": [
+                    "licensing-service"
+                ],
+                "app.kubernetes.io/component": [
+                    "licensing-service-svc"
+                ],
+                "VirtualMachine": [
+                    "false"
+                ]
+            }
+        },
+        "risk": {
+            "subCategory": "Performance Assurance",
+            "description": "VMem Request Congestion, VMem Limit Congestion, Underutilized VCPU Request in Container Spec license-service",
+            "severity": "CRITICAL",
+            "importance": 0.0,
+            "reasonCommodities": [
+                "VMemRequest",
+                "VMem",
+                "VCPURequest"
+            ]
+        },
+        "compoundActions": [
+            {
+                "displayName": "RECOMMEND",
+                "actionType": "RESIZE",
+                "actionState": "READY",
+                "actionMode": "RECOMMEND",
+                "details": "VMem Request Congestion in license-service [1]",
+                "target": {
+                    "uuid": "76084922964122",
+                    "displayName": "license-service",
+                    "className": "ContainerSpec",
+                    "environmentType": "HYBRID",
+                    "discoveredBy": {
+                        "uuid": "75878878480048",
+                        "displayName": "Kubernetes-Turbonomic",
+                        "isProbeRegistered": false,
+                        "type": "Kubernetes",
+                        "readonly": false
+                    },
+                    "vendorIds": {
+                        "Kubernetes-Turbonomic": "3e3e3e3e-7cfc-446f-9616-3ea3ea3ea3ea/license-service"
+                    },
+                    "state": "ACTIVE",
+                    "tags": {
+                        "app.kubernetes.io/managed-by": [
+                            "operator"
+                        ],
+                        "app.kubernetes.io/name": [
+                            "licensing-service-instance"
+                        ],
+                        "release": [
+                            "licensing-service"
+                        ],
+                        "app.kubernetes.io/instance": [
+                            "licensing-service"
+                        ],
+                        "app.kubernetes.io/component": [
+                            "licensing-service-svc"
+                        ]
+                    }
+                },
+                "currentValue": "262144.0",
+                "newValue": "491520.0",
+                "valueUnits": "KB",
+                "resizeAttribute": "CAPACITY",
+                "risk": {
+                    "importance": 0.0,
+                    "reasonCommodities": [
+                        "VMemRequest"
+                    ]
+                }
+            },
+            {
+                "displayName": "RECOMMEND",
+                "actionType": "RESIZE",
+                "actionState": "READY",
+                "actionMode": "RECOMMEND",
+                "details": "VMem Congestion in license-service [1]",
+                "target": {
+                    "uuid": "76084922964122",
+                    "displayName": "license-service",
+                    "className": "ContainerSpec",
+                    "environmentType": "HYBRID",
+                    "discoveredBy": {
+                        "uuid": "75878878480048",
+                        "displayName": "Kubernetes-Turbonomic",
+                        "isProbeRegistered": false,
+                        "type": "Kubernetes",
+                        "readonly": false
+                    },
+                    "vendorIds": {
+                        "Kubernetes-Turbonomic": "3e3e3e3e-7cfc-446f-9616-3ea3ea3ea3ea/license-service"
+                    },
+                    "state": "ACTIVE",
+                    "tags": {
+                        "app.kubernetes.io/managed-by": [
+                            "operator"
+                        ],
+                        "app.kubernetes.io/name": [
+                            "licensing-service-instance"
+                        ],
+                        "release": [
+                            "licensing-service"
+                        ],
+                        "app.kubernetes.io/instance": [
+                            "licensing-service"
+                        ],
+                        "app.kubernetes.io/component": [
+                            "licensing-service-svc"
+                        ]
+                    }
+                },
+                "currentValue": "1048576.0",
+                "newValue": "1310720.0",
+                "valueUnits": "KB",
+                "resizeAttribute": "CAPACITY",
+                "risk": {
+                    "importance": 0.0,
+                    "reasonCommodities": [
+                        "VMem"
+                    ]
+                }
+            },
+            {
+                "displayName": "RECOMMEND",
+                "actionType": "RESIZE",
+                "actionState": "READY",
+                "actionMode": "RECOMMEND",
+                "details": "Underutilized VCPU Request in license-service [1]",
+                "target": {
+                    "uuid": "76084922964122",
+                    "displayName": "license-service",
+                    "className": "ContainerSpec",
+                    "environmentType": "HYBRID",
+                    "discoveredBy": {
+                        "uuid": "75878878480048",
+                        "displayName": "Kubernetes-Turbonomic",
+                        "isProbeRegistered": false,
+                        "type": "Kubernetes",
+                        "readonly": false
+                    },
+                    "vendorIds": {
+                        "Kubernetes-Turbonomic": "3e3e3e3e-7cfc-446f-9616-3ea3ea3ea3ea/license-service"
+                    },
+                    "state": "ACTIVE",
+                    "tags": {
+                        "app.kubernetes.io/managed-by": [
+                            "operator"
+                        ],
+                        "app.kubernetes.io/name": [
+                            "licensing-service-instance"
+                        ],
+                        "release": [
+                            "licensing-service"
+                        ],
+                        "app.kubernetes.io/instance": [
+                            "licensing-service"
+                        ],
+                        "app.kubernetes.io/component": [
+                            "licensing-service-svc"
+                        ]
+                    }
+                },
+                "currentValue": "200.0",
+                "newValue": "10.0",
+                "valueUnits": "mCores",
+                "resizeAttribute": "CAPACITY",
+                "risk": {
+                    "importance": 0.0,
+                    "reasonCommodities": [
+                        "VCPURequest"
+                    ]
+                }
+            }
+        ],
+        "source": "MARKET",
+        "relatedActionsCountByType": {
+            "BLOCKED_BY": 0
+        },
+        "actionID": 639054921252942
+    }
+]

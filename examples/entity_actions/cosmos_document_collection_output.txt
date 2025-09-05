@@ -1,0 +1,174 @@
+Changes to Outputs:
+  + testing = {
+      + action_types     = [
+          + "SCALE",
+        ]
+      + actions          = [
+          + {
+              + action_id        = 638828907944856
+              + action_impact_id = 638828907944856
+              + action_mode      = "MANUAL"
+              + action_state     = "READY"
+              + action_type      = "SCALE"
+              + compound_actions = []
+              + create_time      = "2025-08-18T08:01:53Z"
+              + current_entity   = {
+                  + class_name       = "DatabaseTier"
+                  + discovered_by    = {
+                      + category            = ""
+                      + display_name        = "Example Azure Subscription"
+                      + is_probe_registered = false
+                      + read_only           = false
+                      + type                = "Azure Subscription"
+                      + uuid                = "75878940124304"
+                    }
+                  + display_name     = "cosmos"
+                  + environment_type = "CLOUD"
+                  + state            = "ACTIVE"
+                  + uuid             = "75878941065234"
+                  + vendor_ids       = {
+                      + "Example Azure Subscription" = "azure::DBPROFILE::cosmos"
+                    }
+                }
+              + current_location = {
+                  + class_name       = ""
+                  + discovered_by    = {
+                      + category            = ""
+                      + display_name        = ""
+                      + is_probe_registered = false
+                      + read_only           = false
+                      + type                = ""
+                      + uuid                = ""
+                    }
+                  + display_name     = ""
+                  + environment_type = ""
+                  + uuid             = ""
+                  + vendor_ids       = null
+                }
+              + current_value    = "75878941065234"
+              + details          = "Scale down RU for Document Collection example-doc-collection on cosmos from 1,000 to 400 in Example Azure Account"
+              + display_name     = "MANUAL"
+              + importance       = 0
+              + market_id        = 777777
+              + new_entity       = {
+                  + class_name       = "DatabaseTier"
+                  + discovered_by    = {
+                      + category            = ""
+                      + display_name        = "Example Azure Subscription"
+                      + is_probe_registered = false
+                      + read_only           = false
+                      + type                = "Azure Subscription"
+                      + uuid                = "75878940124304"
+                    }
+                  + display_name     = "cosmos"
+                  + environment_type = "CLOUD"
+                  + state            = "ACTIVE"
+                  + uuid             = "75878941065234"
+                  + vendor_ids       = {
+                      + "Example Azure Subscription" = "azure::DBPROFILE::cosmos"
+                    }
+                }
+              + new_location     = {
+                  + class_name       = ""
+                  + discovered_by    = {
+                      + category            = ""
+                      + display_name        = ""
+                      + is_probe_registered = false
+                      + read_only           = false
+                      + type                = ""
+                      + uuid                = ""
+                    }
+                  + display_name     = ""
+                  + environment_type = ""
+                  + uuid             = ""
+                  + vendor_ids       = null
+                }
+              + new_value        = "75878941065234"
+              + resize_attribute = ""
+              + risk             = {
+                  + description        = "Underutilized RU"
+                  + importance         = 0
+                  + reason_commodities = [
+                      + "RU",
+                    ]
+                  + severity           = "MINOR"
+                  + sub_category       = "Efficiency Improvement"
+                }
+              + source           = "MARKET"
+              + stats            = [
+                  + {
+                      + filters = [
+                          + {
+                              + display_name = ""
+                              + type         = "savingsType"
+                              + value        = "savings"
+                            },
+                        ]
+                      + name    = "costPrice"
+                      + units   = "$/h"
+                      + value   = 0.06
+                    },
+                ]
+              + target           = {
+                  + aspects          = jsonencode(
+                        {
+                          + cloudAspect = {
+                              + businessAccount = {
+                                  + className   = "BusinessAccount"
+                                  + displayName = "Example Azure Account"
+                                  + uuid        = "75878941495325"
+                                }
+                              + resourceGroup   = {
+                                  + className   = "ResourceGroup"
+                                  + displayName = "example-resource-group"
+                                  + uuid        = "287223045491413"
+                                }
+                              + resourceId      = "/subscriptions/a000a0aa-0aaa-00aa-0000-aa000000a000/resourceGroups/example-resource-group/providers/Microsoft.DocumentDB/databaseAccounts/example-cosmos-account/sqlDatabases/example-cosmos-db/containers/example-doc-collection"
+                              + type            = "CloudAspectApiDTO"
+                            }
+                        }
+                    )
+                  + class_name       = "DocumentCollection"
+                  + discovered_by    = {
+                      + category            = ""
+                      + display_name        = "Example Azure Account"
+                      + is_probe_registered = false
+                      + read_only           = false
+                      + type                = "Azure Subscription"
+                      + uuid                = "75878940124306"
+                    }
+                  + display_name     = "example-doc-collection"
+                  + environment_type = "CLOUD"
+                  + state            = "ACTIVE"
+                  + tags             = {
+                      + defaultExperience = [
+                          + "Core (SQL)",
+                        ]
+                      + key               = [
+                          + "test",
+                        ]
+                    }
+                  + uuid             = "75878942858920"
+                  + vendor_ids       = {
+                      + "Example Azure Account" = "azure::DOCUMENT_COLLECTION::AAA00A00-A000-00A0-AA00-0000A00A0A0A"
+                    }
+                }
+              + template         = {
+                  + class_name   = "DatabaseTier"
+                  + discovered   = false
+                  + display_name = "cosmos"
+                  + enable_match = false
+                  + uuid         = "75878941065234"
+                }
+              + uuid             = "638828907944856"
+              + value_units      = ""
+            },
+        ]
+      + entity_name      = "example-doc-collection"
+      + entity_type      = "DocumentCollection"
+      + entity_uuid      = "75878942858920"
+      + environment_type = "CLOUD"
+      + states           = [
+          + "READY",
+        ]
+    }

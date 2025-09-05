@@ -1,0 +1,226 @@
+[
+  {
+    "uuid": "639004047384473",
+    "displayName": "MANUAL",
+    "actionImpactID": 639004047384473,
+    "marketID": 777777,
+    "createTime": "2025-08-07T16:55:53Z",
+    "actionType": "SCALE",
+    "actionState": "READY",
+    "actionMode": "MANUAL",
+    "actionStateDescription": "READY_ACCEPT_AND_EXECUTE",
+    "details": "Scale Virtual Machine test-vm from Standard_B1s to Standard_D2s_v3 in EA - Quality Engineering",
+    "importance": 0.31860355,
+    "target": {
+      "uuid": "76047258724515",
+      "displayName": "test-vm",
+      "className": "VirtualMachine",
+      "environmentType": "CLOUD",
+      "discoveredBy": {
+        "uuid": "76047128227329",
+        "displayName": "EA - Quality Engineering",
+        "isProbeRegistered": false,
+        "type": "Azure Subscription",
+        "readonly": false
+      },
+      "vendorIds": {
+        "EA - Quality Engineering": "test-subscription-id"
+      },
+      "state": "ACTIVE",
+      "aspects": {
+        "cloudAspect": {
+          "businessAccount": {
+            "uuid": "76047258724773",
+            "displayName": "EA - Quality Engineering",
+            "className": "BusinessAccount"
+          },
+          "resourceGroup": {
+            "uuid": "287153497358250",
+            "displayName": "test-rg",
+            "className": "ResourceGroup"
+          },
+          "resourceId": "/subscriptions/test-subscription-id/resourcegroups/test-rg/providers/microsoft.compute/virtualmachines/test-vm",
+          "type": "CloudAspectApiDTO"
+        }
+      },
+      "tags": {
+        "turbonomic_optimized_by": [
+          "turbonomic-terraform-provider"
+        ]
+      }
+    },
+    "currentEntity": {
+      "uuid": "76047255058192",
+      "displayName": "Standard_B1s",
+      "className": "ComputeTier",
+      "environmentType": "CLOUD",
+      "discoveredBy": {
+        "uuid": "76047251651952",
+        "displayName": "test-azure-infrastructure-id",
+        "isProbeRegistered": false,
+        "type": "Azure Infrastructure",
+        "readonly": false
+      },
+      "vendorIds": {
+        "test-azure-infrastructure-id": "azure::VMPROFILE::Standard_B1s"
+      },
+      "state": "ACTIVE"
+    },
+    "newEntity": {
+      "uuid": "76047255058169",
+      "displayName": "Standard_D2s_v3",
+      "className": "ComputeTier",
+      "environmentType": "CLOUD",
+      "discoveredBy": {
+        "uuid": "76047251651952",
+        "displayName": "test-azure-infrastructure-id",
+        "isProbeRegistered": false,
+        "type": "Azure Infrastructure",
+        "readonly": false
+      },
+      "vendorIds": {
+        "test-azure-infrastructure-id": "azure::VMPROFILE::Standard_D2s_v3"
+      },
+      "state": "ACTIVE"
+    },
+    "currentValue": "76047255058192",
+    "newValue": "76047255058169",
+    "template": {
+      "uuid": "76047255058169",
+      "displayName": "Standard_D2s_v3",
+      "className": "ComputeTier",
+      "discovered": false,
+      "enableMatch": false
+    },
+    "risk": {
+      "subCategory": "Performance Assurance",
+      "description": "VMem Congestion",
+      "severity": "CRITICAL",
+      "importance": 0,
+      "reasonCommodities": [
+        "VMem"
+      ]
+    },
+    "stats": [
+      {
+        "name": "costPrice",
+        "filters": [
+          {
+            "type": "savingsType",
+            "value": "savings",
+            "displayName": null
+          }
+        ],
+        "units": "$/h",
+        "value": -0.0101958
+      }
+    ],
+    "currentLocation": {
+      "uuid": "76047255057479",
+      "displayName": "azure-eastus",
+      "className": "Region",
+      "environmentType": "CLOUD",
+      "discoveredBy": {
+        "uuid": "76047251651952",
+        "displayName": "test-azure-infrastructure-id",
+        "category": "Public Cloud",
+        "isProbeRegistered": false,
+        "type": "Azure Infrastructure",
+        "readonly": false
+      },
+      "vendorIds": {
+        "test-azure-infrastructure-id": "azure::eastus::DC::eastus"
+      }
+    },
+    "newLocation": {
+      "uuid": "76047255057479",
+      "displayName": "azure-eastus",
+      "className": "Region",
+      "environmentType": "CLOUD",
+      "discoveredBy": {
+        "uuid": "76047251651952",
+        "displayName": "test-azure-infrastructure-id",
+        "category": "Public Cloud",
+        "isProbeRegistered": false,
+        "type": "Azure Infrastructure",
+        "readonly": false
+      },
+      "vendorIds": {
+        "test-azure-infrastructure-id": "azure::eastus::DC::eastus"
+      }
+    },
+    "compoundActions": [
+      {
+        "displayName": "MANUAL",
+        "actionType": "SCALE",
+        "actionState": "READY",
+        "actionMode": "MANUAL",
+        "details": "Scale Virtual Machine test-vm from Standard_B1s to Standard_D2s_v3",
+        "target": {
+          "uuid": "76047258724515",
+          "displayName": "test-vm",
+          "className": "VirtualMachine",
+          "environmentType": "CLOUD",
+          "discoveredBy": {
+            "uuid": "76047128227329",
+            "displayName": "EA - Quality Engineering",
+            "isProbeRegistered": false,
+            "type": "Azure Subscription",
+            "readonly": false
+          },
+          "vendorIds": {
+            "EA - Quality Engineering": "test-subscription-id"
+          },
+          "state": "ACTIVE",
+          "tags": {
+            "turbonomic_optimized_by": [
+              "turbonomic-terraform-provider"
+            ]
+          }
+        },
+        "currentEntity": {
+          "uuid": "76047255058192",
+          "displayName": "Standard_B1s",
+          "className": "ComputeTier",
+          "environmentType": "CLOUD",
+          "discoveredBy": {
+            "uuid": "76047251651952",
+            "displayName": "test-azure-infrastructure-id",
+            "isProbeRegistered": false,
+            "type": "Azure Infrastructure",
+            "readonly": false
+          },
+          "vendorIds": {
+            "test-azure-infrastructure-id": "azure::VMPROFILE::Standard_B1s"
+          },
+          "state": "ACTIVE"
+        },
+        "newEntity": {
+          "uuid": "76047255058169",
+          "displayName": "Standard_D2s_v3",
+          "className": "ComputeTier",
+          "environmentType": "CLOUD",
+          "discoveredBy": {
+            "uuid": "76047251651952",
+            "displayName": "test-azure-infrastructure-id",
+            "isProbeRegistered": false,
+            "type": "Azure Infrastructure",
+            "readonly": false
+          },
+          "vendorIds": {
+            "test-azure-infrastructure-id": "azure::VMPROFILE::Standard_D2s_v3"
+          },
+          "state": "ACTIVE"
+        },
+        "currentValue": "76047255058192",
+        "newValue": "76047255058169"
+      }
+    ],
+    "executionCharacteristics": {
+      "disruptiveness": "DISRUPTIVE",
+      "reversibility": "REVERSIBLE"
+    },
+    "source": "MARKET",
+    "actionID": 639004047384473
+  }
+]

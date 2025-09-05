@@ -8,5 +8,8 @@ project {
   header_ignore = [
     # examples used within documentation (prose)
     "examples/**",
+    ".pre-commit-config.yaml",
+    ".travis/***",
+    ".travis.yml",
   ]
 }

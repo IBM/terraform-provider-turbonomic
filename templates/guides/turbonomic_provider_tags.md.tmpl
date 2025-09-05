@@ -1,9 +1,11 @@
 ---
 layout: ""
-page_title: "Turbonomic Provider Tags"
+page_title: "Turbonomic provider tags"
 description: |-
  This guide focuses on different tags used in turbonomic provider.
 ---
+
+# Turbonomic provider tags
 
 ## Tagging the resources as optimized by Turbonomic provider
 

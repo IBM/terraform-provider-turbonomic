@@ -16,9 +16,9 @@
 package provider
 
 import (
-	"github.com/IBM/terraform-provider-turbonomic/internal/provider"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
+	"github.com/IBM/terraform-provider-turbonomic/internal/provider"
 )
 
 const (
@@ -74,6 +74,51 @@ const (
 	googleComputeDiskCurrentType = "<googleComputeDiskCurrentType>"
 	googleComputeDiskNewType     = "<googleComputeDiskNewType>"
 	googleComputeDiskDefaultType = "<googleComputeDiskDefaultType>"
+
+	// Entity Action Data Source related values
+	entityActionEntityName             = "<entityActionEntityName>"
+	entityActionEntityType             = "<entityActionentityType>"
+	entityActionEntityUuid             = "<entityActionentityUuid>"
+	entityActionActionUuid             = "<entityActionActionUuid>"
+	entityActionAction0CurrentValue    = "<entityActionAction0CurrentValue>"
+	entityActionAction0NewValue        = "<entityActionAction0NewValue>"
+	entityActionAction0ReasonCommodity = "<entityActionAction0ReasonCommodity>"
+	entityActionAction1CurrentValue    = "<entityActionAction1CurrentValue>"
+	entityActionAction1NewValue        = "<entityActionAction1NewValue>"
+	entityActionAction1ReasonCommodity = "<entityActionAction1ReasonCommodity>"
+	entityActionAction2CurrentValue    = "<entityActionAction2CurrentValue>"
+	entityActionAction2NewValue        = "<entityActionAction2NewValue>"
+	entityActionAction2ReasonCommodity = "<entityActionAction2ReasonCommodity>"
+
+	// Google Compute Instance related values, used to test expected, current and new type
+	googleVMName        = "<googleVMName>"
+	googleVMCurrentType = "<googleVMCurrentType>"
+	googleVMNewType     = "<googleVMNewType>"
+	googleVMDefaultType = "<googleVMDefaultType>"
+
+	// AWS Instance related values, used to test expected, current and new type
+	awsVMName        = "<awsVMName>"
+	awsVMCurrentType = "<awsVMCurrentType>"
+	awsVMNewType     = "<awsVMNewType>"
+	awsVMDefaultType = "<awsVMDefaultType>"
+
+	// Azure Linux Instance related values, used to test expected, current and new type
+	azureLinuxVMName        = "<azureLinuxVMName>"
+	azureLinuxVMCurrentType = "<azureLinuxVMCurrentType>"
+	azureLinuxVMNewType     = "<azureLinuxVMNewType>"
+	azureLinuxVMDefaultType = "<azureLinuxVMDefaultType>"
+
+	// Azure Windows Instance related values, used to test expected, current and new type
+	azureWindowsVMName        = "<azureWindowsVMName>"
+	azureWindowsVMCurrentType = "<azureWindowsVMCurrentType>"
+	azureWindowsVMNewType     = "<azureWindowsVMNewType>"
+	azureWindowsVMDefaultType = "<azureWindowsVMDefaultType>"
+
+	// Azure Mssql Database related values, used to test expected, current and new sku name
+	azureMSSQLDatabaseName           = "<azureMSSQLDatabaseName>"
+	azureMSSQLDatabaseCurrentSkuName = "<azureMSSQLDatabaseSkuName>"
+	azureMSSQLDatabaseNewSkuName     = "<azureMSSQLDatabaseNewSkuName>"
+	azureMSSQLDatabaseDefaultSkuName = "<azureMSSQLDatabaseDefaultSkuName>"
 )
 
 var testAccProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServer, error){

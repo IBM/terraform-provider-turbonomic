@@ -5,7 +5,8 @@ description: |-
   The following demonstrates configuring your Terraform Repository and HCP to use Continuous validation.
 ---
 
-# HashiCorp Cloud Platform Continuous validation
+# Enabling HCP Continuous validation
+
 The Continuous validation feature of HashiCorp Cloud Platform (HCP) Terraform can be used, along with the Turbonomic Terraform Provider setup, to periodically assess and identify adherence of Terraform resource configurations with Turbonomic's recommendation.  The periodic assessment runs every 24 hours and can also be run manually from the specific page of the Continuous validation in HCP.
 
 Use the following sections to setup Continuous validation:
@@ -13,9 +14,9 @@ Use the following sections to setup Continuous validation:
 - [Add check blocks](#add-check-blocks-in-terraform-configuration-file-as-shown-below) to your Terraform configuration code in those workspaces
 - [Verify](#after-applying-the-configuration---check-assertion-result-will-be-available-in-continuous-validation-link-of-hcp) that the Continuous validation is working as expected in HCP under Health Continuous validation section
 
-## Enabling health check
+## Enabling health assessment
 
-To enable health check in your HCP Terraform workspace, use the following steps:
+To enable health assessment in your HCP Terraform workspace, use the following steps:
 
 1. Sign in to HCP Terraform or Terraform Enterprise.
 1. Navigate to the workspace you want to enable health assessments on.
@@ -44,7 +45,7 @@ terraform {
   required_providers {
     turbonomic = {
       source  = "IBM/turbonomic"
-      version = "1.2.0"
+      version = "1.5.0"
     }
   }
 }
@@ -61,10 +62,9 @@ provider "aws" {
   region = "us-east-1"
 }
 
-//data block which retrieves recommendations from Turbonomic for an entity
-data "turbonomic_cloud_entity_recommendation" "example" {
+//data block which retrieves recommendations from Turbonomic for AWS EC2 instance
+data "turbonomic_aws_instance" "example" {
   entity_name = "terraform-example-ec2"
-  entity_type = "VirtualMachine"
 }
 
 resource "aws_instance" "terraform-instance-1" {
@@ -80,8 +80,8 @@ resource "aws_instance" "terraform-instance-1" {
 check "turbonomic_recommendation_check"{
 
   assert {
-    condition =  aws_instance.terraform-instance-1.instance_type == coalesce(data.turbonomic_cloud_entity_recommendation.example.new_instance_type,aws_instance.terraform-instance-1.instance_type)
-    error_message = "Must use the latest recommended instance type,${coalesce(data.turbonomic_cloud_entity_recommendation.example.new_instance_type,aws_instance.terraform-instance-1.instance_type)}"
+    condition =  aws_instance.terraform-instance-1.instance_type == coalesce(data.turbonomic_aws_instance.example.new_instance_type,aws_instance.terraform-instance-1.instance_type)
+    error_message = "Must use the latest recommended instance type,${coalesce(data.turbonomic_aws_instance.example.new_instance_type,aws_instance.terraform-instance-1.instance_type)}"
   }
 
 }

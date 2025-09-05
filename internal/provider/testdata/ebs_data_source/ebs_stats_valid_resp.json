@@ -1,0 +1,504 @@
+[
+    {
+        "displayName": "vol-05f7c906f860b4d3c",
+        "date": "2025-08-05T10:07:49Z",
+        "statistics": [
+            {
+                "name": "StorageAccess",
+                "capacity": {
+                    "max": 3000.0,
+                    "min": 3000.0,
+                    "avg": 3000.0,
+                    "total": 3000.0,
+                    "totalMax": 3000.0,
+                    "totalMin": 3000.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "IOPS",
+                "values": {
+                    "max": 2.833,
+                    "min": 0.283,
+                    "avg": 0.283,
+                    "total": 0.283,
+                    "totalMax": 2.833,
+                    "totalMin": 0.283
+                },
+                "value": 0.283,
+                "commoditySource": {}
+            },
+            {
+                "name": "StorageAmount",
+                "capacity": {
+                    "max": 4096.0,
+                    "min": 4096.0,
+                    "avg": 4096.0,
+                    "total": 4096.0,
+                    "totalMax": 4096.0,
+                    "totalMin": 4096.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "MB",
+                "values": {
+                    "max": 4096.0,
+                    "min": 4096.0,
+                    "avg": 4096.0,
+                    "total": 4096.0,
+                    "totalMax": 4096.0,
+                    "totalMin": 4096.0
+                },
+                "value": 4096.0,
+                "commoditySource": {}
+            },
+            {
+                "name": "IOThroughput",
+                "capacity": {
+                    "max": 1024000.0,
+                    "min": 1024000.0,
+                    "avg": 1024000.0,
+                    "total": 1024000.0,
+                    "totalMax": 1024000.0,
+                    "totalMin": 1024000.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "Kbit/sec",
+                "values": {
+                    "max": 391.464,
+                    "min": 39.144,
+                    "avg": 39.144,
+                    "total": 39.144,
+                    "totalMax": 391.464,
+                    "totalMin": 39.144
+                },
+                "value": 39.144,
+                "commoditySource": {}
+            }
+        ],
+        "epoch": "HISTORICAL"
+    },
+    {
+        "displayName": "vol-05f7c906f860b4d3c",
+        "date": "2025-08-05T10:14:22Z",
+        "statistics": [
+            {
+                "name": "StorageAccess",
+                "capacity": {
+                    "max": 3000.0,
+                    "min": 3000.0,
+                    "avg": 3000.0,
+                    "total": 3000.0,
+                    "totalMax": 3000.0,
+                    "totalMin": 3000.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "IOPS",
+                "values": {
+                    "max": 2.833,
+                    "min": 0.283,
+                    "avg": 0.283,
+                    "total": 0.283,
+                    "totalMax": 2.833,
+                    "totalMin": 0.283
+                },
+                "value": 0.283,
+                "commoditySource": {}
+            },
+            {
+                "name": "StorageAmount",
+                "capacity": {
+                    "max": 4096.0,
+                    "min": 4096.0,
+                    "avg": 4096.0,
+                    "total": 4096.0,
+                    "totalMax": 4096.0,
+                    "totalMin": 4096.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "MB",
+                "values": {
+                    "max": 4096.0,
+                    "min": 4096.0,
+                    "avg": 4096.0,
+                    "total": 4096.0,
+                    "totalMax": 4096.0,
+                    "totalMin": 4096.0
+                },
+                "value": 4096.0,
+                "commoditySource": {}
+            },
+            {
+                "name": "IOThroughput",
+                "capacity": {
+                    "max": 1024000.0,
+                    "min": 1024000.0,
+                    "avg": 1024000.0,
+                    "total": 1024000.0,
+                    "totalMax": 1024000.0,
+                    "totalMin": 1024000.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "Kbit/sec",
+                "values": {
+                    "max": 391.464,
+                    "min": 39.144,
+                    "avg": 39.144,
+                    "total": 39.144,
+                    "totalMax": 391.464,
+                    "totalMin": 39.144
+                },
+                "value": 39.144,
+                "commoditySource": {}
+            }
+        ],
+        "epoch": "CURRENT"
+    },
+    {
+        "displayName": "vol-05f7c906f860b4d3c",
+        "date": "2025-08-05T10:24:22Z",
+        "statistics": [
+            {
+                "name": "IOThroughput",
+                "capacity": {
+                    "max": 1048576.0,
+                    "min": 1048576.0,
+                    "avg": 1048576.0,
+                    "total": 1048576.0,
+                    "totalMax": 1048576.0,
+                    "totalMin": 1048576.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "Kbit/sec",
+                "values": {
+                    "max": 39.146667,
+                    "min": 0.0,
+                    "avg": 39.146667,
+                    "total": 39.146667,
+                    "totalMax": 39.146667,
+                    "totalMin": 0.0
+                },
+                "value": 39.146667,
+                "commoditySource": {},
+                "histUtilizations": [
+                    {
+                        "type": "percentile",
+                        "usage": 10240.0,
+                        "capacity": 737280.0
+                    },
+                    {
+                        "type": "smoothed",
+                        "usage": 39.146667,
+                        "capacity": 737280.0
+                    }
+                ]
+            },
+            {
+                "name": "StorageAccess",
+                "capacity": {
+                    "max": 1.0E9,
+                    "min": 1.0E9,
+                    "avg": 1.0E9,
+                    "total": 1.0E9,
+                    "totalMax": 1.0E9,
+                    "totalMin": 1.0E9
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "bought",
+                        "displayName": null
+                    }
+                ],
+                "relatedEntity": {
+                    "uuid": "76048509423820"
+                },
+                "units": "IOPS",
+                "values": {
+                    "max": 42.857143,
+                    "min": 0.28333333,
+                    "avg": 0.28333333,
+                    "total": 0.28333333,
+                    "totalMax": 42.857143,
+                    "totalMin": 0.28333333
+                },
+                "value": 0.28333333,
+                "commoditySource": {},
+                "histUtilizations": [
+                    {
+                        "type": "smoothed",
+                        "usage": 0.28333333,
+                        "capacity": 1.0E9
+                    }
+                ]
+            },
+            {
+                "name": "StorageAmount",
+                "capacity": {
+                    "max": 1.0E9,
+                    "min": 1.0E9,
+                    "avg": 1.0E9,
+                    "total": 1.0E9,
+                    "totalMax": 1.0E9,
+                    "totalMin": 1.0E9
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "bought",
+                        "displayName": null
+                    }
+                ],
+                "relatedEntity": {
+                    "uuid": "76048509423820"
+                },
+                "units": "MB",
+                "values": {
+                    "max": 4096.0,
+                    "min": 4.0,
+                    "avg": 4096.0,
+                    "total": 4096.0,
+                    "totalMax": 4096.0,
+                    "totalMin": 4.0
+                },
+                "value": 4096.0,
+                "commoditySource": {},
+                "histUtilizations": [
+                    {
+                        "type": "smoothed",
+                        "usage": 4096.0,
+                        "capacity": 1.0E9
+                    }
+                ]
+            },
+            {
+                "name": "StorageAccess",
+                "capacity": {
+                    "max": 160.0,
+                    "min": 160.0,
+                    "avg": 160.0,
+                    "total": 160.0,
+                    "totalMax": 160.0,
+                    "totalMin": 160.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "IOPS",
+                "values": {
+                    "max": 0.28333333,
+                    "min": 0.0,
+                    "avg": 0.28333333,
+                    "total": 0.28333333,
+                    "totalMax": 0.28333333,
+                    "totalMin": 0.0
+                },
+                "value": 0.28333333,
+                "commoditySource": {},
+                "histUtilizations": [
+                    {
+                        "type": "percentile",
+                        "usage": 30.0,
+                        "capacity": 160.0
+                    },
+                    {
+                        "type": "smoothed",
+                        "usage": 0.28333333,
+                        "capacity": 160.0
+                    }
+                ]
+            },
+            {
+                "name": "IOThroughput",
+                "capacity": {
+                    "max": 8.0E9,
+                    "min": 8.0E9,
+                    "avg": 8.0E9,
+                    "total": 8.0E9,
+                    "totalMax": 8.0E9,
+                    "totalMin": 8.0E9
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "bought",
+                        "displayName": null
+                    }
+                ],
+                "relatedEntity": {
+                    "uuid": "76048509423820"
+                },
+                "units": "Kbit/sec",
+                "values": {
+                    "max": 40086.188,
+                    "min": 14.285714,
+                    "avg": 40086.188,
+                    "total": 40086.188,
+                    "totalMax": 40086.188,
+                    "totalMin": 14.285714
+                },
+                "value": 40086.188,
+                "commoditySource": {},
+                "histUtilizations": [
+                    {
+                        "type": "smoothed",
+                        "usage": 40086.188,
+                        "capacity": 8.0E9
+                    }
+                ]
+            },
+            {
+                "name": "StorageAmount",
+                "capacity": {
+                    "max": 4096.0,
+                    "min": 4096.0,
+                    "avg": 4096.0,
+                    "total": 4096.0,
+                    "totalMax": 4096.0,
+                    "totalMin": 4096.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "MB",
+                "values": {
+                    "max": 4096.0,
+                    "min": 0.0,
+                    "avg": 4096.0,
+                    "total": 4096.0,
+                    "totalMax": 4096.0,
+                    "totalMin": 0.0
+                },
+                "value": 4096.0,
+                "commoditySource": {},
+                "histUtilizations": [
+                    {
+                        "type": "smoothed",
+                        "usage": 4096.0,
+                        "capacity": 4096.0
+                    }
+                ]
+            }
+        ],
+        "epoch": "PROJECTED"
+    }
+]

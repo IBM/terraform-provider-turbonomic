@@ -1,0 +1,504 @@
+[
+    {
+        "displayName": "cloud-compute-b-displayname",
+        "date": "2025-08-12T12:21:47Z",
+        "statistics": [
+            {
+                "name": "StorageAccess",
+                "capacity": {
+                    "max": 500.0,
+                    "min": 500.0,
+                    "avg": 500.0,
+                    "total": 500.0,
+                    "totalMax": 500.0,
+                    "totalMin": 500.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "IOPS",
+                "values": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0,
+                    "totalMax": 0.0,
+                    "totalMin": 0.0
+                },
+                "value": 0.0,
+                "commoditySource": {}
+            },
+            {
+                "name": "StorageAmount",
+                "capacity": {
+                    "max": 30720.0,
+                    "min": 30720.0,
+                    "avg": 30720.0,
+                    "total": 30720.0,
+                    "totalMax": 30720.0,
+                    "totalMin": 30720.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "MB",
+                "values": {
+                    "max": 30720.0,
+                    "min": 30720.0,
+                    "avg": 30720.0,
+                    "total": 30720.0,
+                    "totalMax": 30720.0,
+                    "totalMin": 30720.0
+                },
+                "value": 30720.0,
+                "commoditySource": {}
+            },
+            {
+                "name": "IOThroughput",
+                "capacity": {
+                    "max": 819200.0,
+                    "min": 819200.0,
+                    "avg": 819200.0,
+                    "total": 819200.0,
+                    "totalMax": 819200.0,
+                    "totalMin": 819200.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "Kbit/sec",
+                "values": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0,
+                    "totalMax": 0.0,
+                    "totalMin": 0.0
+                },
+                "value": 0.0,
+                "commoditySource": {}
+            }
+        ],
+        "epoch": "HISTORICAL"
+    },
+    {
+        "displayName": "cloud-compute-b-vm-read-only-e4-2B_OsDisk_1_14bc49485a1c4702886984c05b42a04c",
+        "date": "2025-08-12T12:30:38Z",
+        "statistics": [
+            {
+                "name": "StorageAccess",
+                "capacity": {
+                    "max": 500.0,
+                    "min": 500.0,
+                    "avg": 500.0,
+                    "total": 500.0,
+                    "totalMax": 500.0,
+                    "totalMin": 500.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "IOPS",
+                "values": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0,
+                    "totalMax": 0.0,
+                    "totalMin": 0.0
+                },
+                "value": 0.0,
+                "commoditySource": {}
+            },
+            {
+                "name": "StorageAmount",
+                "capacity": {
+                    "max": 30720.0,
+                    "min": 30720.0,
+                    "avg": 30720.0,
+                    "total": 30720.0,
+                    "totalMax": 30720.0,
+                    "totalMin": 30720.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "MB",
+                "values": {
+                    "max": 30720.0,
+                    "min": 30720.0,
+                    "avg": 30720.0,
+                    "total": 30720.0,
+                    "totalMax": 30720.0,
+                    "totalMin": 30720.0
+                },
+                "value": 30720.0,
+                "commoditySource": {}
+            },
+            {
+                "name": "IOThroughput",
+                "capacity": {
+                    "max": 819200.0,
+                    "min": 819200.0,
+                    "avg": 819200.0,
+                    "total": 819200.0,
+                    "totalMax": 819200.0,
+                    "totalMin": 819200.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "Kbit/sec",
+                "values": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0,
+                    "totalMax": 0.0,
+                    "totalMin": 0.0
+                },
+                "value": 0.0,
+                "commoditySource": {}
+            }
+        ],
+        "epoch": "CURRENT"
+    },
+    {
+        "displayName": "cloud-compute-b-vm-read-only-e4-2B_OsDisk_1_14bc49485a1c4702886984c05b42a04c",
+        "date": "2025-08-12T12:40:38Z",
+        "statistics": [
+            {
+                "name": "IOThroughput",
+                "capacity": {
+                    "max": 491520.0,
+                    "min": 491520.0,
+                    "avg": 491520.0,
+                    "total": 491520.0,
+                    "totalMax": 491520.0,
+                    "totalMin": 491520.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "Kbit/sec",
+                "values": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0,
+                    "totalMax": 0.0,
+                    "totalMin": 0.0
+                },
+                "value": 0.0,
+                "commoditySource": {},
+                "histUtilizations": [
+                    {
+                        "type": "percentile",
+                        "usage": 0.0,
+                        "capacity": 491520.0
+                    },
+                    {
+                        "type": "smoothed",
+                        "usage": 0.0,
+                        "capacity": 491520.0
+                    }
+                ]
+            },
+            {
+                "name": "StorageAccess",
+                "capacity": {
+                    "max": 1.0E9,
+                    "min": 1.0E9,
+                    "avg": 1.0E9,
+                    "total": 1.0E9,
+                    "totalMax": 1.0E9,
+                    "totalMin": 1.0E9
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "bought",
+                        "displayName": null
+                    }
+                ],
+                "relatedEntity": {
+                    "uuid": "76102811118589"
+                },
+                "units": "IOPS",
+                "values": {
+                    "max": 500.0,
+                    "min": 0.0,
+                    "avg": 500.0,
+                    "total": 500.0,
+                    "totalMax": 500.0,
+                    "totalMin": 0.0
+                },
+                "value": 500.0,
+                "commoditySource": {},
+                "histUtilizations": [
+                    {
+                        "type": "smoothed",
+                        "usage": 500.0,
+                        "capacity": 1.0E9
+                    }
+                ]
+            },
+            {
+                "name": "StorageAmount",
+                "capacity": {
+                    "max": 1.0E9,
+                    "min": 1.0E9,
+                    "avg": 1.0E9,
+                    "total": 1.0E9,
+                    "totalMax": 1.0E9,
+                    "totalMin": 1.0E9
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "bought",
+                        "displayName": null
+                    }
+                ],
+                "relatedEntity": {
+                    "uuid": "76102811118589"
+                },
+                "units": "MB",
+                "values": {
+                    "max": 30720.0,
+                    "min": 30.0,
+                    "avg": 30720.0,
+                    "total": 30720.0,
+                    "totalMax": 30720.0,
+                    "totalMin": 30.0
+                },
+                "value": 30720.0,
+                "commoditySource": {},
+                "histUtilizations": [
+                    {
+                        "type": "smoothed",
+                        "usage": 30720.0,
+                        "capacity": 1.0E9
+                    }
+                ]
+            },
+            {
+                "name": "StorageAccess",
+                "capacity": {
+                    "max": 500.0,
+                    "min": 500.0,
+                    "avg": 500.0,
+                    "total": 500.0,
+                    "totalMax": 500.0,
+                    "totalMin": 500.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "IOPS",
+                "values": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0,
+                    "totalMax": 0.0,
+                    "totalMin": 0.0
+                },
+                "value": 0.0,
+                "commoditySource": {},
+                "histUtilizations": [
+                    {
+                        "type": "percentile",
+                        "usage": 0.0,
+                        "capacity": 500.0
+                    },
+                    {
+                        "type": "smoothed",
+                        "usage": 0.0,
+                        "capacity": 500.0
+                    }
+                ]
+            },
+            {
+                "name": "IOThroughput",
+                "capacity": {
+                    "max": 8.0E9,
+                    "min": 8.0E9,
+                    "avg": 8.0E9,
+                    "total": 8.0E9,
+                    "totalMax": 8.0E9,
+                    "totalMin": 8.0E9
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "bought",
+                        "displayName": null
+                    }
+                ],
+                "relatedEntity": {
+                    "uuid": "76102811118589"
+                },
+                "units": "Kbit/sec",
+                "values": {
+                    "max": 8.388608E8,
+                    "min": 0.0,
+                    "avg": 8.388608E8,
+                    "total": 8.388608E8,
+                    "totalMax": 8.388608E8,
+                    "totalMin": 0.0
+                },
+                "value": 8.388608E8,
+                "commoditySource": {},
+                "histUtilizations": [
+                    {
+                        "type": "smoothed",
+                        "usage": 8.388608E8,
+                        "capacity": 8.0E9
+                    }
+                ]
+            },
+            {
+                "name": "StorageAmount",
+                "capacity": {
+                    "max": 30720.0,
+                    "min": 30720.0,
+                    "avg": 30720.0,
+                    "total": 30720.0,
+                    "totalMax": 30720.0,
+                    "totalMin": 30720.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "MB",
+                "values": {
+                    "max": 30720.0,
+                    "min": 0.0,
+                    "avg": 30720.0,
+                    "total": 30720.0,
+                    "totalMax": 30720.0,
+                    "totalMin": 0.0
+                },
+                "value": 30720.0,
+                "commoditySource": {},
+                "histUtilizations": [
+                    {
+                        "type": "smoothed",
+                        "usage": 30720.0,
+                        "capacity": 30720.0
+                    }
+                ]
+            }
+        ],
+        "epoch": "PROJECTED"
+    }
+]

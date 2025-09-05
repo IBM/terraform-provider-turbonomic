@@ -38,11 +38,19 @@ const (
 
 	testDataBaseDir                 = "testdata"
 	cloudTestDataBaseDir            = "cloud_data_source"
+	awsVMTestDataBaseDir            = "aws_instance_data_source"
+	azureLinuxVMTestDataBaseDir     = "azurerm_linux_virtual_machine_data_source"
+	azureWindowsVMTestDataBaseDir   = "azurerm_windows_virtual_machine_data_source"
+	googleVMTestDataBaseDir         = "google_compute_instance_data_source"
 	entityTagTestDataBaseDir        = "entity_tags"
 	rdsTestDataBaseDir              = "rds_data_source"
 	ebsTestDataBaseDir              = "ebs_data_source"
 	azureManagedDiskTestDataBaseDir = "azure_mananged_disk_data_source"
 	googleComputeDiskDataBaseDir    = "google_compute_disk_data_source"
+	entityActionDir                 = "entity_action_data_source"
+	azureMSSQLTestDataBaseDir       = "azurerm_mssql_database_data_source"
+
+	vmEntityType = "VirtualMachine"
 )
 
 type Response struct {
@@ -54,6 +62,30 @@ func createLocalServer(t *testing.T, searchResp, actionResp, entityTagsResp, ent
 	return createLocalServerWithResponse(t, searchResp, actionResp, entityTagsResp, Response{
 		Message:    entityTagResp,
 		HttpStatus: http.StatusOK})
+}
+
+func createLocalCloudVolumeServer(t *testing.T, searchResp, actionResp, statResp, entityTagsResp, entityTagResp string) *httptest.Server {
+	return createLocalServerCloudVolumeResponse(t, searchResp, actionResp, statResp, entityTagsResp, Response{
+		Message:    entityTagResp,
+		HttpStatus: http.StatusOK})
+}
+
+func createLocalServerCloudVolumeResponse(t *testing.T, searchResp, actionResp, statResp, entityTagsResp string, entityTagResp Response) *httptest.Server {
+	server := createLocalServerWithResponse(t, searchResp, actionResp, entityTagsResp, entityTagResp)
+
+	// Replace the handler to add the stats endpoint
+	originalHandler := server.Config.Handler
+	server.Config.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodPost && strings.Contains(r.URL.Path, "api/v3/stats/") {
+			w.WriteHeader(http.StatusOK)
+			fmt.Fprint(w, statResp)
+		} else {
+			// Use the original handler for all other requests
+			originalHandler.ServeHTTP(w, r)
+		}
+	})
+
+	return server
 }
 
 // creates a mock turbo client which responds with provided search and action result

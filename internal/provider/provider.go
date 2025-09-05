@@ -23,7 +23,6 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/IBM/terraform-provider-turbonomic/pkg/logger"
 	turboclient "github.com/IBM/turbonomic-go-client"
 	turboLogging "github.com/IBM/turbonomic-go-client/logging"
 
@@ -36,6 +35,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+
+	"github.com/IBM/terraform-provider-turbonomic/pkg/logger"
 )
 
 var (
@@ -348,11 +349,17 @@ func (p *turbonomicProvider) Resources(ctx context.Context) []func() resource.Re
 
 func (p *turbonomicProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
-		NewCloudDataSource,
-		NewRDSDataSource,
-		NewAzureManagedDiskDataSource,
-		NewEBSVolumeDataSource,
+		NewCloudEntityRecommendationDataSource,
+		NewAwsDbInstanceDataSource,
+		NewAzurermManagedDiskDataSource,
+		NewAwsEbsVolumeDataSource,
 		NewGoogleComputeDiskDataSource,
+		NewEntityActionsDataSource,
+		NewAwsInstanceDataSource,
+		NewAzurermLinuxVirtualMachineDataSource,
+		NewAzurermWindowsVirtualMachineDataSource,
+		NewGoogleComputeInstanceDataSource,
+		NewAzurermMssqlDatabaseDataSource,
 	}
 }
 

@@ -1,0 +1,25 @@
+[
+    {
+        "uuid": "76105706434662",
+        "displayName": "MySQL MySQL db",
+        "className": "DatabaseServer",
+        "environmentType": "HYBRID",
+        "discoveredBy": {
+            "uuid": "75878940583056",
+            "displayName": "ffd15256.example.com",
+            "category": "Applications and Databases",
+            "isProbeRegistered": false,
+            "type": "Dynatrace",
+            "readonly": false
+        },
+        "vendorIds": {
+            "ffd15256.example.com": "PROCESS_GROUP_INSTANCE-1324ADE1D23ADAED2EADE3421324ADE1D23ADAED2EADE3424312EADA"
+        },
+        "state": "ACTIVE",
+        "severity": "Critical",
+        "severityBreakdown": {
+            "CRITICAL": 1
+        },
+        "controllable": true
+    }
+]

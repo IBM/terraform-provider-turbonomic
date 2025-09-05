@@ -1,0 +1,122 @@
+---
+page_title: "Entity actions data source"
+subcategory: ""
+description: |-
+  This document explains the purpose of the entity actions data source and provides guidance on how to use it.
+---
+
+# Entity actions data source
+
+The entity actions data source offers a flexible mechanism for retrieving actions from Turbonomic and accessing
+their associated data via the API. This allows users to work with Turbonomic actions that may not be supported
+by standard data sources, or to extract specific action-related details that other sources might not expose.
+
+For example, if you're using the `turbonomic_aws_instance` data source but need to identify which commodity is
+triggering a cloud scaling action, this data source can help bridge that gap.
+
+Another use case involves scaling actions for Azure Cosmos DB containers. Currently, there isn't a dedicated
+data source for this scenario, but the `turbonomic_entity_actions` data source can be leveraged to utilize
+Turbonomic's recommendations effectively.
+
+## Inputs
+
+This data source requires two mandatory fields and supports three optional ones. The fields and their syntax are as follows:
+
+{{ tffile "examples/data-sources/turbonomic_entity_actions/data-source.tf" }}
+
+### Required
+
+- `entity_name` (String) case sensitive name of the entity
+- `entity_type` (String) case insensitive type of the entity
+    - Valid entity typed include `VirtualMachine`, `PhysicalMachine`, `Container`, `DatabaseServer` etc..  Refer to [Entity Reference Tables](https://www.ibm.com/docs/en/tarm/8.17.0?topic=reference-tables#appendix_reference__title__4)
+    for a complete list
+
+### Optional
+
+You can use the following optional fields to filter which types of actions are returned by the data source:
+
+- `action_types` (List of String) type of the action
+    - Valid action types are `START`, `MOVE`, `SCALE`, `ALLOCATE`, `SUSPEND`, `PROVISION`, `RECONFIGURE`, `RESIZE`, `DELETE`, `RIGHT_SIZE`, `BUY_RI`
+    - Multiple types can be specified
+- `environment_type` (String) filter the actions by environment type
+    - Valid environment types are `HYBRID`, `CLOU`, `ONPREM`, `UNKNOWN`
+- `states` (List of String) list of action states to filter
+    - Valid states include `ACCEPTED`, `REJECTED`, `SUCCEEDED`, `FAILED`, `READY` etc..  Refer to [Entity Reference Tables](https://www.ibm.com/docs/en/tarm/8.17.0?topic=reference-tables#appendix_reference__title__3)
+    for a complete list
+    - Multiple types can be specified
+
+## Outputs
+
+You can reference the schema for the outputs in [turbonomic_entity_actions](https://registry.terraform.io/providers/IBM/turbonomic/latest/docs/data-sources/entity_actions#schema)
+
+## Example
+
+The example below illustrates how to use the `turbonomic_entity_actions` data source to retrieve `READY` scaling actions for the `CLOUD`
+Virtual Machine named `aws-scale-test`.
+
+{{ tffile "examples/entity_actions/scale_example.tf" }}
+
+<details>
+<summary>Example output:</summary>
+
+{{ tffile "examples/entity_actions/scale_example_output.txt" }}
+
+</details>
+
+
+-> **NOTE:** Keep in mind that the actions attribute contains a list of actions. Depending on your query, you might receive multiple
+actions in response. To improve the relevance of your results, we recommend using the input attributes to narrow your
+search as much as possible.
+
+## Use case: Rezising a Cosmos DB container's document collection
+
+Although Turbonomic data sources currently don't support direct scaling of Cosmos DB document collections through
+Turbonomic actions, you can still leverage the `turbonomic_entity_actions` data source to benefit from Turbonomic's
+optimization recommendations.
+
+Suppose you have a basic Cosmos DB setup defined using Terraform, similar to the example below:
+
+{{ tffile "examples/entity_actions/cosmos_document_collection.tf" }}
+
+As you can see, throughput is currently hard-coded. We can update this configuration to integrate the
+`turbonomic_entity_actions` data source, allowing Turbonomic to serve as the authoritative source for throughput values.
+
+First, we add the data source to our code:
+
+{{ tffile "examples/entity_actions/cosmos_document_collection_data_source.tf" }}
+
+The output from the data source is similar to the following:
+
+<details>
+<summary>Example output:</summary>
+
+{{ tffile "examples/entity_actions/cosmos_document_collection_output.txt" }}
+
+</details>
+
+Turbonomic generates only one SCALE action for a Cosmos DB document collection. Therefore, we only need to consider the
+first item `0` in the actions array. The relevant value can be found in the details attribute.
+
+ ```
++ details          = "Scale down RU for Document Collection example-doc-collection on cosmos from 1,000 to 400 in Example Azure Account"
+ ```
+
+Turbonomic recommends reducing the throughput from `1,000` RU/s to `400` RU/s. To implement this, we need to extract the
+value `400` from the details attribute and convert it from text to a number. This can be done by introducing a local variable
+in our Terraform code and using a regular expression along with a built-in Terraform function.
+
+{{ tffile "examples/entity_actions/cosmos_document_collection_locals.tf" }}
+
+-> **Note:** that we are still providing a default value of `400` in case we do not have any actions returned from Turbonomic.
+
+With `throughput_value` now set to Turbonomic's recommended value, we can reference it in the `azurerm_cosmosdb_sql_container`
+resource block to configure the throughput for our Cosmos DB container.
+
+{{ tffile "examples/entity_actions/cosmos_document_collection_new.tf" }}
+
+On future Terraform runs, Terraform will query Turbonomic and update `throughput_value` based on any new recommendations provided.
+
+
+## ActionApiDTO Reference
+
+For more information about the ActionApiDTO and its parameters, please refer to our [API Documentation](https://www.ibm.com/docs/en/tarm/8.17.0?topic=index-actionapidto)

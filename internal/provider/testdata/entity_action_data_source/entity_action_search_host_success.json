@@ -1,0 +1,84 @@
+[
+  {
+    "uuid": "75878937361513",
+    "displayName": "esx71.example.com",
+    "className": "PhysicalMachine",
+    "environmentType": "ONPREM",
+    "discoveredBy": {
+      "uuid": "75878937179328",
+      "displayName": "vc9.example.com",
+      "category": "Hypervisor",
+      "isProbeRegistered": false,
+      "type": "vCenter",
+      "readonly": false
+    },
+    "vendorIds": {
+      "vc9.example.com": "host-1015"
+    },
+    "state": "ACTIVE",
+    "severity": "Critical",
+    "severityBreakdown": {
+      "CRITICAL": 1
+    },
+    "providers": [
+      {
+        "uuid": "75878937361505",
+        "displayName": "VC9DC1",
+        "className": "DataCenter"
+      },
+      {
+        "uuid": "75878937361509",
+        "displayName": "test:storage",
+        "className": "Storage"
+      },
+      {
+        "uuid": "75878937361511",
+        "displayName": "test:storage2",
+        "className": "Storage"
+      },
+      {
+        "uuid": "75878937361510",
+        "displayName": "test:storage3",
+        "className": "Storage"
+      }
+    ],
+    "consumers": [
+      {
+        "uuid": "76087037577074",
+        "displayName": "test_vm_1",
+        "className": "VirtualMachine"
+      },
+      {
+        "uuid": "76081587941331",
+        "displayName": "test_vm_2",
+        "className": "VirtualMachine"
+      },
+      {
+        "uuid": "76066784659298",
+        "displayName": "test_vm_3",
+        "className": "VirtualMachine"
+      },
+      {
+        "uuid": "75878937361711",
+        "displayName": "test_vm_4",
+        "className": "VirtualMachine"
+      },
+      {
+        "uuid": "75878937361697",
+        "displayName": "test_vm_5",
+        "className": "VirtualMachine"
+      },
+      {
+        "uuid": "76054352687250",
+        "displayName": "test_vm_6",
+        "className": "VirtualMachine"
+      },
+      {
+        "uuid": "75878937361517",
+        "displayName": "Resources-VC91DC1C1",
+        "className": "VirtualDataCenter"
+      }
+    ],
+    "staleness": "CURRENT"
+  }
+]

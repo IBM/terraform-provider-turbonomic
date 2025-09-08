@@ -1,0 +1,111 @@
+[
+  {
+    "uuid": "638917183109157",
+    "displayName": "RECOMMEND",
+    "actionImpactID": 638917183109157,
+    "marketID": 777777,
+    "createTime": "2023-04-14T12:34:56Z",
+    "lastModifiedTime": "2023-04-14T12:34:56Z",
+    "currentLocation": {
+      "uuid": "75947562073584",
+      "displayName": "aws-US West (Oregon)",
+      "className": "Region",
+      "environmentType": "CLOUD",
+      "discoveredBy": {
+        "uuid": "75947555338561",
+        "displayName": "Standard",
+        "category": "Public Cloud",
+        "isProbeRegistered": false,
+        "type": "AWS Infrastructure",
+        "readonly": false
+      },
+      "vendorIds": {
+        "Standard": "aws::us-west-2::DC::us-west-2"
+      }
+    },
+    "newEntity": {
+      "displayName": "t3a.micro"
+    },
+    "template": {
+      "displayName": "t3a.micro"
+    },
+    "newLocation": {
+      "uuid": "75947562073584",
+      "displayName": "aws-US West (Oregon)",
+      "className": "Region",
+      "environmentType": "CLOUD",
+      "discoveredBy": {
+        "uuid": "75947555338561",
+        "displayName": "Standard",
+        "category": "Public Cloud",
+        "isProbeRegistered": false,
+        "type": "AWS Infrastructure",
+        "readonly": false
+      },
+      "vendorIds": {
+        "Standard": "aws::us-west-2::DC::us-west-2"
+      }
+    },
+    "compoundActions": [
+      {
+        "displayName": "RECOMMEND",
+        "actionType": "SCALE",
+        "actionState": "READY",
+        "actionMode": "RECOMMEND",
+        "details": "Scale Virtual Machine vmTest from t2.micro to t3a.micro",
+        "target": {
+          "uuid": "75967221374101",
+          "displayName": "vmTest",
+          "className": "VirtualMachine",
+          "environmentType": "CLOUD",
+          "discoveredBy": {
+            "uuid": "75947534865776",
+            "displayName": "AWS test",
+            "isProbeRegistered": false,
+            "type": "AWS",
+            "readonly": false
+          },
+          "vendorIds": {
+            "AWS test": "vmTest"
+          },
+          "state": "ACTIVE",
+          "tags": {}
+        },
+        "currentEntity": {
+          "uuid": "75947562077219",
+          "displayName": "t2.micro",
+          "className": "ComputeTier",
+          "environmentType": "CLOUD",
+          "discoveredBy": {
+            "uuid": "75947555338561",
+            "displayName": "Standard",
+            "isProbeRegistered": false,
+            "type": "AWS Infrastructure",
+            "readonly": false
+          },
+          "vendorIds": {
+            "Standard": "t2.micro"
+          },
+          "state": "ACTIVE"
+        },
+        "newEntity": {
+          "uuid": "75947562078321",
+          "displayName": "t3a.micro",
+          "className": "ComputeTier",
+          "environmentType": "CLOUD",
+          "discoveredBy": {
+            "uuid": "75947555338561",
+            "displayName": "Standard",
+            "isProbeRegistered": false,
+            "type": "AWS Infrastructure",
+            "readonly": false
+          },
+          "vendorIds": {
+            "Standard": "t3a.micro"
+          },
+          "state": "ACTIVE"
+        }
+      }
+    ]
+  }
+]

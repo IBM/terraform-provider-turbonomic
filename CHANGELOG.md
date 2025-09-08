@@ -1,3 +1,20 @@
+## 1.5.0
+
+FEATURES:
+- Added `iops`,`throughput` and `size` attributes to `aws_ebs_volume` data source
+- Added `disk_iops_read_write`,`disk_mbps_read_write` and `disk_size_gb` to `azurerm_managed_disk` data source
+- Added `provisioned_iops`,`provisioned_throughput` and `size` attributes to `google_compute_disk` data source
+- Deprecated `turbonomic_cloud_entity_recommendation` data source
+- **New Data Resources:** `turbonomic_aws_instance`, `azurerm_linux_virtual_machine`, `azurerm_windows_virtual_machine`, `google_compute_instance`, `turbonomic_entity_actions`
+
+BUG FIXES:
+
+- Fixed `azurerm_managed_disk` data source to return correct values for storage_account_type
+
+NOTES:
+
+- Refactored the data sources
+
 ## 1.3.0
 
 FEATURES:
@@ -8,7 +25,6 @@ NOTES:
 
 - Added guide with examples to use Turbonomic provider with modules
 - Reorganised the Turbonomic Provider Registry documentation.
-- Update provier to use `github.com/IBM/turbonomic-go-client-v1.3.0`
 
 ## 1.2.0 (Beta Release)
 

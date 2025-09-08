@@ -1,0 +1,51 @@
+[
+    {
+        "uuid": "75878960778871",
+        "displayName": "cloud-int-a-sqlserver-gp-gen5-4",
+        "className": "Database",
+        "environmentType": "CLOUD",
+        "discoveredBy": {
+            "uuid": "75878940124305",
+            "displayName": "EA - Development 1",
+            "category": "Public Cloud",
+            "isProbeRegistered": false,
+            "type": "Azure Subscription",
+            "readonly": false
+        },
+        "vendorIds": {
+            "EA - Development 1": "azure::DB::dc073f5c-207c-456b-95c7-c6a6e6583738"
+        },
+        "state": "ACTIVE",
+        "severity": "Minor",
+        "costPrice": 1.0141534,
+        "severityBreakdown": {
+            "MINOR": 1
+        },
+        "providers": [
+            {
+                "uuid": "75878941049033",
+                "displayName": "GP_Gen5_4",
+                "className": "DatabaseTier"
+            }
+        ],
+        "template": {
+            "uuid": "75878941049033",
+            "displayName": "GP_Gen5_4",
+            "price": 1.0076,
+            "discovered": false,
+            "enableMatch": false
+        },
+        "tags": {
+            " turbo_owner": [
+                "jean.luo@ibm.com"
+            ],
+            " turbo_team": [
+                "Cloud Integrations Blue"
+            ],
+            " Turbo_TTL": [
+                "020225"
+            ]
+        },
+        "staleness": "CURRENT"
+    }
+]

@@ -1,0 +1,25 @@
+[
+    {
+        "uuid": "75878938189618",
+        "displayName": "hv16-susevm1",
+        "className": "VirtualMachine",
+        "environmentType": "ONPREM",
+        "discoveredBy": {
+            "uuid": "75878937626928",
+            "displayName": "vmm2016.turbo.rtp.raleigh.ibm.com",
+            "category": "Private Cloud",
+            "isProbeRegistered": false,
+            "type": "VMM",
+            "readonly": false
+        },
+        "vendorIds": {
+            "vmm2016.turbo.rtp.raleigh.ibm.com": "0247AD02-430B-4581-93CA-225258F71AA3"
+        },
+        "state": "ACTIVE",
+        "severity": "Normal",
+        "severityBreakdown": {
+            "NORMAL": 1
+        },
+        "controllable": true
+    }
+]

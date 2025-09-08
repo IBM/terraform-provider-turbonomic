@@ -4,16 +4,25 @@
 package provider
 
 import (
+	"encoding/json"
+	"io"
+	"os"
 	"testing"
 
-	turboclient "github.com/IBM/turbonomic-go-client"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	turboclient "github.com/IBM/turbonomic-go-client"
 )
 
 // MockT8cClient is a mock implementation of the T8cClient interface.
 type MockT8cClient struct {
 	mock.Mock
+}
+
+// GetStats implements turboclient.T8cClient.
+func (m *MockT8cClient) GetStats(statsReq turboclient.StatsRequest) (turboclient.StatsResponse, error) {
+	args := m.Called(statsReq)
+	return args.Get(0).(turboclient.StatsResponse), args.Error(1)
 }
 
 // GetActionsByUUID mocks the GetActionsByUUID method.
@@ -158,4 +167,181 @@ func TestGetActionsByEntityUUIDAndType(t *testing.T) {
 
 		client.AssertExpectations(t)
 	})
+}
+
+func TestGetStatsByEntityUUID(t *testing.T) {
+	entityUUID := "test-entity-uuid"
+
+	t.Run("Client is nil", func(t *testing.T) {
+		_, errDiag := GetStatsByEntityUUID(nil, entityUUID)
+		assert.NotNil(t, errDiag)
+		assert.Contains(t, errDiag.Detail(), "nil client")
+	})
+
+	t.Run("Entity UUID is empty", func(t *testing.T) {
+		client := new(MockT8cClient)
+		_, errDiag := GetStatsByEntityUUID(client, "")
+		assert.NotNil(t, errDiag)
+		assert.Contains(t, errDiag.Detail(), "empty entity UUID")
+		client.AssertExpectations(t)
+	})
+
+	t.Run("Client returns error", func(t *testing.T) {
+		client := new(MockT8cClient)
+		client.On("GetStats", mock.Anything).Return(turboclient.StatsResponse{}, assert.AnError).Once()
+
+		_, errDiag := GetStatsByEntityUUID(client, entityUUID)
+		assert.NotNil(t, errDiag)
+		assert.Contains(t, errDiag.Detail(), "Error fetching stats")
+
+		client.AssertExpectations(t)
+	})
+
+	t.Run("Client returns empty response", func(t *testing.T) {
+		client := new(MockT8cClient)
+		client.On("GetStats", mock.Anything).Return(turboclient.StatsResponse{}, nil).Once()
+
+		_, errDiag := GetStatsByEntityUUID(client, entityUUID)
+		assert.NotNil(t, errDiag)
+		assert.Contains(t, errDiag.Detail(), "No stats found")
+
+		client.AssertExpectations(t)
+	})
+
+	t.Run("Successful stats retrieval", func(t *testing.T) {
+		client := new(MockT8cClient)
+
+		// Create a mock response with minimal structure
+		mockResponse := turboclient.StatsResponse{
+			{
+				DisplayName: "test-entity",
+				Statistics: []turboclient.Statistic{
+					{Name: StorageAccess},
+					{Name: StorageAmount},
+					{Name: IOThroughput},
+				},
+				Epoch: "CURRENT",
+			},
+		}
+
+		// Verify that the request contains the expected parameters
+		client.On("GetStats", mock.MatchedBy(func(req turboclient.StatsRequest) bool {
+			// Check that the entity UUID matches
+			if req.EntityUUID != entityUUID {
+				return false
+			}
+
+			// Check that we have the expected number of statistics
+			if len(req.Statistics) != 3 {
+				return false
+			}
+
+			// Check that the statistics include the expected names
+			statNames := make([]string, len(req.Statistics))
+			for i, stat := range req.Statistics {
+				statNames[i] = stat.Name
+			}
+
+			return contains(statNames, StorageAccess) &&
+				contains(statNames, StorageAmount) &&
+				contains(statNames, IOThroughput)
+		})).Return(mockResponse, nil).Once()
+
+		stats, errDiag := GetStatsByEntityUUID(client, entityUUID)
+		assert.Nil(t, errDiag)
+		assert.Equal(t, mockResponse, stats)
+		assert.Equal(t, 1, len(stats))
+		assert.Equal(t, 3, len(stats[0].Statistics))
+		assert.Equal(t, "CURRENT", stats[0].Epoch)
+
+		client.AssertExpectations(t)
+	})
+
+	t.Run("Successful stats retrieval with EBS data", func(t *testing.T) {
+		// Read the test data file
+		jsonFile, err := os.Open("testdata/ebs_data_source/ebs_stats_valid_resp.json")
+		if err != nil {
+			t.Fatalf("Error opening test data file: %v", err)
+		}
+		defer jsonFile.Close()
+
+		jsonData, err := io.ReadAll(jsonFile)
+		if err != nil {
+			t.Fatalf("Error reading test data file: %v", err)
+		}
+
+		// We don't need an HTTP server since we're using the mock client directly
+
+		// Create a client and call the function
+		client := new(MockT8cClient)
+
+		// Create a mock response using the JSON data
+		var mockResponse turboclient.StatsResponse
+		err = json.Unmarshal(jsonData, &mockResponse)
+		if err != nil {
+			t.Fatalf("Error unmarshaling JSON data: %v", err)
+		}
+
+		client.On("GetStats", mock.Anything).Return(mockResponse, nil).Once()
+
+		stats, errDiag := GetStatsByEntityUUID(client, "vol-05f7c906f860b4d3c")
+		if errDiag != nil {
+			t.Fatalf("Error getting stats: %v", errDiag)
+		}
+
+		// Verify the response
+		assert.Equal(t, 3, len(stats), "Expected 3 stats entries (HISTORICAL, CURRENT, PROJECTED)")
+
+		// Check the first entry (HISTORICAL)
+		assert.Equal(t, "vol-05f7c906f860b4d3c", stats[0].DisplayName)
+		assert.Equal(t, "HISTORICAL", stats[0].Epoch)
+		assert.Equal(t, 3, len(stats[0].Statistics))
+
+		// Check the second entry (CURRENT)
+		assert.Equal(t, "vol-05f7c906f860b4d3c", stats[1].DisplayName)
+		assert.Equal(t, "CURRENT", stats[1].Epoch)
+		assert.Equal(t, 3, len(stats[1].Statistics))
+
+		// Check the third entry (PROJECTED)
+		assert.Equal(t, "vol-05f7c906f860b4d3c", stats[2].DisplayName)
+		assert.Equal(t, "PROJECTED", stats[2].Epoch)
+		assert.Equal(t, 6, len(stats[2].Statistics))
+
+		// Verify specific statistics in the CURRENT entry
+		currentStats := stats[1].Statistics
+		var storageAccessStat, storageAmountStat, ioThroughputStat *turboclient.Statistic
+
+		for i := range currentStats {
+			switch currentStats[i].Name {
+			case "StorageAccess":
+				storageAccessStat = &currentStats[i]
+			case "StorageAmount":
+				storageAmountStat = &currentStats[i]
+			case "IOThroughput":
+				ioThroughputStat = &currentStats[i]
+			}
+		}
+
+		// Check StorageAccess stat
+		assert.NotNil(t, storageAccessStat, "StorageAccess stat should exist")
+		assert.Equal(t, "IOPS", storageAccessStat.Units)
+
+		// Check StorageAmount stat
+		assert.NotNil(t, storageAmountStat, "StorageAmount stat should exist")
+		assert.Equal(t, "MB", storageAmountStat.Units)
+
+		// Check IOThroughput stat
+		assert.NotNil(t, ioThroughputStat, "IOThroughput stat should exist")
+		assert.Equal(t, "Kbit/sec", ioThroughputStat.Units)
+	})
+}
+
+// Helper function to check if a slice contains a string
+func contains(slice []string, item string) bool {
+	for _, s := range slice {
+		if s == item {
+			return true
+		}
+	}
+	return false
 }

@@ -1,0 +1,170 @@
+[
+  {
+    "uuid": "638883006725506",
+    "displayName": "MANUAL",
+    "actionImpactID": 638883006725506,
+    "marketID": 777777,
+    "createTime": "2025-07-30T20:22:45Z",
+    "actionType": "RESIZE",
+    "actionState": "READY",
+    "actionMode": "MANUAL",
+    "details": "Resize up VMem for Virtual Machine resize_test_pc24 from 2.5 GB to 3.5 GB",
+    "importance": -1,
+    "target": {
+      "uuid": "75930461864800",
+      "displayName": "resize_test_pc24",
+      "className": "VirtualMachine",
+      "environmentType": "ONPREM",
+      "discoveredBy": {
+        "uuid": "75878938715344",
+        "displayName": "nutanixc4.example.com",
+        "isProbeRegistered": false,
+        "type": "Nutanix",
+        "readonly": false
+      },
+      "vendorIds": {
+        "nutanixc4.example.com": "3e3e3a3a-4471-4540-b4dc-aeaeaeae3142"
+      },
+      "state": "ACTIVE",
+      "connectedEntities": [
+        {
+          "uuid": "75878938760489",
+          "displayName": "nutanixc4/NutanixCluster-nutanixc4",
+          "className": "Cluster"
+        }
+      ]
+    },
+    "currentValue": "2621440.0",
+    "newValue": "3670016.0",
+    "valueUnits": "KB",
+    "risk": {
+      "subCategory": "Performance Assurance",
+      "description": "VMem Congestion in Virtual Machine resize_test_pc24",
+      "severity": "CRITICAL",
+      "importance": 0,
+      "reasonCommodities": [
+        "VMem"
+      ]
+    },
+    "currentLocation": {
+      "uuid": "75878938760487",
+      "displayName": "nutanixc4",
+      "className": "DataCenter",
+      "environmentType": "ONPREM",
+      "discoveredBy": {
+        "uuid": "75878938715344",
+        "displayName": "nutanixc4.example.com",
+        "category": "Hyperconverged",
+        "isProbeRegistered": false,
+        "type": "Nutanix",
+        "readonly": false
+      },
+      "vendorIds": {
+        "nutanixc4.example.com": "aeaeaeae3142-c5f8-6f1f-4be4-123432121234"
+      }
+    },
+    "newLocation": {
+      "uuid": "75878938760487",
+      "displayName": "nutanixc4",
+      "className": "DataCenter",
+      "environmentType": "ONPREM",
+      "discoveredBy": {
+        "uuid": "75878938715344",
+        "displayName": "nutanixc4.example.com",
+        "category": "Hyperconverged",
+        "isProbeRegistered": false,
+        "type": "Nutanix",
+        "readonly": false
+      },
+      "vendorIds": {
+        "nutanixc4.example.com": "aeaeaeae3142-c5f8-6f1f-4be4-123432121234"
+      }
+    },
+    "source": "MARKET",
+    "actionID": 638883006725506
+  },
+  {
+    "uuid": "638929431495649",
+    "displayName": "MANUAL",
+    "actionImpactID": 638929431495649,
+    "marketID": 777777,
+    "createTime": "2025-07-30T20:22:45Z",
+    "actionType": "RESIZE",
+    "actionState": "READY",
+    "actionMode": "MANUAL",
+    "details": "Resize up VCPU for Virtual Machine resize_test_pc24 from 1 to 2 vCPUs",
+    "importance": -1,
+    "target": {
+      "uuid": "75930461864800",
+      "displayName": "resize_test_pc24",
+      "className": "VirtualMachine",
+      "environmentType": "ONPREM",
+      "discoveredBy": {
+        "uuid": "75878938715344",
+        "displayName": "nutanixc4.example.com",
+        "isProbeRegistered": false,
+        "type": "Nutanix",
+        "readonly": false
+      },
+      "vendorIds": {
+        "nutanixc4.example.com": "3e3e3a3a-4471-4540-b4dc-aeaeaeae3142"
+      },
+      "state": "ACTIVE",
+      "connectedEntities": [
+        {
+          "uuid": "75878938760489",
+          "displayName": "nutanixc4/NutanixCluster-nutanixc4",
+          "className": "Cluster"
+        }
+      ]
+    },
+    "currentValue": "1.0",
+    "newValue": "2.0",
+    "valueUnits": "vCPU",
+    "risk": {
+      "subCategory": "Performance Assurance",
+      "description": "VCPU Congestion in Virtual Machine resize_test_pc24",
+      "severity": "CRITICAL",
+      "importance": 0,
+      "reasonCommodities": [
+        "VCPU"
+      ]
+    },
+    "currentLocation": {
+      "uuid": "75878938760487",
+      "displayName": "nutanixc4",
+      "className": "DataCenter",
+      "environmentType": "ONPREM",
+      "discoveredBy": {
+        "uuid": "75878938715344",
+        "displayName": "nutanixc4.example.com",
+        "category": "Hyperconverged",
+        "isProbeRegistered": false,
+        "type": "Nutanix",
+        "readonly": false
+      },
+      "vendorIds": {
+        "nutanixc4.example.com": "aeaeaeae3142-c5f8-6f1f-4be4-123432121234"
+      }
+    },
+    "newLocation": {
+      "uuid": "75878938760487",
+      "displayName": "nutanixc4",
+      "className": "DataCenter",
+      "environmentType": "ONPREM",
+      "discoveredBy": {
+        "uuid": "75878938715344",
+        "displayName": "nutanixc4.example.com",
+        "category": "Hyperconverged",
+        "isProbeRegistered": false,
+        "type": "Nutanix",
+        "readonly": false
+      },
+      "vendorIds": {
+        "nutanixc4.example.com": "aeaeaeae3142-c5f8-6f1f-4be4-123432121234"
+      }
+    },
+    "source": "MARKET",
+    "actionID": 638929431495649
+  }
+]

@@ -20,12 +20,12 @@ import (
 	"flag"
 	"log"
 
-	"github.com/IBM/terraform-provider-turbonomic/internal/provider"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
+	"github.com/IBM/terraform-provider-turbonomic/internal/provider"
 )
 
 const (
-	version           = "1.3.0"
+	version           = "1.5.0"
 	typeName          = "turbonomic"
 	tfProviderAddress = "registry.terraform.io/IBM/turbonomic"
 )

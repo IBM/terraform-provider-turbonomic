@@ -1,0 +1,51 @@
+[
+    {
+        "uuid": "75967221374101",
+        "displayName": "vmTest",
+        "className": "VirtualMachine",
+        "environmentType": "CLOUD",
+        "discoveredBy": {
+            "uuid": "75947534865776",
+            "displayName": "AWS test",
+            "category": "Public Cloud",
+            "isProbeRegistered": false,
+            "type": "AWS",
+            "readonly": false
+        },
+        "vendorIds": {
+            "AWS test": "vmTest"
+        },
+        "state": "ACTIVE",
+        "severity": "Minor",
+        "costPrice": 0.2,
+        "severityBreakdown": {
+            "MINOR": 1
+        },
+        "providers": [
+            {
+                "uuid": "75947562077219",
+                "displayName": "t2.micro",
+                "className": "ComputeTier"
+            },
+            {
+                "uuid": "75967221374116",
+                "displayName": "vol-00d1c4ae08a5455cd",
+                "className": "VirtualVolume"
+            },
+            {
+                "uuid": "75947562073688",
+                "displayName": "aws-us-west-2c",
+                "className": "AvailabilityZone"
+            }
+        ],
+        "template": {
+            "uuid": "75947562077219",
+            "displayName": "t2.micro",
+            "price": 0.0116,
+            "discovered": false,
+            "enableMatch": false
+        },
+        "tags": {},
+        "staleness": "CURRENT"
+    }
+]

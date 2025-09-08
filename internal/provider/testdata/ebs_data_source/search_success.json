@@ -1,0 +1,44 @@
+[{
+  "uuid": "76064450740518",
+  "displayName": "vol-02442ed87649b8e6f",
+  "className": "VirtualVolume",
+  "environmentType": "CLOUD",
+  "discoveredBy": {
+    "uuid": "76064432714976",
+    "displayName": "AWS Target Test",
+    "category": "Public Cloud",
+    "isProbeRegistered": false,
+    "type": "AWS",
+    "readonly": false
+  },
+  "vendorIds": {
+    "AWS Target Test": "vol-02442ed87649b8e6f"
+  },
+  "state": "ACTIVE",
+  "severity": "Critical",
+  "costPrice": 0.12891096,
+  "severityBreakdown": {
+    "CRITICAL": 1
+  },
+  "providers": [
+    {
+      "uuid": "76064455681298",
+      "displayName": "GP3",
+      "className": "StorageTier"
+    }
+  ],
+  "consumers": [
+    {
+      "uuid": "76064450740496",
+      "displayName": "IAM_BILLING_XL",
+      "className": "VirtualMachine"
+    }
+  ],
+  "template": {
+    "uuid": "76064455681298",
+    "displayName": "GP3",
+    "discovered": false,
+    "enableMatch": false
+  },
+  "staleness": "CURRENT"
+}]

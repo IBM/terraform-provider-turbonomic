@@ -1,0 +1,62 @@
+[
+  {
+    "uuid": "76104347422507",
+    "displayName": "test-vm",
+    "className": "VirtualMachine",
+    "environmentType": "CLOUD",
+    "discoveredBy": {
+      "uuid": "76104346468176",
+      "displayName": "Turbonomic Engineering",
+      "category": "Public Cloud",
+      "isProbeRegistered": false,
+      "type": "GCP Project",
+      "readonly": false
+    },
+    "vendorIds": {
+      "Turbonomic Engineering": "6106508049847730083"
+    },
+    "state": "ACTIVE",
+    "severity": "Critical",
+    "costPrice": 0.047204293,
+    "severityBreakdown": {
+      "CRITICAL": 1
+    },
+    "providers": [
+      {
+        "uuid": "76104347941690",
+        "displayName": "e2-medium",
+        "className": "ComputeTier"
+      },
+      {
+        "uuid": "76104347422649",
+        "displayName": "test-vm",
+        "className": "VirtualVolume"
+      },
+      {
+        "uuid": "76104347941127",
+        "displayName": "us-central1-f",
+        "className": "AvailabilityZone"
+      }
+    ],
+    "template": {
+      "uuid": "76104347941690",
+      "displayName": "e2-medium",
+      "price": 0.033505708,
+      "discovered": false,
+      "enableMatch": false
+    },
+    "tags": {
+      "turbo_owner": ["mridulmukundan_at_ibmcom"],
+      "turbo_use": ["development"],
+      "turbo_park": ["false"],
+      "goog-gke-cluster-id-base32": ["11"],
+      "goog-k8s-cluster-name": ["datadog-gke-cluster"],
+      "goog-k8s-node-pool-name": ["default-pool"],
+      "goog-k8s-cluster-location": ["us-central1"],
+      "goog-gke-cost-management": [""],
+      "goog-gke-node": [""],
+      "turbo_ttl": ["042125"]
+    },
+    "staleness": "CURRENT"
+  }
+]

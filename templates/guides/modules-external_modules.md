@@ -34,7 +34,7 @@ locals {
 
 To create EC2 instance for each configuration, `for_each` is used inside the module invocation of `ec2_turbonomic_module` as well as inside the data block of Turbonomic to correlate the entity name.
 
-The `instance_type` is configured to use the `turbonomic_cloud_entity_recommendation` data block unless null is returned. If null is returned, then the `default_size` defined in data block of Turbonomic is used. `each.key` is used to bind the reference of the entity from Turbonomic data block.
+The `instance_type` is configured to use the `turbonomic_aws_instance` data block unless null is returned. If null is returned, then the `default_instance_type` defined in data block of Turbonomic is used. `each.key` is used to bind the reference of the entity from Turbonomic data block.
 
 
 ```diff
@@ -44,17 +44,16 @@ module "ec2_turbonomic_module"{
   <mark>for_each              = local.instance_ami_types</mark>		 			     //reading values from config
   ami                   = each.value.ami								  //reading ami from config  <span style='color:green'>
 + name                  = each.value.name                                 //reading name from config
-+ instance_type         = data.turbonomic_cloud_entity_recommendation.ec2_recommendation[each.key].new_instance_type		//reading
++ instance_type         = data.turbonomic_aws_instance.ec2_recommendation[each.key].new_instance_type		//reading
 Turbonomic recommendation
 + tags                  = provider::turbonomic::get_tag()                  //tag the resource as optimised as Turbonomic provider </span>
 }
 
 #Turbonomic recommendation data block <span style='color:green'>
-+ data "turbonomic_cloud_entity_recommendation" "ec2_recommendation" {
++ data "turbonomic_aws_instance" "ec2_recommendation" {
 +  <mark>for_each     = local.instance_ami_types</mark>
 +  entity_name  = each.value.name
-+  entity_type  = "VirtualMachine"
-+  default_size = each.value.instance_type                                //reading instance_type from configuration
++  default_instance_type = each.value.instance_type                                //reading instance_type from configuration
 + }</span>
 ```
 
@@ -67,7 +66,7 @@ Turbonomic recommendations can be accessed within the invoking module as seen fr
 #To read Turbonomic recommendations for each EC2 instance from data block
 output "turbonomic_output" {
     value = {
-        for key,recommendation in data.turbonomic_cloud_entity_recommendation.ec2_recommendation: key => recommendation
+        for key,recommendation in data.turbonomic_aws_instance.ec2_recommendation: key => recommendation
     }
 }
 
@@ -77,7 +76,7 @@ output "turbonomic_output" {
 
 If the requirement is to create multiple instances of the same configuration, `count` based approach can be adopted. `count` is used inside the module invocation of `ec2_turbonomic_module` as well as inside the data block of Turbonomic to correlate the entity name.
 
-The `instance_type` is configured to use the `turbonomic_cloud_entity_recommendation` data block unless null is returned. If null is returned, then the `default_size` defined in data block of Turbonomic is used. `count.index` is used to bind the reference of the entity from Turbonomic data block.
+The `instance_type` is configured to use the `turbonomic_aws_instance` data block unless null is returned. If null is returned, then the `default_instance_type` defined in data block of Turbonomic is used. `count.index` is used to bind the reference of the entity from Turbonomic data block.
 
 ```diff
 module "ec2_turbonomic_module"{
@@ -86,16 +85,15 @@ module "ec2_turbonomic_module"{
   <mark>count         = var.ec2_instances_count</mark> 						 //reading values from config
   ami           = var.ami																			    //reading ami from config<span style='color:green'>
 + name          = "exampleVirtualMachine-trb-${count.index}"      //indexed based name
-+ instance_type = data.turbonomic_cloud_entity_recommendation.ec2_recommendation[count.index].new_instance_type		//reading Turbonomic recommendation
++ instance_type = data.turbonomic_aws_instance.ec2_recommendation[count.index].new_instance_type		//reading Turbonomic recommendation
 + tags          = provider::turbonomic::get_tag()                 //tag the resource as optimised as Turbonomic provider </span>
 }
 
 #Turbonomic recommendation data block <span style='color:green'>
-+ data "turbonomic_cloud_entity_recommendation" "ec2_recommendation" {
++ data "turbonomic_aws_instance" "ec2_recommendation" {
 +  <mark>count        = var.ec2_instances_count</mark>
 +  entity_name  = "exampleVirtualMachine-trb-${count.index}"
-+  entity_type  = "VirtualMachine"
-+  default_size = var.instance_type                                //reading instance_type from configuration
++  default_instance_type = var.instance_type                                //reading instance_type from configuration
 + }</span>
 ```
 

@@ -21,7 +21,7 @@ terraform {
   required_providers {
     turbonomic = {
       source  = "IBM/turbonomic"
-      version = "1.2.0"
+      version = "1.5.0"
     }
   }
 }
@@ -49,7 +49,7 @@ terraform {
   required_providers {
     turbonomic = {
       source  = "IBM/turbonomic"
-      version = "1.2.0"
+      version = "1.5.0"
     }
   }
 }
@@ -76,7 +76,7 @@ terraform {
   required_providers {
     turbonomic = {
       source  = "IBM/turbonomic"
-      version = "1.2.0"
+      version = "1.5.0"
     }
   }
 }
@@ -91,6 +91,21 @@ provider "turbonomic" {
 ```
 
 -> **NOTE:** Valid roles are ADMINISTRATOR, SITE_ADMIN, AUTOMATOR, DEPLOYER, ADVISOR, OBSERVER, OPERATIONAL_OBSERVER, SHARED_ADVISOR and SHARED_OBSERVER.
+
+## Naming convention for Data Sources
+Each data source is named to clearly indicate the cloud provider and the resource type.
+
+Naming pattern: `turbonomic_<provider>_<resource_type>`.
+
+### Examples
+| Data Source Name                             | Cloud Provider    | Resource Type           |
+|----------------------------------------------|-------------------|-------------------------|
+| `turbonomic_aws_instance`                    | AWS               | EC2 Instance            |
+| `turbonomic_azurerm_linux_virtual_machine`   | Azure             | Linux Virtual Machine   |
+| `turbonomic_azurerm_windows_virtual_machine` | Azure             | Windows Virtual Machine |
+| `turbonomic_google_compute_instance`         | Google Cloud      | Compute Engine Instance |
+
+
 
 ## Features and bug requests
 

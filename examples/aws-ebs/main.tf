@@ -3,19 +3,22 @@ provider "aws" {
 }
 
 data "turbonomic_aws_ebs_volume" "example" {
-  entity_name  = "exampleEBSVolumeName"
-  default_type = "gp2"
+  entity_name        = "<entity_name>"
+  default_type       = "<default_type>"
+  default_iops       = var.iops
+  default_size       = var.size
+  default_throughput = var.throughput
 }
 
 resource "aws_ebs_volume" "example-ebs-instance" {
   availability_zone = "us-east-1a"
-  size              = 100
+  size              = data.turbonomic_aws_ebs_volume.example.new_size
   type              = data.turbonomic_aws_ebs_volume.example.new_type
-  iops              = 3000
-  throughput        = 125
+  iops              = data.turbonomic_aws_ebs_volume.example.new_iops
+  throughput        = data.turbonomic_aws_ebs_volume.example.new_throughput
   tags = merge(
     {
-      Name = "exampleEBSVolumeName"
+      Name = "<entity_name>"
     },
     provider::turbonomic::get_tag() //tag the resource as optimized by Turbonomic provider
   )

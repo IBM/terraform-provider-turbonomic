@@ -1,0 +1,61 @@
+[
+    {
+        "uuid": "639055660460449",
+        "displayName": "RECOMMEND",
+        "actionImpactID": 639055660460449,
+        "marketID": 777777,
+        "createTime": "2025-08-11T08:00:34Z",
+        "actionType": "RECONFIGURE",
+        "actionState": "READY",
+        "actionMode": "RECOMMEND",
+        "details": "Reconfigure Database Server MySQL MySQL db to provide VMem, VCPU",
+        "importance": -1.0,
+        "target": {
+            "uuid": "76105706434662",
+            "displayName": "MySQL MySQL db",
+            "className": "DatabaseServer",
+            "environmentType": "HYBRID",
+            "discoveredBy": {
+                "uuid": "75878940583056",
+                "displayName": "ffd15256.example.com",
+                "isProbeRegistered": false,
+                "type": "Dynatrace",
+                "readonly": false
+            },
+            "vendorIds": {
+                "ffd15256.example.com": "PROCESS_GROUP_INSTANCE-1324ADE1D23ADAED2EADE3421324ADE1D23ADAED2EADE3424312EADA"
+            },
+            "state": "ACTIVE"
+        },
+        "currentEntity": {
+            "uuid": "76105706434567",
+            "displayName": "turbonomic/db-6775b8ddc8-wt74d/db",
+            "className": "Container",
+            "environmentType": "HYBRID",
+            "discoveredBy": {
+                "uuid": "75878940583056",
+                "displayName": "ffd15256.example.com",
+                "isProbeRegistered": false,
+                "type": "Dynatrace",
+                "readonly": false
+            },
+            "vendorIds": {
+                "ffd15256.example.com": "9f354e87-2c4f-431b-9f7a-1324ADE1D23ADAED2EADE3421324ADE1D23ADAED2EADE3424312EADA"
+            },
+            "state": "ACTIVE"
+        },
+        "currentValue": "76105706434567",
+        "risk": {
+            "subCategory": "Compliance",
+            "description": "Configure supplier to update resource(s) VMem, VCPU",
+            "severity": "CRITICAL",
+            "importance": 0.0,
+            "reasonCommodities": [
+                "VMem",
+                "VCPU"
+            ]
+        },
+        "source": "MARKET",
+        "actionID": 639055660460449
+    }
+]

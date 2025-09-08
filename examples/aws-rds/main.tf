@@ -3,14 +3,13 @@ provider "aws" {
 }
 
 data "turbonomic_aws_db_instance" "rdsExample" {
-  entity_name            = "exampleDBinstance"
-  default_instance_class = "db.t3.small"
-  default_storage_type   = "gp2"
+  entity_name            = "<entity_name>"
+  default_instance_class = "<default_instance_class>"
+  default_storage_type   = "<default_storage_type>"
 }
 
-
 resource "aws_db_instance" "default" {
-  identifier           = "exampleDBinstance"
+  identifier           = "<entity_name>"
   allocated_storage    = 10
   db_name              = "mydb"
   engine               = "mysql"

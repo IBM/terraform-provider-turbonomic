@@ -1,0 +1,50 @@
+[
+  {
+    "uuid": "76047258724515",
+    "displayName": "test-vm",
+    "className": "VirtualMachine",
+    "environmentType": "CLOUD",
+    "discoveredBy": {
+      "uuid": "76047128227329",
+      "displayName": "EA - Quality Engineering",
+      "category": "Public Cloud",
+      "isProbeRegistered": false,
+      "type": "Azure Subscription",
+      "readonly": false
+    },
+    "vendorIds": {
+      "EA - Quality Engineering": "xxxx"
+    },
+    "state": "ACTIVE",
+    "severity": "Critical",
+    "costPrice": 0.025260381,
+    "severityBreakdown": {
+      "CRITICAL": 1
+    },
+    "providers": [
+      {
+        "uuid": "76047255058192",
+        "displayName": "Standard_B1s",
+        "className": "ComputeTier"
+      },
+      {
+        "uuid": "76047258724693",
+        "displayName": "test-vm_OsD",
+        "className": "VirtualVolume"
+      }
+    ],
+    "template": {
+      "uuid": "76047255058192",
+      "displayName": "Standard_B1s",
+      "price": 0.0176,
+      "discovered": false,
+      "enableMatch": false
+    },
+    "tags": {
+      "turbonomic_optimized_by": [
+        "turbonomic-terraform-provider"
+      ]
+    },
+    "staleness": "CURRENT"
+  }
+]

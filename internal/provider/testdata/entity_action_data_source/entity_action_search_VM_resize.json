@@ -1,0 +1,25 @@
+[
+    {
+        "uuid": "75930461864800",
+        "displayName": "resize_test_pc24",
+        "className": "VirtualMachine",
+        "environmentType": "ONPREM",
+        "discoveredBy": {
+            "uuid": "75878938715344",
+            "displayName": "nutanixc4.example.com",
+            "category": "Hypervisor",
+            "isProbeRegistered": false,
+            "type": "Nutanix",
+            "readonly": false
+        },
+        "vendorIds": {
+            "vc1.turbo.com": "vm-121"
+        },
+        "state": "ACTIVE",
+        "severity": "Normal",
+        "severityBreakdown": {
+            "NORMAL": 1
+        },
+        "controllable": true
+    }
+]

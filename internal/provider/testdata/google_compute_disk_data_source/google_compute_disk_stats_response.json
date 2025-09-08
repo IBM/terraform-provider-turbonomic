@@ -1,0 +1,494 @@
+[
+    {
+        "displayName": "automation-test-extreme-disk-p0l9",
+        "date": "2025-08-12T14:50:19Z",
+        "statistics": [
+            {
+                "name": "StorageAccess",
+                "capacity": {
+                    "max": 80000.0,
+                    "min": 80000.0,
+                    "avg": 80000.0,
+                    "total": 80000.0,
+                    "totalMax": 80000.0,
+                    "totalMin": 80000.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "IOPS",
+                "values": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0,
+                    "totalMax": 0.0,
+                    "totalMin": 0.0
+                },
+                "value": 0.0,
+                "commoditySource": {}
+            },
+            {
+                "name": "StorageAmount",
+                "capacity": {
+                    "max": 1024000.0,
+                    "min": 1024000.0,
+                    "avg": 1024000.0,
+                    "total": 1024000.0,
+                    "totalMax": 1024000.0,
+                    "totalMin": 1024000.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "MB",
+                "values": {
+                    "max": 1024000.0,
+                    "min": 1024000.0,
+                    "avg": 1024000.0,
+                    "total": 1024000.0,
+                    "totalMax": 1024000.0,
+                    "totalMin": 1024000.0
+                },
+                "value": 1024000.0,
+                "commoditySource": {}
+            },
+            {
+                "name": "IOThroughput",
+                "capacity": {
+                    "max": 3.2768E7,
+                    "min": 3.2768E7,
+                    "avg": 3.2768E7,
+                    "total": 3.2768E7,
+                    "totalMax": 3.2768E7,
+                    "totalMin": 3.2768E7
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "Kbit/sec",
+                "values": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0,
+                    "totalMax": 0.0,
+                    "totalMin": 0.0
+                },
+                "value": 0.0,
+                "commoditySource": {}
+            }
+        ],
+        "epoch": "HISTORICAL"
+    },
+    {
+        "displayName": "automation-test-extreme-disk-p0l9",
+        "date": "2025-08-12T14:59:55Z",
+        "statistics": [
+            {
+                "name": "StorageAccess",
+                "capacity": {
+                    "max": 80000.0,
+                    "min": 80000.0,
+                    "avg": 80000.0,
+                    "total": 80000.0,
+                    "totalMax": 80000.0,
+                    "totalMin": 80000.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "IOPS",
+                "values": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0,
+                    "totalMax": 0.0,
+                    "totalMin": 0.0
+                },
+                "value": 0.0,
+                "commoditySource": {}
+            },
+            {
+                "name": "StorageAmount",
+                "capacity": {
+                    "max": 1024000.0,
+                    "min": 1024000.0,
+                    "avg": 1024000.0,
+                    "total": 1024000.0,
+                    "totalMax": 1024000.0,
+                    "totalMin": 1024000.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "MB",
+                "values": {
+                    "max": 1024000.0,
+                    "min": 1024000.0,
+                    "avg": 1024000.0,
+                    "total": 1024000.0,
+                    "totalMax": 1024000.0,
+                    "totalMin": 1024000.0
+                },
+                "value": 1024000.0,
+                "commoditySource": {}
+            },
+            {
+                "name": "IOThroughput",
+                "capacity": {
+                    "max": 3.2768E7,
+                    "min": 3.2768E7,
+                    "avg": 3.2768E7,
+                    "total": 3.2768E7,
+                    "totalMax": 3.2768E7,
+                    "totalMin": 3.2768E7
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "Kbit/sec",
+                "values": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0,
+                    "totalMax": 0.0,
+                    "totalMin": 0.0
+                },
+                "value": 0.0,
+                "commoditySource": {}
+            }
+        ],
+        "epoch": "CURRENT"
+    },
+    {
+        "displayName": "automation-test-extreme-disk-p0l9",
+        "date": "2025-08-12T15:09:55Z",
+        "statistics": [
+            {
+                "name": "IOThroughput",
+                "capacity": {
+                    "max": 1.96608E7,
+                    "min": 1.96608E7,
+                    "avg": 1.96608E7,
+                    "total": 1.96608E7,
+                    "totalMax": 1.96608E7,
+                    "totalMin": 1.96608E7
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "Kbit/sec",
+                "values": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0,
+                    "totalMax": 0.0,
+                    "totalMin": 0.0
+                },
+                "value": 0.0,
+                "commoditySource": {},
+                "histUtilizations": [
+                    {
+                        "type": "smoothed",
+                        "usage": 0.0,
+                        "capacity": 1.96608E7
+                    }
+                ]
+            },
+            {
+                "name": "StorageAccess",
+                "capacity": {
+                    "max": 86010.0,
+                    "min": 86010.0,
+                    "avg": 86010.0,
+                    "total": 86010.0,
+                    "totalMax": 86010.0,
+                    "totalMin": 86010.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "bought",
+                        "displayName": null
+                    }
+                ],
+                "relatedEntity": {
+                    "uuid": "75878942068255"
+                },
+                "units": "IOPS",
+                "values": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0,
+                    "totalMax": 0.0,
+                    "totalMin": 0.0
+                },
+                "value": 0.0,
+                "commoditySource": {},
+                "histUtilizations": [
+                    {
+                        "type": "smoothed",
+                        "usage": 0.0,
+                        "capacity": 86010.0
+                    }
+                ]
+            },
+            {
+                "name": "StorageAmount",
+                "capacity": {
+                    "max": 2731008.0,
+                    "min": 2731008.0,
+                    "avg": 2731008.0,
+                    "total": 2731008.0,
+                    "totalMax": 2731008.0,
+                    "totalMin": 2731008.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "bought",
+                        "displayName": null
+                    }
+                ],
+                "relatedEntity": {
+                    "uuid": "75878942068255"
+                },
+                "units": "MB",
+                "values": {
+                    "max": 1024000.0,
+                    "min": 1024000.0,
+                    "avg": 1024000.0,
+                    "total": 1024000.0,
+                    "totalMax": 1024000.0,
+                    "totalMin": 1024000.0
+                },
+                "value": 1024000.0,
+                "commoditySource": {},
+                "histUtilizations": [
+                    {
+                        "type": "smoothed",
+                        "usage": 1024000.0,
+                        "capacity": 2731008.0
+                    }
+                ]
+            },
+            {
+                "name": "StorageAccess",
+                "capacity": {
+                    "max": 86010.0,
+                    "min": 86010.0,
+                    "avg": 86010.0,
+                    "total": 86010.0,
+                    "totalMax": 86010.0,
+                    "totalMin": 86010.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "IOPS",
+                "values": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0,
+                    "totalMax": 0.0,
+                    "totalMin": 0.0
+                },
+                "value": 0.0,
+                "commoditySource": {},
+                "histUtilizations": [
+                    {
+                        "type": "smoothed",
+                        "usage": 0.0,
+                        "capacity": 86010.0
+                    }
+                ]
+            },
+            {
+                "name": "IOThroughput",
+                "capacity": {
+                    "max": 1.96608E7,
+                    "min": 1.96608E7,
+                    "avg": 1.96608E7,
+                    "total": 1.96608E7,
+                    "totalMax": 1.96608E7,
+                    "totalMin": 1.96608E7
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "bought",
+                        "displayName": null
+                    }
+                ],
+                "relatedEntity": {
+                    "uuid": "75878942068255"
+                },
+                "units": "Kbit/sec",
+                "values": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0,
+                    "totalMax": 0.0,
+                    "totalMin": 0.0
+                },
+                "value": 0.0,
+                "commoditySource": {},
+                "histUtilizations": [
+                    {
+                        "type": "smoothed",
+                        "usage": 0.0,
+                        "capacity": 1.96608E7
+                    }
+                ]
+            },
+            {
+                "name": "StorageAmount",
+                "capacity": {
+                    "max": 2731008.0,
+                    "min": 2731008.0,
+                    "avg": 2731008.0,
+                    "total": 2731008.0,
+                    "totalMax": 2731008.0,
+                    "totalMin": 2731008.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "MB",
+                "values": {
+                    "max": 1024000.0,
+                    "min": 1024000.0,
+                    "avg": 1024000.0,
+                    "total": 1024000.0,
+                    "totalMax": 1024000.0,
+                    "totalMin": 1024000.0
+                },
+                "value": 1024000.0,
+                "commoditySource": {},
+                "histUtilizations": [
+                    {
+                        "type": "smoothed",
+                        "usage": 1024000.0,
+                        "capacity": 2731008.0
+                    }
+                ]
+            }
+        ],
+        "epoch": "PROJECTED"
+    }
+]

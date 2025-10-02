@@ -16,6 +16,8 @@
 package provider
 
 import (
+	"bytes"
+	"crypto/tls"
 	"fmt"
 	"io"
 	"net/http"
@@ -24,6 +26,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 )
 
 const (
@@ -51,6 +54,9 @@ const (
 	azureMSSQLTestDataBaseDir       = "azurerm_mssql_database_data_source"
 
 	vmEntityType = "VirtualMachine"
+
+	entityTagsRespTestData = "entity_tags_success_response.json"
+	entityTagRespTestData  = "entity_tag_success_response.json"
 )
 
 type Response struct {
@@ -58,69 +64,70 @@ type Response struct {
 	HttpStatus int
 }
 
-func createLocalServer(t *testing.T, searchResp, actionResp, entityTagsResp, entityTagResp string) *httptest.Server {
-	return createLocalServerWithResponse(t, searchResp, actionResp, entityTagsResp, Response{
-		Message:    entityTagResp,
-		HttpStatus: http.StatusOK})
+type MockRoute struct {
+	Method       string
+	Path         string
+	ExpectedBody string
+	ResponseBody string
+	ResponseCode int
 }
 
-func createLocalCloudVolumeServer(t *testing.T, searchResp, actionResp, statResp, entityTagsResp, entityTagResp string) *httptest.Server {
-	return createLocalServerCloudVolumeResponse(t, searchResp, actionResp, statResp, entityTagsResp, Response{
-		Message:    entityTagResp,
-		HttpStatus: http.StatusOK})
-}
+func mockTurboServer(t *testing.T, routes []MockRoute) *httptest.Server {
+	// Set shorter timeouts to prevent hanging connections
+	server := httptest.NewUnstartedServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		for _, route := range routes {
+			if r.Method == route.Method && matchPath(route.Path, r.URL.Path) {
+				if len(route.ExpectedBody) > 0 {
+					body, _ := io.ReadAll(r.Body)
+					defer r.Body.Close()
+					if !bytes.Equal(bytes.TrimSpace(body), []byte(route.ExpectedBody)) {
+						http.Error(w, fmt.Sprintf("unexpected body: expected: %q, got %q", route.ExpectedBody, string(body)), http.StatusBadRequest)
+						return
+					}
+				}
 
-func createLocalServerCloudVolumeResponse(t *testing.T, searchResp, actionResp, statResp, entityTagsResp string, entityTagResp Response) *httptest.Server {
-	server := createLocalServerWithResponse(t, searchResp, actionResp, entityTagsResp, entityTagResp)
-
-	// Replace the handler to add the stats endpoint
-	originalHandler := server.Config.Handler
-	server.Config.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodPost && strings.Contains(r.URL.Path, "api/v3/stats/") {
-			w.WriteHeader(http.StatusOK)
-			fmt.Fprint(w, statResp)
-		} else {
-			// Use the original handler for all other requests
-			originalHandler.ServeHTTP(w, r)
+				w.WriteHeader(route.ResponseCode)
+				fmt.Fprint(w, route.ResponseBody)
+				return
+			}
 		}
+		http.NotFound(w, r)
+	}))
+
+	// Configure TLS with shorter timeouts
+	server.Config.ReadHeaderTimeout = 1 * time.Second
+	server.Config.WriteTimeout = 1 * time.Second
+	server.Config.IdleTimeout = 1 * time.Second
+	server.TLS = &tls.Config{
+		InsecureSkipVerify: true,
+	}
+	server.StartTLS()
+
+	t.Cleanup(func() {
+		server.CloseClientConnections()
+		server.Close()
 	})
 
 	return server
 }
 
-// creates a mock turbo client which responds with provided search and action result
-func createLocalServerWithResponse(t *testing.T, searchResp, actionResp, entityTagsResp string, entityTagResp Response) *httptest.Server {
-	return httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch {
-		case r.Method == http.MethodPost && r.URL.Path == "/api/v3/login":
-			body, _ := io.ReadAll(r.Body)
-			defer r.Body.Close()
-			w.WriteHeader(http.StatusOK)
-			fmt.Fprintf(w, `{"result":"POST success", "received": "%s"}`, string(body))
-		case r.Method == http.MethodPost && r.URL.Path == "/api/v3/search":
-			w.WriteHeader(http.StatusOK)
-			fmt.Fprint(w, searchResp)
-		case r.Method == http.MethodPost && strings.HasPrefix(r.URL.Path, "/api/v3/entities/") &&
-			strings.HasSuffix(r.URL.Path, "/actions"):
-			w.WriteHeader(http.StatusOK)
-			fmt.Fprint(w, actionResp)
-		case r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, "/api/v3/entities/") && strings.HasSuffix(r.URL.Path, "/tags"):
-			w.WriteHeader(http.StatusOK)
-			fmt.Fprint(w, entityTagsResp)
-		case r.Method == http.MethodPost && strings.HasPrefix(r.URL.Path, "/api/v3/entities/") && strings.HasSuffix(r.URL.Path, "/tags"):
-			w.WriteHeader(entityTagResp.HttpStatus)
-			fmt.Fprint(w, entityTagResp.Message)
-		case r.Method == http.MethodPost && r.URL.Path == "/oauth2/token":
-			body, _ := io.ReadAll(r.Body)
-			defer r.Body.Close()
-			w.WriteHeader(http.StatusOK)
-			fmt.Fprintf(w, `{"result":"POST success", "received": "%s"}`, string(body))
-		default:
-			// Endpoint not defined
-			http.NotFound(w, r)
-			t.FailNow()
+func matchPath(pattern, path string) bool {
+	patternParts := strings.Split(pattern, "/")
+	pathParts := strings.Split(path, "/")
+
+	if len(patternParts) != len(pathParts) {
+		return false
+	}
+
+	for i := range patternParts {
+		if strings.HasPrefix(patternParts[i], "{") && strings.HasSuffix(patternParts[i], "}") {
+			continue
 		}
-	}))
+		if patternParts[i] != pathParts[i] {
+			return false
+		}
+	}
+	return true
 }
 
 func loadTestFile(t *testing.T, pathParts ...string) string {
@@ -133,6 +140,29 @@ func loadTestFile(t *testing.T, pathParts ...string) string {
 	}
 
 	return string(d)
+}
+
+func LoginAndTagRoutes(t *testing.T) []MockRoute {
+	return []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}
 }
 
 func init() {

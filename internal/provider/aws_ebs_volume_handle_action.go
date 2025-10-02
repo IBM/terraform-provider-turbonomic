@@ -71,30 +71,6 @@ func HandleAwsEbsVolumeCommodityAction(ctx context.Context, commodityActions tur
 	return HandleGenericVolumeCommodityAction(ctx, commodityActions, adapter)
 }
 
-// set the current state fields with default values if they are empty
-func setDefaultsAwsEbsVolumeToCurrentState(state *AwsEbsVolumeEntityModel) {
-	state.CurrentType = applyDefaultIfEmptyGeneric(state.CurrentType, state.DefaultType)
-	state.CurrentIops = applyDefaultIfEmptyGeneric(state.CurrentIops, state.DefaultIops)
-	state.CurrentThroughput = applyDefaultIfEmptyGeneric(state.CurrentThroughput, state.DefaultThroughput)
-	state.CurrentSize = applyDefaultIfEmptyGeneric(state.CurrentSize, state.DefaultSize)
-}
-
-// set the new state fields with default values if they are empty
-func setDefaultsAwsEbsVolumeToNewState(state *AwsEbsVolumeEntityModel) {
-	state.NewType = applyDefaultIfEmptyGeneric(state.NewType, state.DefaultType)
-	state.NewIops = applyDefaultIfEmptyGeneric(state.NewIops, state.DefaultIops)
-	state.NewThroughput = applyDefaultIfEmptyGeneric(state.NewThroughput, state.DefaultThroughput)
-	state.NewSize = applyDefaultIfEmptyGeneric(state.NewSize, state.DefaultSize)
-}
-
-// apply current values to new values if action/stat projected value is not available
-func setCurrentAwsEbsVolumeToNewState(state *AwsEbsVolumeEntityModel) {
-	state.NewType = applyDefaultIfEmptyGeneric(state.NewType, state.CurrentType)
-	state.NewIops = applyDefaultIfEmptyGeneric(state.NewIops, state.CurrentIops)
-	state.NewThroughput = applyDefaultIfEmptyGeneric(state.NewThroughput, state.CurrentThroughput)
-	state.NewSize = applyDefaultIfEmptyGeneric(state.NewSize, state.CurrentSize)
-}
-
 func (a *AwsEbsVolumeStateAdapter) UpdateIops(ctx context.Context, value float64, isNew bool) {
 	// Round to nearest integer
 	iopsValue := int64(math.Round(value))

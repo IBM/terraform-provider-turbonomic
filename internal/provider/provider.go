@@ -70,46 +70,46 @@ func (p *turbonomicProvider) Schema(ctx context.Context, req provider.SchemaRequ
 		Attributes: map[string]schema.Attribute{
 			"hostname": schema.StringAttribute{
 				MarkdownDescription: "hostname or IP Address of Turbonomic Instance; " +
-					"use TURBO_HOSTNAME to set with an enviornment variable",
+					"use TURBO_HOSTNAME to set with an environment variable",
 				Description: "hostname or IP Address of Turbonomic Instance; " +
-					"use TURBO_HOSTNAME to set with an enviornment variable",
+					"use TURBO_HOSTNAME to set with an environment variable",
 				Optional: true,
 			},
 			"username": schema.StringAttribute{
 				MarkdownDescription: "username to access the Turbonomic Instance; " +
-					"use TURBO_USERNAME to set with an enviornment variable",
+					"use TURBO_USERNAME to set with an environment variable",
 				Description: "username to access the Turbonomic Instance; " +
-					"use TURBO_USERNAME to set with an enviornment variable",
+					"use TURBO_USERNAME to set with an environment variable",
 				Optional: true,
 			},
 			"password": schema.StringAttribute{
 				MarkdownDescription: "password for the username to access the Turbonomic Instance; " +
-					"use TURBO_PASSWORD to set with an enviornment variable",
+					"use TURBO_PASSWORD to set with an environment variable",
 				Description: "password for the username to access the Turbonomic Instance; " +
-					"use TURBO_PASSWORD to set with an enviornment variable",
+					"use TURBO_PASSWORD to set with an environment variable",
 				Optional:  true,
 				Sensitive: true,
 			},
 			"client_id": schema.StringAttribute{
 				MarkdownDescription: "the OAuth 2.0 client ID that can be used to access the Turbonomic " +
-					"instance; use TURBO_CLIENT_ID to set with an enviornment variable",
+					"instance; use TURBO_CLIENT_ID to set with an environment variable",
 				Description: "the OAuth 2.0 client ID that can be used to access the Turbonomic " +
-					"instance; use TURBO_CLIENT_ID to set with an enviornment variable",
+					"instance; use TURBO_CLIENT_ID to set with an environment variable",
 				Optional: true,
 			},
 			"client_secret": schema.StringAttribute{
 				MarkdownDescription: "the OAuth 2.0 client secret that can be used to access the Turbonomic " +
-					"instance; use TURBO_CLIENT_SECRET to set with an enviornment variable",
+					"instance; use TURBO_CLIENT_SECRET to set with an environment variable",
 				Description: "the OAuth 2.0 client secret that can be used to access the Turbonomic " +
-					"instance; use TURBO_CLIENT_SECRET to set with an enviornment variable",
+					"instance; use TURBO_CLIENT_SECRET to set with an environment variable",
 				Optional:  true,
 				Sensitive: true,
 			},
 			"role": schema.StringAttribute{
 				MarkdownDescription: "the OAuth 2.0 role that can be used to access the Turbonomic " +
-					"instance; use TURBO_ROLE to set with an enviornment variable",
+					"instance; use TURBO_ROLE to set with an environment variable",
 				Description: "the OAuth 2.0 role that can be used to access the Turbonomic " +
-					"instance; use TURBO_ROLE to set with an enviornment variable",
+					"instance; use TURBO_ROLE to set with an environment variable",
 				Optional: true,
 			},
 			"skipverify": schema.BoolAttribute{
@@ -319,13 +319,12 @@ func (p *turbonomicProvider) Configure(ctx context.Context, req provider.Configu
 		turboLogging.WithLogger(&logAdapter))
 
 	if err != nil {
-		resp.Diagnostics.AddError(
+		resp.Diagnostics.AddWarning(
 			"Unable to Create Turbonomic API Client",
 			"An unexpected error occurred when creating the Turbonomic API client. "+
 				"If the error is not clear, please contact the provider developers.\n\n"+
 				"Turbonomic Client Error: "+err.Error(),
 		)
-		return
 	}
 
 	resp.DataSourceData = client

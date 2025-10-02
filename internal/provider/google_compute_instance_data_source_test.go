@@ -22,25 +22,59 @@ const (
 		default_machine_type = "%s"
 	}
 	`
+	gcpVMConfigWithVendorId = `
+	data "turbonomic_google_compute_instance" "test" {
+		vendor_id = "%s"
+		default_machine_type = "%s"
+	}
+	`
+	gcpVMConfigWithVendorIdAndName = `
+	data "turbonomic_google_compute_instance" "test" {
+		vendor_id = "%s"
+		default_machine_type = "%s"
+		entity_name  = "%s"
+	}
+	`
 	googleVMConfigNoDefaultType = `
 	data "turbonomic_google_compute_instance" "test" {
 		entity_name  = "%s"
 	}
 	`
-	googleVMDataSourceRef = "data.turbonomic_google_compute_instance.test"
-	googleVMName          = "vm-test"
-	googleVMCurrentType   = "e2-medium"
-	googleVMDefaultType   = "t2d-standard-1"
-	googleVMInvalidType   = "invalid@type#"
+	gcpVMConfigNoIdentifiers = `
+	data "turbonomic_google_compute_instance" "test" {
+		default_machine_type = "%s"
+	}
+	`
+	googleVMDataSourceRef   = "data.turbonomic_google_compute_instance.test"
+	googleVMName            = "vm-test"
+	googleVMVendorId        = "1234567890123456789"
+	googleVMInvalidVendorId = "invalid-vendor-id"
+	googleVMCurrentType     = "e2-medium"
+	googleVMDefaultType     = "t2d-standard-1"
+	gcpVMTestDataBaseDir    = googleVMTestDataBaseDir
+	gcpVMVendorId           = googleVMVendorId
+	gcpVMDefaultMachineType = googleVMDefaultType
+	gcpVMName               = googleVMName
+	gcpVMCurrentMachineType = googleVMCurrentType
+	gcpVMDataSourceRef      = googleVMDataSourceRef
 )
 
 // Test for a valid entity
 func TestGoogleComputeInstanceDataSourceWithValidEntity(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, googleVMTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, googleVMTestDataBaseDir, validVmActionRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, googleVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, googleVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
@@ -84,7 +118,38 @@ func TestGoogleComputeInstanceDataSourceWithValidEntity(t *testing.T) {
 
 // Test for an invalid entity
 func TestGoogleComputeInstanceDataSourceWithInvalidEntity(t *testing.T) {
-	mockServer := createLocalServer(t, "[]", "", "", "")
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: "[]",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+	})
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
@@ -126,11 +191,20 @@ func TestGoogleComputeInstanceDataSourceWithInvalidEntity(t *testing.T) {
 
 // Test for an entity that has no actions
 func TestGoogleComputeInstanceDataSourceWithNoAction(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, googleVMTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, emptyActionRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, googleVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, emptyActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
@@ -174,11 +248,20 @@ func TestGoogleComputeInstanceDataSourceWithNoAction(t *testing.T) {
 
 // Tests when default_machine_type is not specified
 func TestGoogleComputeInstanceDataSourceWithoutDefaultType(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, googleVMTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, googleVMTestDataBaseDir, validVmActionRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, googleVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, googleVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
@@ -217,48 +300,102 @@ func TestGoogleComputeInstanceDataSourceWithoutDefaultType(t *testing.T) {
 	}
 }
 
-// Tests error while retrieving entity tags
+// Tests no error while retrieving entity tags
 func TestGoogleComputeInstanceDataSourceGetEntityTagsError(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, googleVMTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, googleVMTestDataBaseDir, validVmActionRespTestData),
-		"",
-		"")
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, googleVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, googleVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+	})
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
 
-	t.Run("Error while retrieving entity tags", func(t *testing.T) {
+	t.Run("no error while retrieving entity tags", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
 			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
 				{
 					Config:      providerConfig + fmt.Sprintf(googleVMConfig, googleVMName, googleVMDefaultType),
-					ExpectError: regexp.MustCompile(`Unable to retrieve entity tags from Turbonomic`),
+					ExpectError: nil,
 				},
 			},
 		})
 	})
 }
 
-// Tests error while tagging an entity
+// Tests no error while tagging an entity
 func TestGoogleComputeInstanceDataSourceTagEntityError(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, googleVMTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, googleVMTestDataBaseDir, validVmActionRespTestData),
-		"[]",
-		"")
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, googleVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, googleVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "[]",
+			ResponseCode: http.StatusOK,
+		},
+	})
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
 
-	t.Run("Error while tagging an entity", func(t *testing.T) {
+	t.Run("no error while tagging an entity", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
 			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
 				{
 					Config:      providerConfig + fmt.Sprintf(googleVMConfig, googleVMName, googleVMDefaultType),
-					ExpectError: regexp.MustCompile(`Unable to tag an entity in Turbonomic`),
+					ExpectError: nil,
 				},
 			},
 		})
@@ -267,11 +404,38 @@ func TestGoogleComputeInstanceDataSourceTagEntityError(t *testing.T) {
 
 // Tests no error while tagging already tagged entity with discovered "optimized by" tag value
 func TestGoogleComputeInstanceDataSourceTagEntityAlreadyTaggedDiscovered(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, googleVMTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, googleVMTestDataBaseDir, validVmActionRespTestData),
-		`[{"key": "turbonomic_optimized_by","values": ["turbonomic-terraform-provider"]}]`,
-		"")
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, googleVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, googleVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: `[{"key": "turbonomic_optimized_by","values": ["turbonomic-terraform-provider"]}]`,
+			ResponseCode: http.StatusOK,
+		},
+	})
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
@@ -314,13 +478,38 @@ func TestGoogleComputeInstanceDataSourceTagEntityAlreadyTaggedDiscovered(t *test
 
 // Tests no error while tagging already tagged entity with not discovered "optimized by" tag value
 func TestGoogleComputeInstanceDataSourceTagEntityAlreadyTaggedNotDiscovered(t *testing.T) {
-	mockServer := createLocalServerWithResponse(t,
-		loadTestFile(t, googleVMTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, googleVMTestDataBaseDir, validVmActionRespTestData),
-		`[]`,
-		Response{
-			Message:    "Entity service RPC call failed to complete request: INVALID_ARGUMENT: Trying to insert a tag with a key that already exists: turbonomic_optimized_by",
-			HttpStatus: http.StatusBadRequest})
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, googleVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, googleVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "Entity service RPC call failed to complete request: INVALID_ARGUMENT: Trying to insert a tag with a key that already exists: turbonomic_optimized_by",
+			ResponseCode: http.StatusBadRequest,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: `[]`,
+			ResponseCode: http.StatusOK,
+		},
+	})
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
@@ -360,18 +549,261 @@ func TestGoogleComputeInstanceDataSourceTagEntityAlreadyTaggedNotDiscovered(t *t
 		})
 	}
 }
+func TestGoogleComputeInstanceDataSourceWithEmptyDefaultType(t *testing.T) {
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, googleVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, googleVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
+	defer mockServer.Close()
 
-// Tests invalid characters in default_machine_type field
-func TestGoogleComputeInstanceDataSourceInvalidTypeCharacters(t *testing.T) {
-	t.Run("Invalid characters in default_machine_type", func(t *testing.T) {
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+	t.Run("Default machine type should be atleast 1", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
 			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
 				{
-					Config:      providerConfig + fmt.Sprintf(googleVMConfig, googleVMName, googleVMInvalidType),
-					ExpectError: regexp.MustCompile(`Invalid Attribute Value Match`),
+					Config:      providerConfig + fmt.Sprintf(googleVMConfig, googleVMName, ""),
+					ExpectError: regexp.MustCompile(`Attribute default_machine_type string length must be at least 1`),
 				},
 			},
 		})
 	})
+}
+
+// Test for a valid entity using vendor_id
+func TestGoogleComputeInstanceDataSourceWithVendorId(t *testing.T) {
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, gcpVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, gcpVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
+	defer mockServer.Close()
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+
+	for _, tc := range []struct {
+		name                       string
+		testVendorId               string
+		expectedVendorId           string
+		expectedDefaultMachineType string
+		expectedCurrentMachineType string
+		expectedNewMachineType     string
+	}{
+		{
+			name:                       "Valid VM recommendation with vendor_id",
+			testVendorId:               gcpVMVendorId,
+			expectedVendorId:           gcpVMVendorId,
+			expectedDefaultMachineType: gcpVMDefaultMachineType,
+			expectedCurrentMachineType: gcpVMCurrentMachineType,
+			expectedNewMachineType:     gcpVMDefaultMachineType,
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			resource.Test(t, resource.TestCase{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Steps: []resource.TestStep{
+					{
+						Config: providerConfig + fmt.Sprintf(gcpVMConfigWithVendorId, tc.testVendorId, tc.expectedDefaultMachineType),
+						Check: resource.ComposeAggregateTestCheckFunc(
+							resource.TestCheckResourceAttr(gcpVMDataSourceRef, "vendor_id", tc.expectedVendorId),
+							resource.TestCheckResourceAttr(gcpVMDataSourceRef, "entity_type", vmEntityType),
+							resource.TestCheckResourceAttr(gcpVMDataSourceRef, "default_machine_type", tc.expectedDefaultMachineType),
+							resource.TestCheckResourceAttr(gcpVMDataSourceRef, "current_machine_type", tc.expectedCurrentMachineType),
+							resource.TestCheckResourceAttr(gcpVMDataSourceRef, "new_machine_type", tc.expectedNewMachineType),
+						),
+					},
+				},
+			})
+		})
+	}
+}
+
+// Test for a valid entity using vendor_id and entity_name
+func TestGoogleComputeInstanceDataSourceWithVendorIdAndName(t *testing.T) {
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, gcpVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, gcpVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
+	defer mockServer.Close()
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+
+	for _, tc := range []struct {
+		name                       string
+		testVendorId               string
+		testEntity                 string
+		expectedVendorId           string
+		expectedEntityName         string
+		expectedDefaultMachineType string
+		expectedCurrentMachineType string
+		expectedNewMachineType     string
+	}{
+		{
+			name:                       "Valid VM recommendation with vendor_id and entity_name",
+			testVendorId:               gcpVMVendorId,
+			testEntity:                 gcpVMName,
+			expectedVendorId:           gcpVMVendorId,
+			expectedEntityName:         gcpVMName,
+			expectedDefaultMachineType: gcpVMDefaultMachineType,
+			expectedCurrentMachineType: gcpVMCurrentMachineType,
+			expectedNewMachineType:     gcpVMDefaultMachineType,
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			resource.Test(t, resource.TestCase{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Steps: []resource.TestStep{
+					{
+						Config: providerConfig + fmt.Sprintf(gcpVMConfigWithVendorIdAndName, tc.testVendorId, tc.expectedDefaultMachineType, tc.testEntity),
+						Check: resource.ComposeAggregateTestCheckFunc(
+							resource.TestCheckResourceAttr(gcpVMDataSourceRef, "vendor_id", tc.expectedVendorId),
+							resource.TestCheckResourceAttr(gcpVMDataSourceRef, "entity_name", tc.expectedEntityName),
+							resource.TestCheckResourceAttr(gcpVMDataSourceRef, "entity_type", vmEntityType),
+							resource.TestCheckResourceAttr(gcpVMDataSourceRef, "default_machine_type", tc.expectedDefaultMachineType),
+							resource.TestCheckResourceAttr(gcpVMDataSourceRef, "current_machine_type", tc.expectedCurrentMachineType),
+							resource.TestCheckResourceAttr(gcpVMDataSourceRef, "new_machine_type", tc.expectedNewMachineType),
+						),
+					},
+				},
+			})
+		})
+	}
+}
+
+// Test for when neither entity_name nor vendor_id is provided
+func TestGoogleComputeInstanceDataSourceWithNoIdentifiers(t *testing.T) {
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, gcpVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, gcpVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
+	defer mockServer.Close()
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+
+	t.Run("Error when neither entity_name nor vendor_id is provided", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config:      providerConfig + fmt.Sprintf(gcpVMConfigNoIdentifiers, gcpVMDefaultMachineType),
+					ExpectError: regexp.MustCompile(`At least one of these attributes must be configured`),
+				},
+			},
+		})
+	})
+
+}
+
+// Test for an invalid vendor_id
+func TestGoogleComputeInstanceDataSourceWithInvalidVendorId(t *testing.T) {
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: "[]",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+	})
+	defer mockServer.Close()
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+
+	for _, tc := range []struct {
+		name                       string
+		testVendorId               string
+		expectedVendorId           string
+		expectedDefaultMachineType string
+		expectedCurrentMachineType string
+		expectedNewMachineType     string
+	}{
+		{
+			name:                       "Invalid vendor_id",
+			testVendorId:               gcpVMVendorId,
+			expectedVendorId:           gcpVMVendorId,
+			expectedDefaultMachineType: gcpVMDefaultMachineType,
+			expectedCurrentMachineType: gcpVMCurrentMachineType,
+			expectedNewMachineType:     gcpVMDefaultMachineType,
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			resource.Test(t, resource.TestCase{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Steps: []resource.TestStep{
+					{
+						Config: providerConfig + fmt.Sprintf(gcpVMConfigWithVendorId, tc.testVendorId, tc.expectedDefaultMachineType),
+						Check: resource.ComposeAggregateTestCheckFunc(
+							resource.TestCheckResourceAttr(gcpVMDataSourceRef, "vendor_id", tc.expectedVendorId),
+							resource.TestCheckNoResourceAttr(gcpVMDataSourceRef, "entity_type"),
+							resource.TestCheckNoResourceAttr(gcpVMDataSourceRef, "current_machine_type"),
+							resource.TestCheckResourceAttr(gcpVMDataSourceRef, "new_machine_type", tc.expectedNewMachineType),
+							resource.TestCheckResourceAttr(gcpVMDataSourceRef, "default_machine_type", tc.expectedDefaultMachineType),
+						),
+					},
+				},
+			})
+		})
+	}
 }

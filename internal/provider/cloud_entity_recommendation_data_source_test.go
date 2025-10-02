@@ -43,9 +43,6 @@ const (
 	validVmActionRespTestData = "action_success_response.json"
 	emptyActionRespTestData   = "empty_array_response.json"
 
-	entityTagsRespTestData = "entity_tags_success_response.json"
-	entityTagRespTestData  = "entity_tag_success_response.json"
-
 	searchEmptyRespFileLoc = "empty_array_response.json"
 	actionEmptyRespFileLoc = "empty_array_response.json"
 
@@ -59,11 +56,20 @@ const (
 
 // Tests data block logic by mocking valid turbo api response
 func TestCloudDataSource(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, cloudTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, cloudTestDataBaseDir, validVmActionRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, cloudTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, cloudTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
@@ -111,12 +117,38 @@ func TestCloudDataSource(t *testing.T) {
 
 // Tests default_size field in data block by mocking empty turbo api search response
 func TestDefaultSizeOnEmptySearch(t *testing.T) {
-	mockServer := createLocalServer(t,
-		"[]",
-		"",
-		"",
-		"")
-	defer mockServer.Close()
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: "[]",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+	})
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
 
@@ -162,12 +194,20 @@ func TestDefaultSizeOnEmptySearch(t *testing.T) {
 
 // Tests default_size field in data block by mocking empty turbo api action response
 func TestDefaultSizeInCloudDataSource(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, cloudTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, emptyActionRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
-
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, cloudTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, emptyActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
@@ -215,11 +255,20 @@ func TestDefaultSizeInCloudDataSource(t *testing.T) {
 
 // Tests when no default_size is specified
 func TestCloudDataSourceWithoutDefaultSize(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, cloudTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, cloudTestDataBaseDir, validVmActionRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, cloudTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, cloudTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
@@ -268,14 +317,23 @@ func TestCloudDataSourceWithoutDefaultSize(t *testing.T) {
 
 // Tests default_size field in data block by when search response is empty
 func TestDefaultEmptySearchResp(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, searchEmptyRespFileLoc),
-		loadTestFile(t, actionEmptyRespFileLoc),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, searchEmptyRespFileLoc),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, actionEmptyRespFileLoc),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
 	defer mockServer.Close()
 
-	providerConfig := fmt.Sprintf(config, strings.TrimLeft(mockServer.URL, "htps:/"))
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
 
 	for _, tc := range []struct {
 		name                        string
@@ -323,14 +381,34 @@ func TestDefaultEmptySearchResp(t *testing.T) {
 	}
 }
 
-// Tests error while retrieving entity tags
+// Tests no error while retrieving entity tags
 func TestCloudDataSourceGetEntityTagsError(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, cloudTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, cloudTestDataBaseDir, validVmActionRespTestData),
-		"",
-		"")
-	defer mockServer.Close()
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, cloudTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, cloudTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+	})
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
 	resourceConfig := `data "turbonomic_cloud_entity_recommendation" "test" {
@@ -339,7 +417,7 @@ func TestCloudDataSourceGetEntityTagsError(t *testing.T) {
 		default_size = "t3a.micro"
 	}`
 
-	t.Run("Valid VM Recommendation", func(t *testing.T) {
+	t.Run("no error while retrieving entity tags", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
 			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
@@ -354,12 +432,38 @@ func TestCloudDataSourceGetEntityTagsError(t *testing.T) {
 
 // Tests error while tagging an entity
 func TestCloudDataSourceTagEntityError(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, cloudTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, cloudTestDataBaseDir, validVmActionRespTestData),
-		"[]",
-		"")
-	defer mockServer.Close()
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, cloudTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, cloudTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "[]",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+	})
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
 	resourceConfig := `data "turbonomic_cloud_entity_recommendation" "test" {
@@ -383,12 +487,32 @@ func TestCloudDataSourceTagEntityError(t *testing.T) {
 
 // Tests no error while tagging already tagged entity with discovered "optimized by" tag value
 func TestCloudDataSourceTagEntityAlreadyTaggedDiscovered(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, cloudTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, cloudTestDataBaseDir, validVmActionRespTestData),
-		`[{"key": "turbonomic_optimized_by","values": ["turbonomic-terraform-provider"]}]`,
-		"")
-	defer mockServer.Close()
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, cloudTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, cloudTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: `[{"key": "turbonomic_optimized_by","values": ["turbonomic-terraform-provider"]}]`,
+			ResponseCode: http.StatusOK,
+		},
+	})
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
 	for _, tc := range []struct {
@@ -434,14 +558,38 @@ func TestCloudDataSourceTagEntityAlreadyTaggedDiscovered(t *testing.T) {
 
 // Tests no error while tagging already tagged entity with not discovered "optimized by" tag value
 func TestCloudDataSourceTagEntityAlreadyTaggedNotDiscovered(t *testing.T) {
-	mockServer := createLocalServerWithResponse(t,
-		loadTestFile(t, cloudTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, cloudTestDataBaseDir, validVmActionRespTestData),
-		`[]`,
-		Response{
-			Message:    "Entity service RPC call failed to complete request: INVALID_ARGUMENT: Trying to insert a tag with a key that already exists: turbonomic_optimized_by",
-			HttpStatus: http.StatusBadRequest})
-	defer mockServer.Close()
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, cloudTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, cloudTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: `[]`,
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "Entity service RPC call failed to complete request: INVALID_ARGUMENT: Trying to insert a tag with a key that already exists: turbonomic_optimized_by",
+			ResponseCode: http.StatusBadRequest,
+		},
+	})
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
 	for _, tc := range []struct {
@@ -485,40 +633,22 @@ func TestCloudDataSourceTagEntityAlreadyTaggedNotDiscovered(t *testing.T) {
 	}
 }
 
-// Tests invalid characters in default_size field
-func TestInvalidDefaultSizeCharacters(t *testing.T) {
-	providerConfig := `provider "turbonomic" {
-		hostname = "example.com"
-		username = "testuser"
-		password = "password"
-		skipverify = true
-	}`
-
-	t.Run("Invalid characters in default_size", func(t *testing.T) {
-		resource.Test(t, resource.TestCase{
-			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
-			Steps: []resource.TestStep{
-				{
-					Config: providerConfig + `
-					data "turbonomic_cloud_entity_recommendation" "test" {
-						entity_name  = "testVM"
-						entity_type  = "VirtualMachine"
-						default_size = "invalid@size#"
-					}`,
-					ExpectError: regexp.MustCompile(`Invalid Attribute Value Match`),
-				},
-			},
-		})
-	})
-}
-
 // Tests Azure VM recommendation
 func TestAzureCloudDataSource(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, azureTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, azureTestDataBaseDir, validVmActionRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, azureTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, azureTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
@@ -562,4 +692,35 @@ func TestAzureCloudDataSource(t *testing.T) {
 			})
 		})
 	}
+}
+
+func TestCloudEntityDataSourceDefaultSize(t *testing.T) {
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, cloudTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, cloudTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
+	defer mockServer.Close()
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+	t.Run("Default size length should be atleast 1", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config:      providerConfig + fmt.Sprintf(vmConfig, vmName, vmType, ""),
+					ExpectError: regexp.MustCompile(`Attribute default_size string length must be at least 1`),
+				},
+			},
+		})
+	})
 }

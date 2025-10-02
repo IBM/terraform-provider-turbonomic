@@ -12,11 +12,13 @@ This guide focuses on using Turbonomic data sources with [Google Cloud](https://
 ## Google compute engine example
 
 The `machine_type` is set to use the `turbonomic_google_compute_instance` data source unless null is returned, in which case it uses `<default_machine_type>` by default.
+Either `<vendor_id>` or `<entity_name>` to be provided to uniquely identify an entity.
 
 {{ tffile "examples/google_compute_instance/main.tf" }}
 
 ## Google persistent disk example
 
-The Google Persistent Disk resource is confgured to use the `turbonomic_google_compute_disk` data source unless null is returned, in which case it uses `<default_type>` by default.
+The Google Persistent Disk resource is configured to use the `turbonomic_google_compute_disk` data source unless null is returned, in which case it uses `<default_type>` by default.
+Either `<vendor_id>` or `<entity_name>` to be provided to uniquely identify an entity.
 
 {{ tffile "examples/google-compute-disk/main.tf" }}

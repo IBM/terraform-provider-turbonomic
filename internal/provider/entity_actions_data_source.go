@@ -262,7 +262,6 @@ var entityTypes = map[string]string{
 	"group":                    "Group",
 	"iomodule":                 "IOModule",
 	"internet":                 "Internet",
-	"loadbalancer":             "LoadBalancer",
 	"logicalpool":              "LogicalPool",
 	"namespace":                "Namespace",
 	"network":                  "Network",
@@ -281,7 +280,6 @@ var entityTypes = map[string]string{
 	"virtualmachinecluster":    "VirtualMachineCluster",
 	"virtualmachinespec":       "VirtualMachineSpec",
 	"virtualvolume":            "VirtualVolume",
-	"workload":                 "Workload",
 	"workloadcontroller":       "WorkloadController",
 }
 
@@ -729,6 +727,12 @@ func (d *entityActionsDataSource) Read(ctx context.Context, req datasource.ReadR
 	resp.Diagnostics.Append(req.Config.Get(ctx, &state)...)
 
 	enName, enTyp, envType := state.EntityName.ValueString(), state.EntityType.ValueString(), strings.ToUpper(state.EnvType.ValueString())
+
+	if d.client == nil {
+		resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+		return
+	}
+
 	var actTypes, actStates []string
 	err := state.ActionTypes.ElementsAs(ctx, &actTypes, true)
 	if err.HasError() {
@@ -741,7 +745,7 @@ func (d *entityActionsDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 
-	entity, errDiag := GetEntitiesByNameAndType(d.client, enName, entityTypes[strings.ToLower(enTyp)], envType, "")
+	entity, errDiag := GetEntitiesByName(d.client, WithEntityName(enName), WithEntityType(entityTypes[strings.ToLower(enTyp)]), WithEnvironmentType(envType))
 	if errDiag != nil {
 		tflog.Error(ctx, errDiag.Detail())
 		resp.Diagnostics.AddError(errDiag.Summary(), errDiag.Detail())
@@ -784,6 +788,10 @@ func (d *entityActionsDataSource) Read(ctx context.Context, req datasource.ReadR
 		}
 
 		state.Actions = append(state.Actions, tfAction)
+	}
+
+	if err := TagEntity(d.client, state.EntityUuid.ValueString()); err != nil {
+		resp.Diagnostics.AddError("error while tagging an entity", err.Error())
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)

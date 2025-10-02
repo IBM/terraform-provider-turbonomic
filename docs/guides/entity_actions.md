@@ -36,7 +36,7 @@ data "turbonomic_entity_actions" "testing" {
 
 - `entity_name` (String) case sensitive name of the entity
 - `entity_type` (String) case insensitive type of the entity
-    - Valid entity typed include `VirtualMachine`, `PhysicalMachine`, `Container`, `DatabaseServer` etc..  Refer to [Entity Reference Tables](https://www.ibm.com/docs/en/tarm/8.17.0?topic=reference-tables#appendix_reference__title__4)
+    - Valid entity types include `VirtualMachine`, `PhysicalMachine`, `Container`, `DatabaseServer` etc. Refer to [Entity Reference Tables](https://www.ibm.com/docs/en/tarm/8.17.0?topic=reference-tables#appendix_reference__title__4)
     for a complete list
 
 ### Optional
@@ -47,9 +47,9 @@ You can use the following optional fields to filter which types of actions are r
     - Valid action types are `START`, `MOVE`, `SCALE`, `ALLOCATE`, `SUSPEND`, `PROVISION`, `RECONFIGURE`, `RESIZE`, `DELETE`, `RIGHT_SIZE`, `BUY_RI`
     - Multiple types can be specified
 - `environment_type` (String) filter the actions by environment type
-    - Valid environment types are `HYBRID`, `CLOU`, `ONPREM`, `UNKNOWN`
+    - Valid environment types are `HYBRID`, `CLOUD`, `ONPREM`, `UNKNOWN`
 - `states` (List of String) list of action states to filter
-    - Valid states include `ACCEPTED`, `REJECTED`, `SUCCEEDED`, `FAILED`, `READY` etc..  Refer to [Entity Reference Tables](https://www.ibm.com/docs/en/tarm/8.17.0?topic=reference-tables#appendix_reference__title__3)
+    - Valid states include `ACCEPTED`, `REJECTED`, `SUCCEEDED`, `FAILED`, `READY` etc. Refer to [Entity Reference Tables](https://www.ibm.com/docs/en/tarm/8.17.0?topic=reference-tables#appendix_reference__title__3)
     for a complete list
     - Multiple types can be specified
 
@@ -335,7 +335,7 @@ Changes to Outputs:
 actions in response. To improve the relevance of your results, we recommend using the input attributes to narrow your
 search as much as possible.
 
-## Use case: Rezising a Cosmos DB container's document collection
+## Use case: Resizing a Cosmos DB container's document collection
 
 Although Turbonomic data sources currently don't support direct scaling of Cosmos DB document collections through
 Turbonomic actions, you can still leverage the `turbonomic_entity_actions` data source to benefit from Turbonomic's
@@ -593,7 +593,7 @@ locals {
 }
 ```
 
--> **Note:** that we are still providing a default value of `400` in case we do not have any actions returned from Turbonomic.
+-> **Note:** We are still providing a default value of `400` in case we do not have any actions returned from Turbonomic.
 
 With `throughput_value` now set to Turbonomic's recommended value, we can reference it in the `azurerm_cosmosdb_sql_container`
 resource block to configure the throughput for our Cosmos DB container.

@@ -21,7 +21,7 @@ terraform {
   required_providers {
     turbonomic = {
       source  = "IBM/turbonomic"
-      version = "1.5.0"
+      version = "1.6.0"
     }
   }
 }
@@ -36,7 +36,7 @@ provider "turbonomic" {
 
 ## Authentication and configuration
 
-The following examples demonstrate the Terraform code to and use the provider in different cloud environments.
+The following examples demonstrate how to use the provider in different cloud environments.
 
 ### Configuring the provider credentials
 
@@ -49,7 +49,7 @@ terraform {
   required_providers {
     turbonomic = {
       source  = "IBM/turbonomic"
-      version = "1.5.0"
+      version = "1.6.0"
     }
   }
 }
@@ -66,7 +66,7 @@ provider "turbonomic" {
 
 In order to authenticate to Turbonomic's API using OAuth 2.0, you first need to create an OAuth client.
 For more information, see [Creating and authenticating an OAuth 2.0 client](https://www.ibm.com/docs/en/tarm/8.15.0?topic=cookbook-authenticating-oauth-20-clients-api#cookbook_administration_oauth_authentication__title__4)
-to create the client. The output from the preceeding documentation will result in the following parameters:
+to create the client. The output from the preceding documentation will result in the following parameters:
 - clientId
 - clientSecret
 - role
@@ -76,7 +76,7 @@ terraform {
   required_providers {
     turbonomic = {
       source  = "IBM/turbonomic"
-      version = "1.5.0"
+      version = "1.6.0"
     }
   }
 }
@@ -97,14 +97,19 @@ Each data source is named to clearly indicate the cloud provider and the resourc
 
 Naming pattern: `turbonomic_<provider>_<resource_type>`.
 
-### Examples
-| Data Source Name                             | Cloud Provider    | Resource Type           |
-|----------------------------------------------|-------------------|-------------------------|
-| `turbonomic_aws_instance`                    | AWS               | EC2 Instance            |
-| `turbonomic_azurerm_linux_virtual_machine`   | Azure             | Linux Virtual Machine   |
-| `turbonomic_azurerm_windows_virtual_machine` | Azure             | Windows Virtual Machine |
-| `turbonomic_google_compute_instance`         | Google Cloud      | Compute Engine Instance |
-
+### Supported Data Sources
+| Name                                                                                  | Cloud Provider | Resource Type             |
+|---------------------------------------------------------------------------------------|----------------|---------------------------|
+| [`turbonomic_aws_db_instance`](data-sources/aws_db_instance.md)                       | AWS            | RDS Instance              |
+| [`turbonomic_aws_ebs_volume`](data-sources/aws_ebs_volume.md)                         | AWS            | EBS Volume              |
+| [`turbonomic_aws_instance`](data-sources/aws_instance.md)                             | AWS            | EC2 Instance              |
+| [`turbonomic_azurerm_linux_virtual_machine`](data-sources/azurerm_linux_virtual_machine.md) | Azure          | Linux Virtual Machine     |
+| [`turbonomic_azurerm_managed_disk`](data-sources/azurerm_managed_disk.md)             | Azure          | Managed Disk              |
+| [`turbonomic_azurerm_mssql_database`](data-sources/azurerm_mssql_database.md)         | Azure          | MS SQL Database           |
+| [`turbonomic_azurerm_windows_virtual_machine`](data-sources/azurerm_windows_virtual_machine.md) | Azure          | Windows Virtual Machine   |
+| [`turbonomic_entity_actions`](data-sources/entity_actions.md)                         | Multicloud     | Generic Action Search     |
+| [`turbonomic_google_compute_disk`](data-sources/google_compute_disk.md)               | Google Cloud   | Persistent Disk           |
+| [`turbonomic_google_compute_instance`](data-sources/google_compute_instance.md)       | Google Cloud   | Compute Engine Instance   |
 
 
 ## Features and bug requests
@@ -121,10 +126,10 @@ If you have a bug or feature request, then use one of the following resources to
 
 ### Optional
 
-- `client_id` (String) the OAuth 2.0 client ID that can be used to access the Turbonomic instance; use TURBO_CLIENT_ID to set with an enviornment variable
-- `client_secret` (String, Sensitive) the OAuth 2.0 client secret that can be used to access the Turbonomic instance; use TURBO_CLIENT_SECRET to set with an enviornment variable
-- `hostname` (String) hostname or IP Address of Turbonomic Instance; use TURBO_HOSTNAME to set with an enviornment variable
-- `password` (String, Sensitive) password for the username to access the Turbonomic Instance; use TURBO_PASSWORD to set with an enviornment variable
-- `role` (String) the OAuth 2.0 role that can be used to access the Turbonomic instance; use TURBO_ROLE to set with an enviornment variable
+- `client_id` (String) the OAuth 2.0 client ID that can be used to access the Turbonomic instance; use TURBO_CLIENT_ID to set with an environment variable
+- `client_secret` (String, Sensitive) the OAuth 2.0 client secret that can be used to access the Turbonomic instance; use TURBO_CLIENT_SECRET to set with an environment variable
+- `hostname` (String) hostname or IP Address of Turbonomic Instance; use TURBO_HOSTNAME to set with an environment variable
+- `password` (String, Sensitive) password for the username to access the Turbonomic Instance; use TURBO_PASSWORD to set with an environment variable
+- `role` (String) the OAuth 2.0 role that can be used to access the Turbonomic instance; use TURBO_ROLE to set with an environment variable
 - `skipverify` (Boolean) boolean on whether to verify the SSL or TLS certificate for the hostname
-- `username` (String) username to access the Turbonomic Instance; use TURBO_USERNAME to set with an enviornment variable
+- `username` (String) username to access the Turbonomic Instance; use TURBO_USERNAME to set with an environment variable

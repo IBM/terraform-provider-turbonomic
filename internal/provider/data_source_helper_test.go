@@ -9,6 +9,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	turboclient "github.com/IBM/turbonomic-go-client"
@@ -17,6 +18,12 @@ import (
 // MockT8cClient is a mock implementation of the T8cClient interface.
 type MockT8cClient struct {
 	mock.Mock
+}
+
+// SearchEntityByVendorId implements turboclient.T8cClient.
+func (m *MockT8cClient) SearchEntityByVendorId(searchReq turboclient.SearchRequestByVendorId) (turboclient.SearchResults, error) {
+	args := m.Called(searchReq)
+	return args.Get(0).(turboclient.SearchResults), args.Error(1)
 }
 
 // GetStats implements turboclient.T8cClient.
@@ -61,31 +68,37 @@ func (m *MockT8cClient) SearchEntityByName(searchReq turboclient.SearchRequest) 
 	return args.Get(0).(turboclient.SearchResults), args.Error(1)
 }
 
-func TestGetEntitiesByNameAndType(t *testing.T) {
+func TestGetEntitiesByName(t *testing.T) {
 	entityName := "exampleEntity"
 	entityType := "exampleType"
 	envType := "exampleEnv"
 	cloudType := "exampleCloud"
 
 	t.Run("Client is nil", func(t *testing.T) {
-		_, errDiag := GetEntitiesByNameAndType(nil, entityName, entityType, envType, cloudType)
+		_, errDiag := GetEntitiesByName(nil, WithEntityName(entityName), WithEntityType(entityType), WithEnvironmentType(envType), WithCloudType(cloudType))
 		assert.NotNil(t, errDiag)
 	})
 
 	t.Run("Entity name is empty", func(t *testing.T) {
 		mockClient := new(MockT8cClient)
-		_, errDiag := GetEntitiesByNameAndType(mockClient, "", entityType, envType, cloudType)
+		_, errDiag := GetEntitiesByName(mockClient, WithEntityType(entityType), WithEnvironmentType(envType), WithCloudType(cloudType))
+		assert.NotNil(t, errDiag)
+		mockClient.AssertExpectations(t)
+
+		_, errDiag = GetEntitiesByName(mockClient, WithEntityName(""), WithEntityType(entityType), WithEnvironmentType(envType), WithCloudType(cloudType))
 		assert.NotNil(t, errDiag)
 		mockClient.AssertExpectations(t)
 	})
 
 	t.Run("Successful search", func(t *testing.T) {
 		mockClient := new(MockT8cClient)
-		expected := turboclient.SearchResults{{UUID: "uuid"}}
+		expected := turboclient.SearchResults{
+			{UUID: "uuid"},
+		}
 
 		mockClient.On("SearchEntityByName", mock.Anything).Return(expected, nil).Once()
 
-		entities, errDiag := GetEntitiesByNameAndType(mockClient, entityName, entityType, envType, cloudType)
+		entities, errDiag := GetEntitiesByName(mockClient, WithEntityName(entityName), WithEntityType(entityType), WithEnvironmentType(envType), WithCloudType(cloudType))
 		assert.Nil(t, errDiag)
 		assert.Equal(t, expected, entities)
 
@@ -94,36 +107,42 @@ func TestGetEntitiesByNameAndType(t *testing.T) {
 
 	t.Run("Multiple matches found", func(t *testing.T) {
 		mockClient := new(MockT8cClient)
-		multiple := turboclient.SearchResults{{UUID: "uuid1"}, {UUID: "uuid2"}}
+		multiple := turboclient.SearchResults{
+			{UUID: "uuid1"}, {UUID: "uuid2"},
+		}
 
 		mockClient.On("SearchEntityByName", mock.Anything).Return(multiple, nil).Once()
 
-		_, errDiag := GetEntitiesByNameAndType(mockClient, entityName, entityType, envType, cloudType)
+		_, errDiag := GetEntitiesByName(mockClient, WithEntityName(entityName), WithEntityType(entityType), WithEnvironmentType(envType), WithCloudType(cloudType))
 		assert.NotNil(t, errDiag)
 
 		mockClient.AssertExpectations(t)
 	})
 }
 
-func TestGetActionsByEntityUUIDAndType(t *testing.T) {
+func TestGetActions(t *testing.T) {
 	entityUUID := "exampleUuid"
-	actionType := "exampleAction"
+	actionTypes := []string{"exampleAction"}
 
 	t.Run("Client is nil", func(t *testing.T) {
-		_, errDiag := GetActionsByEntityUUIDAndType(nil, entityUUID, actionType)
+		_, errDiag := GetActions(nil, WithEntityUuid(entityUUID), WithActionTypes(actionTypes))
 		assert.NotNil(t, errDiag)
 	})
 
 	t.Run("Entity UUID is empty", func(t *testing.T) {
 		client := new(MockT8cClient)
-		_, errDiag := GetActionsByEntityUUIDAndType(client, "", actionType)
+		_, errDiag := GetActions(client, WithActionTypes(actionTypes))
+		assert.NotNil(t, errDiag)
+		client.AssertExpectations(t)
+
+		_, errDiag = GetActions(client, WithEntityUuid(""), WithActionTypes(actionTypes))
 		assert.NotNil(t, errDiag)
 		client.AssertExpectations(t)
 	})
 
 	t.Run("Action Type is empty", func(t *testing.T) {
 		client := new(MockT8cClient)
-		_, errDiag := GetActionsByEntityUUIDAndType(client, entityUUID, "")
+		_, errDiag := GetActions(client, WithEntityUuid(entityUUID))
 		assert.NotNil(t, errDiag)
 		client.AssertExpectations(t)
 	})
@@ -132,7 +151,7 @@ func TestGetActionsByEntityUUIDAndType(t *testing.T) {
 		client := new(MockT8cClient)
 		client.On("GetActionsByUUID", mock.Anything).Return(turboclient.ActionResults{}, assert.AnError).Once()
 
-		_, errDiag := GetActionsByEntityUUIDAndType(client, entityUUID, actionType)
+		_, errDiag := GetActions(client, WithEntityUuid(entityUUID), WithActionTypes(actionTypes))
 		assert.NotNil(t, errDiag)
 
 		client.AssertExpectations(t)
@@ -146,7 +165,7 @@ func TestGetActionsByEntityUUIDAndType(t *testing.T) {
 
 		client.On("GetActionsByUUID", mock.Anything).Return(expected, nil).Once()
 
-		actions, errDiag := GetActionsByEntityUUIDAndType(client, entityUUID, actionType)
+		actions, errDiag := GetActions(client, WithEntityUuid(entityUUID), WithActionTypes(actionTypes))
 		assert.Nil(t, errDiag)
 		assert.Equal(t, expected, actions)
 
@@ -162,25 +181,25 @@ func TestGetActionsByEntityUUIDAndType(t *testing.T) {
 
 		client.On("GetActionsByUUID", mock.Anything).Return(multiple, nil).Once()
 
-		_, errDiag := GetActionsByEntityUUIDAndType(client, entityUUID, actionType)
+		_, errDiag := GetActions(client, WithEntityUuid(entityUUID), WithActionTypes(actionTypes))
 		assert.NotNil(t, errDiag) // Assume function treats multiple as error
 
 		client.AssertExpectations(t)
 	})
 }
 
-func TestGetStatsByEntityUUID(t *testing.T) {
+func TestGetStatsByEntityUUIDAndType(t *testing.T) {
 	entityUUID := "test-entity-uuid"
 
 	t.Run("Client is nil", func(t *testing.T) {
-		_, errDiag := GetStatsByEntityUUID(nil, entityUUID)
+		_, errDiag := GetStatsByEntityUUIDAndType(nil, entityUUID, "VirtualVolume")
 		assert.NotNil(t, errDiag)
 		assert.Contains(t, errDiag.Detail(), "nil client")
 	})
 
 	t.Run("Entity UUID is empty", func(t *testing.T) {
 		client := new(MockT8cClient)
-		_, errDiag := GetStatsByEntityUUID(client, "")
+		_, errDiag := GetStatsByEntityUUIDAndType(client, "", "VirtualVolume")
 		assert.NotNil(t, errDiag)
 		assert.Contains(t, errDiag.Detail(), "empty entity UUID")
 		client.AssertExpectations(t)
@@ -190,7 +209,7 @@ func TestGetStatsByEntityUUID(t *testing.T) {
 		client := new(MockT8cClient)
 		client.On("GetStats", mock.Anything).Return(turboclient.StatsResponse{}, assert.AnError).Once()
 
-		_, errDiag := GetStatsByEntityUUID(client, entityUUID)
+		_, errDiag := GetStatsByEntityUUIDAndType(client, entityUUID, "VirtualVolume")
 		assert.NotNil(t, errDiag)
 		assert.Contains(t, errDiag.Detail(), "Error fetching stats")
 
@@ -201,7 +220,7 @@ func TestGetStatsByEntityUUID(t *testing.T) {
 		client := new(MockT8cClient)
 		client.On("GetStats", mock.Anything).Return(turboclient.StatsResponse{}, nil).Once()
 
-		_, errDiag := GetStatsByEntityUUID(client, entityUUID)
+		_, errDiag := GetStatsByEntityUUIDAndType(client, entityUUID, "VirtualVolume")
 		assert.NotNil(t, errDiag)
 		assert.Contains(t, errDiag.Detail(), "No stats found")
 
@@ -247,7 +266,7 @@ func TestGetStatsByEntityUUID(t *testing.T) {
 				contains(statNames, IOThroughput)
 		})).Return(mockResponse, nil).Once()
 
-		stats, errDiag := GetStatsByEntityUUID(client, entityUUID)
+		stats, errDiag := GetStatsByEntityUUIDAndType(client, entityUUID, "VirtualVolume")
 		assert.Nil(t, errDiag)
 		assert.Equal(t, mockResponse, stats)
 		assert.Equal(t, 1, len(stats))
@@ -284,7 +303,7 @@ func TestGetStatsByEntityUUID(t *testing.T) {
 
 		client.On("GetStats", mock.Anything).Return(mockResponse, nil).Once()
 
-		stats, errDiag := GetStatsByEntityUUID(client, "vol-05f7c906f860b4d3c")
+		stats, errDiag := GetStatsByEntityUUIDAndType(client, "vol-05f7c906f860b4d3c", "VirtualVolume")
 		if errDiag != nil {
 			t.Fatalf("Error getting stats: %v", errDiag)
 		}
@@ -334,6 +353,132 @@ func TestGetStatsByEntityUUID(t *testing.T) {
 		assert.NotNil(t, ioThroughputStat, "IOThroughput stat should exist")
 		assert.Equal(t, "Kbit/sec", ioThroughputStat.Units)
 	})
+}
+
+func TestGetStatisticsByEntityType(t *testing.T) {
+	t.Run("VirtualVolume entity type", func(t *testing.T) {
+		stats := GetStatisticsByEntityType("VirtualVolume")
+		assert.Equal(t, 3, len(stats), "VirtualVolume should have 3 statistics")
+
+		statNames := make([]string, len(stats))
+		for i, stat := range stats {
+			statNames[i] = stat.Name
+		}
+
+		assert.True(t, contains(statNames, StorageAccess), "Should include StorageAccess")
+		assert.True(t, contains(statNames, StorageAmount), "Should include StorageAmount")
+		assert.True(t, contains(statNames, IOThroughput), "Should include IOThroughput")
+	})
+
+	t.Run("DatabaseServer entity type", func(t *testing.T) {
+		stats := GetStatisticsByEntityType("DatabaseServer")
+		assert.Equal(t, 2, len(stats), "DatabaseServer should have 2 statistics")
+
+		statNames := make([]string, len(stats))
+		for i, stat := range stats {
+			statNames[i] = stat.Name
+		}
+
+		assert.True(t, contains(statNames, StorageAccess), "Should include StorageAccess")
+		assert.True(t, contains(statNames, StorageAmount), "Should include StorageAmount")
+		assert.False(t, contains(statNames, IOThroughput), "Should NOT include IOThroughput")
+	})
+
+	t.Run("Unknown entity type", func(t *testing.T) {
+		stats := GetStatisticsByEntityType("UnknownType")
+		assert.Equal(t, 3, len(stats), "Unknown type should default to 3 statistics")
+
+		statNames := make([]string, len(stats))
+		for i, stat := range stats {
+			statNames[i] = stat.Name
+		}
+
+		assert.True(t, contains(statNames, StorageAccess), "Should include StorageAccess")
+		assert.True(t, contains(statNames, StorageAmount), "Should include StorageAmount")
+		assert.True(t, contains(statNames, IOThroughput), "Should include IOThroughput")
+	})
+}
+
+func TestApplyDefaultIfEmptyGeneric_StringValue(t *testing.T) {
+	tests := []struct {
+		name     string
+		field    types.String
+		def      types.String
+		expected types.String
+	}{
+		{
+			name:     "field not null and not empty",
+			field:    types.StringValue("hello"),
+			def:      types.StringValue("default"),
+			expected: types.StringValue("hello"),
+		},
+		{
+			name:     "field empty",
+			field:    types.StringValue(""),
+			def:      types.StringValue("default"),
+			expected: types.StringValue("default"),
+		},
+		{
+			name:     "field empty but default null",
+			field:    types.StringValue(""),
+			def:      types.StringNull(),
+			expected: types.StringValue(""),
+		},
+		{
+			name:     "field null",
+			field:    types.StringNull(),
+			def:      types.StringValue("default"),
+			expected: types.StringValue("default"),
+		},
+		{
+			name:     "field null and default null",
+			field:    types.StringNull(),
+			def:      types.StringNull(),
+			expected: types.StringNull(),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := applyDefaultIfEmptyGeneric[types.String](tt.field, tt.def)
+			assert.Equal(t, tt.expected, got)
+		})
+	}
+}
+
+func TestApplyDefaultIfEmptyGeneric_Int64Value(t *testing.T) {
+	tests := []struct {
+		name     string
+		field    types.Int64
+		def      types.Int64
+		expected types.Int64
+	}{
+		{
+			name:     "field not null",
+			field:    types.Int64Value(42),
+			def:      types.Int64Value(99),
+			expected: types.Int64Value(42),
+		},
+		{
+			name:     "field null",
+			field:    types.Int64Null(),
+			def:      types.Int64Value(99),
+			expected: types.Int64Value(99),
+		},
+		{
+			name:     "field null and default null",
+			field:    types.Int64Null(),
+			def:      types.Int64Null(),
+			expected: types.Int64Null(),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := applyDefaultIfEmptyGeneric[types.Int64](tt.field, tt.def)
+			assert.Equal(t, tt.expected, got)
+		})
+	}
 }
 
 // Helper function to check if a slice contains a string

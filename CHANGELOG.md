@@ -1,15 +1,38 @@
+
+## 1.6.0
+FEATURES:
+- Introduced `iops` and `allocated_storage` attributes to the `aws_db_instance` data source.
+- Added `vendor_id` attribute to the following data sources for improved searching:
+    - `turbonomic_aws_ebs_volume`
+    - `turbonomic_aws_instance`
+    - `turbonomic_azurerm_managed_disk`
+    - `turbonomic_google_compute_disk`
+    - `turbonomic_google_compute_instance`
+
+BUG FIXES:
+- Resolved casing normalization issues for `vm_size` values in Azure-related data sources.
+- Fixed tagging issues in the `turbonomic_entity_actions` data source.
+- Corrected configuration validators across multiple data sources.
+- Applied minor updates to documentation.
+
 ## 1.5.0
 
 FEATURES:
 - Added `iops`,`throughput` and `size` attributes to `aws_ebs_volume` data source
 - Added `disk_iops_read_write`,`disk_mbps_read_write` and `disk_size_gb` to `azurerm_managed_disk` data source
 - Added `provisioned_iops`,`provisioned_throughput` and `size` attributes to `google_compute_disk` data source
-- Deprecated `turbonomic_cloud_entity_recommendation` data source
-- **New Data Resources:** `turbonomic_aws_instance`, `azurerm_linux_virtual_machine`, `azurerm_windows_virtual_machine`, `google_compute_instance`, `turbonomic_entity_actions`
+- Added `iops` and `allocated_storage` attributes to `aws_db_instance` data source
 
 BUG FIXES:
 
 - Fixed `azurerm_managed_disk` data source to return correct values for storage_account_type
+
+## 1.4.0
+
+FEATURES:
+
+- Deprecated `turbonomic_cloud_entity_recommendation` data source
+- **New Data Resources:** `turbonomic_aws_instance`, `azurerm_linux_virtual_machine`, `azurerm_windows_virtual_machine`, `google_compute_instance`
 
 NOTES:
 

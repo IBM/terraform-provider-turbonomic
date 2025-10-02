@@ -54,11 +54,13 @@ resource "azurerm_linux_virtual_machine" "exampleVirtualMachine" {
 ## Azure managed disks example
 
 The `storage_account_type` is set to use the `turbonomic_azurerm_managed_disk` data source unless null is returned, in which case it uses `<default_storage_account_type>` by default.
+Either `<vendor_id>` or `<entity_name>` to be provided to uniquely identify an entity.
 
 ```terraform
 data "turbonomic_azurerm_managed_disk" "example" {
   entity_name                  = "<entity_name>"
   default_storage_account_type = "<default_storage_account_type>"
+  vendor_id                    = "<vendor_id>"
   default_disk_iops_read_write = var.default_disk_iops_read_write
   default_disk_size_gb         = var.default_disk_size_gb
   default_disk_mbps_read_write = var.default_disk_mbps_read_write

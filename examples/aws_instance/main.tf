@@ -5,6 +5,7 @@ provider "aws" {
 data "turbonomic_aws_instance" "example" {
   entity_name           = "<entity_name>"
   default_instance_type = "<default_instance_type>"
+  vendor_id             = "<vendor_id>"
 }
 
 resource "aws_instance" "terraform-demo-ec2" {

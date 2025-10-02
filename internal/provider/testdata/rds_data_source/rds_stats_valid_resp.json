@@ -1,0 +1,252 @@
+[
+    {
+        "displayName": "testRDS",
+        "date": "2025-08-05T10:07:49Z",
+        "statistics": [
+            {
+                "name": "StorageAccess",
+                "capacity": {
+                    "max": 3000.0,
+                    "min": 3000.0,
+                    "avg": 3000.0,
+                    "total": 3000.0,
+                    "totalMax": 3000.0,
+                    "totalMin": 3000.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "IOPS",
+                "values": {
+                    "max": 2.833,
+                    "min": 0.283,
+                    "avg": 0.283,
+                    "total": 0.283,
+                    "totalMax": 2.833,
+                    "totalMin": 0.283
+                },
+                "value": 0.283,
+                "commoditySource": {}
+            },
+            {
+                "name": "StorageAmount",
+                "capacity": {
+                    "max": 100.0,
+                    "min": 100.0,
+                    "avg": 100.0,
+                    "total": 100.0,
+                    "totalMax": 100.0,
+                    "totalMin": 100.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "GB",
+                "values": {
+                    "max": 50.0,
+                    "min": 50.0,
+                    "avg": 50.0,
+                    "total": 50.0,
+                    "totalMax": 50.0,
+                    "totalMin": 50.0
+                },
+                "value": 50.0,
+                "commoditySource": {}
+            }
+        ],
+        "epoch": "HISTORICAL"
+    },
+    {
+        "displayName": "testRDS",
+        "date": "2025-08-05T10:14:22Z",
+        "statistics": [
+            {
+                "name": "StorageAccess",
+                "capacity": {
+                    "max": 3000.0,
+                    "min": 3000.0,
+                    "avg": 3000.0,
+                    "total": 3000.0,
+                    "totalMax": 3000.0,
+                    "totalMin": 3000.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "IOPS",
+                "values": {
+                    "max": 2.833,
+                    "min": 0.283,
+                    "avg": 0.283,
+                    "total": 0.283,
+                    "totalMax": 2.833,
+                    "totalMin": 0.283
+                },
+                "value": 0.283,
+                "commoditySource": {}
+            },
+            {
+                "name": "StorageAmount",
+                "capacity": {
+                    "max": 100.0,
+                    "min": 100.0,
+                    "avg": 100.0,
+                    "total": 100.0,
+                    "totalMax": 100.0,
+                    "totalMin": 100.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "GB",
+                "values": {
+                    "max": 50.0,
+                    "min": 50.0,
+                    "avg": 50.0,
+                    "total": 50.0,
+                    "totalMax": 50.0,
+                    "totalMin": 50.0
+                },
+                "value": 50.0,
+                "commoditySource": {}
+            }
+        ],
+        "epoch": "CURRENT"
+    },
+    {
+        "displayName": "testRDS",
+        "date": "2025-08-05T10:24:22Z",
+        "statistics": [
+            {
+                "name": "StorageAccess",
+                "capacity": {
+                    "max": 1000.0,
+                    "min": 1000.0,
+                    "avg": 1000.0,
+                    "total": 1000.0,
+                    "totalMax": 1000.0,
+                    "totalMin": 1000.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "IOPS",
+                "values": {
+                    "max": 0.28333333,
+                    "min": 0.0,
+                    "avg": 0.28333333,
+                    "total": 0.28333333,
+                    "totalMax": 0.28333333,
+                    "totalMin": 0.0
+                },
+                "value": 0.28333333,
+                "commoditySource": {},
+                "histUtilizations": [
+                    {
+                        "type": "percentile",
+                        "usage": 30.0,
+                        "capacity": 1000.0
+                    },
+                    {
+                        "type": "smoothed",
+                        "usage": 0.28333333,
+                        "capacity": 1000.0
+                    }
+                ]
+            },
+            {
+                "name": "StorageAmount",
+                "capacity": {
+                    "max": 100.0,
+                    "min": 100.0,
+                    "avg": 100.0,
+                    "total": 100.0,
+                    "totalMax": 100.0,
+                    "totalMin": 100.0
+                },
+                "reserved": {
+                    "max": 0.0,
+                    "min": 0.0,
+                    "avg": 0.0,
+                    "total": 0.0
+                },
+                "filters": [
+                    {
+                        "type": "relation",
+                        "value": "sold",
+                        "displayName": null
+                    }
+                ],
+                "units": "GB",
+                "values": {
+                    "max": 50.0,
+                    "min": 0.0,
+                    "avg": 50.0,
+                    "total": 50.0,
+                    "totalMax": 50.0,
+                    "totalMin": 0.0
+                },
+                "value": 50.0,
+                "commoditySource": {},
+                "histUtilizations": [
+                    {
+                        "type": "smoothed",
+                        "usage": 50.0,
+                        "capacity": 100.0
+                    }
+                ]
+            }
+        ],
+        "epoch": "PROJECTED"
+    }
+]

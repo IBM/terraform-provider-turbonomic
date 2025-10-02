@@ -18,6 +18,7 @@ The `size` is configured to use the `turbonomic_azurerm_linux_virtual_machine` d
 ## Azure managed disks example
 
 The `storage_account_type` is set to use the `turbonomic_azurerm_managed_disk` data source unless null is returned, in which case it uses `<default_storage_account_type>` by default.
+Either `<vendor_id>` or `<entity_name>` to be provided to uniquely identify an entity.
 
 {{ tffile "examples/azure_managed_disks/main.tf" }}
 

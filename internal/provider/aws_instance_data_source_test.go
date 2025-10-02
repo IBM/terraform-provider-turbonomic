@@ -27,20 +27,49 @@ const (
 		entity_name  = "%s"
 	}
 	`
-	awsVMDataSourceRef = "data.turbonomic_aws_instance.test"
-	awsVMName          = "testVM"
-	awsVMCurrentType   = "t2.micro"
-	awsVMDefaultType   = "t3a.micro"
-	awsVMInvalidType   = "invalid@type#"
+	awsVMConfigWithVendorId = `
+	data "turbonomic_aws_instance" "test" {
+		vendor_id = "%s"
+		default_instance_type = "%s"
+	}
+	`
+	awsVMConfigWithVendorIdAndName = `
+	data "turbonomic_aws_instance" "test" {
+		vendor_id = "%s"
+		default_instance_type = "%s"
+		entity_name  = "%s"
+	}
+	`
+	awsVMConfigNoIdentifiers = `
+	data "turbonomic_aws_instance" "test" {
+		default_instance_type = "%s"
+	}
+	`
+	awsVMDataSourceRef       = "data.turbonomic_aws_instance.test"
+	awsVMName                = "testVM"
+	awsVMVendorId            = "i-0123456789abcdef0"
+	awsVMCurrentType         = "t2.micro"
+	awsVMDefaultType         = "t3a.micro"
+	awsVMDefaultInstanceType = awsVMDefaultType
+	awsVMCurrentInstanceType = awsVMCurrentType
 )
 
 // Test for a valid entity
 func TestAwsInstanceDataSourceWithValidEntity(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, awsVMTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, awsVMTestDataBaseDir, validVmActionRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, awsVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, awsVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
@@ -84,7 +113,38 @@ func TestAwsInstanceDataSourceWithValidEntity(t *testing.T) {
 
 // Test for an invalid entity
 func TestAwsInstanceDataSourceWithInvalidEntity(t *testing.T) {
-	mockServer := createLocalServer(t, "[]", "", "", "")
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: "[]",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+	})
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
@@ -126,11 +186,20 @@ func TestAwsInstanceDataSourceWithInvalidEntity(t *testing.T) {
 
 // Test for an entity that has no actions
 func TestAwsInstanceDataSourceWithNoAction(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, awsVMTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, emptyActionRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, awsVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, emptyActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
@@ -175,11 +244,20 @@ func TestAwsInstanceDataSourceWithNoAction(t *testing.T) {
 
 // Tests when default_instance_type is not specified
 func TestAwsInstanceDataSourceWithoutDefaultType(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, awsVMTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, awsVMTestDataBaseDir, validVmActionRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, awsVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, awsVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
@@ -218,48 +296,102 @@ func TestAwsInstanceDataSourceWithoutDefaultType(t *testing.T) {
 	}
 }
 
-// Tests error while retrieving entity tags
+// Tests no error while retrieving entity tags
 func TestAwsInstanceDataSourceGetEntityTagsError(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, awsVMTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, awsVMTestDataBaseDir, validVmActionRespTestData),
-		"",
-		"")
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, awsVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, awsVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+	})
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
 
-	t.Run("Error while retrieving entity tags", func(t *testing.T) {
+	t.Run("no error while retrieving entity tags", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
 			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
 				{
 					Config:      providerConfig + fmt.Sprintf(awsConfig, awsVMName, awsVMDefaultType),
-					ExpectError: regexp.MustCompile(`Unable to retrieve entity tags from Turbonomic`),
+					ExpectError: nil,
 				},
 			},
 		})
 	})
 }
 
-// Tests error while tagging an entity
+// Tests no error while tagging an entity
 func TestAwsInstanceDataSourceTagEntityError(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, awsVMTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, awsVMTestDataBaseDir, validVmActionRespTestData),
-		"[]",
-		"")
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, awsVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, awsVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "[]",
+			ResponseCode: http.StatusOK,
+		},
+	})
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
 
-	t.Run("Error while tagging an entity", func(t *testing.T) {
+	t.Run("no rrror while tagging an entity", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
 			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
 				{
 					Config:      providerConfig + fmt.Sprintf(awsConfig, awsVMName, awsVMDefaultType),
-					ExpectError: regexp.MustCompile(`Unable to tag an entity in Turbonomic`),
+					ExpectError: nil,
 				},
 			},
 		})
@@ -268,11 +400,38 @@ func TestAwsInstanceDataSourceTagEntityError(t *testing.T) {
 
 // Tests no error while tagging already tagged entity with discovered "optimized by" tag value
 func TestAwsInstanceDataSourceTagEntityAlreadyTaggedDiscovered(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, awsVMTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, awsVMTestDataBaseDir, validVmActionRespTestData),
-		`[{"key": "turbonomic_optimized_by","values": ["turbonomic-terraform-provider"]}]`,
-		"")
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, awsVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, awsVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: `[{"key": "turbonomic_optimized_by","values": ["turbonomic-terraform-provider"]}]`,
+			ResponseCode: http.StatusOK,
+		},
+	})
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
@@ -285,7 +444,7 @@ func TestAwsInstanceDataSourceTagEntityAlreadyTaggedDiscovered(t *testing.T) {
 		expectedDefaultType string
 	}{
 		{
-			name:                "No error while tagging already tagged entity",
+			name:                "no error while tagging already tagged entity",
 			testEntity:          awsVMName,
 			expectedEntityName:  awsVMName,
 			expectedCurrentType: awsVMCurrentType,
@@ -315,13 +474,38 @@ func TestAwsInstanceDataSourceTagEntityAlreadyTaggedDiscovered(t *testing.T) {
 
 // Tests no error while tagging already tagged entity with not discovered "optimized by" tag value
 func TestAwsInstanceDataSourceTagEntityAlreadyTaggedNotDiscovered(t *testing.T) {
-	mockServer := createLocalServerWithResponse(t,
-		loadTestFile(t, awsVMTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, awsVMTestDataBaseDir, validVmActionRespTestData),
-		`[]`,
-		Response{
-			Message:    "Entity service RPC call failed to complete request: INVALID_ARGUMENT: Trying to insert a tag with a key that already exists: turbonomic_optimized_by",
-			HttpStatus: http.StatusBadRequest})
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, awsVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, awsVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "Entity service RPC call failed to complete request: INVALID_ARGUMENT: Trying to insert a tag with a key that already exists: turbonomic_optimized_by",
+			ResponseCode: http.StatusBadRequest,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: `[]`,
+			ResponseCode: http.StatusOK,
+		},
+	})
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
@@ -362,17 +546,331 @@ func TestAwsInstanceDataSourceTagEntityAlreadyTaggedNotDiscovered(t *testing.T) 
 	}
 }
 
-// Tests invalid characters in default_instance_type field
-func TestAwsInstanceDataSourceInvalidDefaultTypeCharacters(t *testing.T) {
-	t.Run("Invalid characters in default_instance_type", func(t *testing.T) {
+func TestAwsInstanceDataSourceWithEmptyDefaultType(t *testing.T) {
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, awsVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, awsVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
+	defer mockServer.Close()
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+	t.Run("Default length should be atleast 1", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
 			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
 				{
-					Config:      providerConfig + fmt.Sprintf(awsConfig, awsVMName, awsVMInvalidType),
-					ExpectError: regexp.MustCompile(`Invalid Attribute Value Match`),
+					Config:      providerConfig + fmt.Sprintf(awsConfig, awsVMName, ""),
+					ExpectError: regexp.MustCompile(`Attribute default_instance_type string length must be at least 1`),
 				},
 			},
 		})
 	})
+}
+
+// Test for a valid entity using vendor_id
+func TestAwsInstanceDataSourceWithVendorId(t *testing.T) {
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, awsVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, awsVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
+	defer mockServer.Close()
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+
+	for _, tc := range []struct {
+		name                        string
+		testVendorId                string
+		expectedVendorId            string
+		expectedDefaultInstanceType string
+		expectedCurrentInstanceType string
+		expectedNewInstanceType     string
+	}{
+		{
+			name:                        "Valid VM recommendation with vendor_id",
+			testVendorId:                awsVMVendorId,
+			expectedVendorId:            awsVMVendorId,
+			expectedDefaultInstanceType: awsVMDefaultInstanceType,
+			expectedCurrentInstanceType: awsVMCurrentInstanceType,
+			expectedNewInstanceType:     awsVMDefaultInstanceType,
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			resource.Test(t, resource.TestCase{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Steps: []resource.TestStep{
+					{
+						Config: providerConfig + fmt.Sprintf(awsVMConfigWithVendorId, tc.testVendorId, tc.expectedDefaultInstanceType),
+						Check: resource.ComposeAggregateTestCheckFunc(
+							resource.TestCheckResourceAttr(awsVMDataSourceRef, "vendor_id", tc.expectedVendorId),
+							resource.TestCheckResourceAttr(awsVMDataSourceRef, "entity_type", vmEntityType),
+							resource.TestCheckResourceAttr(awsVMDataSourceRef, "default_instance_type", tc.expectedDefaultInstanceType),
+							resource.TestCheckResourceAttr(awsVMDataSourceRef, "current_instance_type", tc.expectedCurrentInstanceType),
+							resource.TestCheckResourceAttr(awsVMDataSourceRef, "new_instance_type", tc.expectedNewInstanceType),
+						),
+					},
+				},
+			})
+		})
+	}
+}
+
+// Test for a valid entity using vendor_id and entity_name
+func TestAwsInstanceDataSourceWithVendorIdAndName(t *testing.T) {
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, awsVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, awsVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
+	defer mockServer.Close()
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+
+	for _, tc := range []struct {
+		name                        string
+		testVendorId                string
+		testEntity                  string
+		expectedVendorId            string
+		expectedEntityName          string
+		expectedDefaultInstanceType string
+		expectedCurrentInstanceType string
+		expectedNewInstanceType     string
+	}{
+		{
+			name:                        "Valid VM recommendation with vendor_id and entity_name",
+			testVendorId:                awsVMVendorId,
+			testEntity:                  awsVMName,
+			expectedVendorId:            awsVMVendorId,
+			expectedEntityName:          awsVMName,
+			expectedDefaultInstanceType: awsVMDefaultInstanceType,
+			expectedCurrentInstanceType: awsVMCurrentInstanceType,
+			expectedNewInstanceType:     awsVMDefaultInstanceType,
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			resource.Test(t, resource.TestCase{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Steps: []resource.TestStep{
+					{
+						Config: providerConfig + fmt.Sprintf(awsVMConfigWithVendorIdAndName, tc.testVendorId, tc.expectedDefaultInstanceType, tc.testEntity),
+						Check: resource.ComposeAggregateTestCheckFunc(
+							resource.TestCheckResourceAttr(awsVMDataSourceRef, "vendor_id", tc.expectedVendorId),
+							resource.TestCheckResourceAttr(awsVMDataSourceRef, "entity_name", tc.expectedEntityName),
+							resource.TestCheckResourceAttr(awsVMDataSourceRef, "entity_type", vmEntityType),
+							resource.TestCheckResourceAttr(awsVMDataSourceRef, "default_instance_type", tc.expectedDefaultInstanceType),
+							resource.TestCheckResourceAttr(awsVMDataSourceRef, "current_instance_type", tc.expectedCurrentInstanceType),
+							resource.TestCheckResourceAttr(awsVMDataSourceRef, "new_instance_type", tc.expectedNewInstanceType),
+						),
+					},
+				},
+			})
+		})
+	}
+}
+
+// Test for when neither entity_name nor vendor_id is provided
+func TestAwsInstanceDataSourceWithNoIdentifiers(t *testing.T) {
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, awsVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, awsVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
+	defer mockServer.Close()
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+
+	t.Run("Error when neither entity_name nor vendor_id is provided", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config:      providerConfig + fmt.Sprintf(awsVMConfigNoIdentifiers, awsVMDefaultType),
+					ExpectError: regexp.MustCompile(`At least one of these attributes must be configured`),
+				},
+			},
+		})
+	})
+
+}
+
+// Test for an invalid vendor_id
+func TestAwsInstanceDataSourceWithInvalidVendorId(t *testing.T) {
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: "[]",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+	})
+	defer mockServer.Close()
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+
+	for _, tc := range []struct {
+		name                        string
+		testVendorId                string
+		expectedVendorId            string
+		expectedDefaultInstanceType string
+		expectedCurrentInstanceType string
+		expectedNewInstanceType     string
+	}{
+		{
+			name:                        "Invalid vendor_id",
+			testVendorId:                awsVMVendorId,
+			expectedVendorId:            awsVMVendorId,
+			expectedDefaultInstanceType: awsVMDefaultInstanceType,
+			expectedCurrentInstanceType: awsVMCurrentInstanceType,
+			expectedNewInstanceType:     awsVMDefaultInstanceType,
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			resource.Test(t, resource.TestCase{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Steps: []resource.TestStep{
+					{
+						Config: providerConfig + fmt.Sprintf(awsVMConfigWithVendorId, tc.testVendorId, tc.expectedDefaultInstanceType),
+						Check: resource.ComposeAggregateTestCheckFunc(
+							resource.TestCheckResourceAttr(awsVMDataSourceRef, "vendor_id", tc.expectedVendorId),
+							resource.TestCheckNoResourceAttr(awsVMDataSourceRef, "entity_type"),
+							resource.TestCheckNoResourceAttr(awsVMDataSourceRef, "current_instance_type"),
+							resource.TestCheckResourceAttr(awsVMDataSourceRef, "new_instance_type", tc.expectedNewInstanceType),
+							resource.TestCheckResourceAttr(awsVMDataSourceRef, "default_instance_type", tc.expectedDefaultInstanceType),
+						),
+					},
+				},
+			})
+		})
+	}
+}
+
+func TestAwsInstanceDataSourceWithInconsistentCase(t *testing.T) {
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, awsVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, awsVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
+	defer mockServer.Close()
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+
+	// Define test cases with different case variations
+	testCases := []struct {
+		name                string
+		defaultInstanceType string
+		expectedCurrentType string
+		expectedNewType     string
+	}{
+		{
+			name:                "Lowercase input matches lowercase stored value",
+			defaultInstanceType: "t3a.micro",
+			expectedCurrentType: "t2.micro",
+			expectedNewType:     "t3a.micro",
+		},
+		{
+			name:                "Uppercase input matches lowercase stored value",
+			defaultInstanceType: "T3A.MICRO",
+			expectedCurrentType: "t2.micro",
+			expectedNewType:     "t3a.micro",
+		},
+		{
+			name:                "Mixed case input matches lowercase stored value",
+			defaultInstanceType: "T3a.MiCrO",
+			expectedCurrentType: "t2.micro",
+			expectedNewType:     "t3a.micro",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			resource.Test(t, resource.TestCase{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Steps: []resource.TestStep{
+					{
+						Config: providerConfig + fmt.Sprintf(awsConfig, awsVMName, tc.defaultInstanceType),
+						Check: resource.ComposeAggregateTestCheckFunc(
+							resource.TestCheckResourceAttr(awsVMDataSourceRef, "entity_name", awsVMName),
+							resource.TestCheckResourceAttr(awsVMDataSourceRef, "entity_type", vmEntityType),
+							// Case-insensitive comparison should work regardless of case
+							resource.TestCheckResourceAttr(awsVMDataSourceRef, "current_instance_type", tc.expectedCurrentType),
+							// Input case is preserved in the state
+							resource.TestCheckResourceAttr(awsVMDataSourceRef, "default_instance_type", tc.defaultInstanceType),
+							// New instance type is always lowercase from the API response
+							resource.TestCheckResourceAttr(awsVMDataSourceRef, "new_instance_type", tc.expectedNewType),
+						),
+					},
+				},
+			})
+		})
+	}
 }

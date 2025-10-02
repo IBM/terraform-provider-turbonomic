@@ -5,6 +5,7 @@ package provider
 
 import (
 	"fmt"
+	"net/http"
 	"regexp"
 	"strings"
 	"testing"
@@ -39,17 +40,65 @@ const (
 	currentSize                  = 1000
 	newSize                      = 2667
 	defaultSize                  = 1000
+
+	// Config templates for vendor ID tests
+	gcpVirtualVolumeConfigWithVendorId = `
+	data "turbonomic_google_compute_disk" "test" {
+		vendor_id    = "%s"
+		default_type = "%s"
+		default_size                   = %d
+		default_provisioned_iops        = %d
+		default_provisioned_throughput  = %d
+	}
+	`
+
+	gcpVirtualVolumeConfigWithVendorIdAndName = `
+	data "turbonomic_google_compute_disk" "test" {
+		vendor_id    = "%s"
+		default_type = "%s"
+		entity_name  = "%s"
+		default_size                   = %d
+		default_provisioned_iops        = %d
+		default_provisioned_throughput  = %d
+	}
+	`
+
+	gcpVirtualVolumeConfigNoIdentifiers = `
+	data "turbonomic_google_compute_disk" "test" {
+		default_type = "%s"
+	}
+	`
+
+	// Data source reference
+	gcpVirtualVolumeDataSourceRef = "data.turbonomic_google_compute_disk.test"
+
+	// Test vendor ID
+	testVendorId   = "test-vendor-id"
+	testEntityName = "test-volume"
 )
 
 // Tests Google Compute Disk data block logic by mocking valid turbo api response
 func TestGoogleComputeDiskDataSource(t *testing.T) {
-	mockServer := createLocalCloudVolumeServer(t,
-		loadTestFile(t, googleComputeDiskDataBaseDir, entitySearchRespSuccess),
-		loadTestFile(t, googleComputeDiskDataBaseDir, entityActionRespSuccess),
-		loadTestFile(t, googleComputeDiskDataBaseDir, entityStatsRespSuccess),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
-
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, googleComputeDiskDataBaseDir, entitySearchRespSuccess),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, googleComputeDiskDataBaseDir, entityActionRespSuccess),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/stats/{id}",
+			ResponseBody: loadTestFile(t, googleComputeDiskDataBaseDir, entityStatsRespSuccess),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimLeft(mockServer.URL, "htps:/"))
@@ -123,8 +172,38 @@ func TestGoogleComputeDiskDataSource(t *testing.T) {
 
 // Tests Google Compute Disk data block for an entity that does not exist
 func TestGoogleComputeDiskDataSourceNewInstance(t *testing.T) {
-	mockServer := createLocalServer(t, "[]", "[]", "[]", "[]")
-	defer mockServer.Close()
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: "[]",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: "[]",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "[]",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "[]",
+			ResponseCode: http.StatusOK,
+		},
+	})
 
 	providerConfig := fmt.Sprintf(config, strings.TrimLeft(mockServer.URL, "htps:/"))
 
@@ -170,12 +249,26 @@ func TestGoogleComputeDiskDataSourceNewInstance(t *testing.T) {
 
 // Tests Google Compute Disk data block for an entity that has no actions
 func TestGoogleComputeDiskDataSourceNoActions(t *testing.T) {
-	mockServer := createLocalCloudVolumeServer(t,
-		loadTestFile(t, googleComputeDiskDataBaseDir, entitySearchRespSuccess),
-		"[]",
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
-		loadTestFile(t, googleComputeDiskDataBaseDir, entityStatsRespSuccess),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, googleComputeDiskDataBaseDir, entitySearchRespSuccess),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: "[]",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/stats/{id}",
+			ResponseBody: loadTestFile(t, googleComputeDiskDataBaseDir, entityStatsRespSuccess),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimLeft(mockServer.URL, "htps:/"))
@@ -225,11 +318,20 @@ func TestGoogleComputeDiskDataSourceNoActions(t *testing.T) {
 
 // Tests Google Compute Disk data block with invalid default type
 func TestGoogleComputeDiskDataSourceInvalidDefaultType(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, googleComputeDiskDataBaseDir, entitySearchRespSuccess),
-		loadTestFile(t, googleComputeDiskDataBaseDir, entityActionRespSuccess),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, googleComputeDiskDataBaseDir, entitySearchRespSuccess),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, googleComputeDiskDataBaseDir, entityActionRespSuccess),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimLeft(mockServer.URL, "htps:/"))
@@ -249,4 +351,442 @@ func TestGoogleComputeDiskDataSourceInvalidDefaultType(t *testing.T) {
 			},
 		})
 	})
+}
+
+func TestGoogleComputeDiskDataSourceDefaultThroughput(t *testing.T) {
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, googleComputeDiskDataBaseDir, entitySearchRespSuccess),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, googleComputeDiskDataBaseDir, entityActionRespSuccess),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/stats/{id}",
+			ResponseBody: loadTestFile(t, googleComputeDiskDataBaseDir, entityStatsRespSuccess),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
+	defer mockServer.Close()
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+	t.Run("Default disk mbps read write atleast 0", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config:      providerConfig + fmt.Sprintf(googleComputeDiskConfig, entityName, defaultype, defaultSize, defaultSize, -1),
+					ExpectError: regexp.MustCompile(`Attribute default_provisioned_throughput value must be at least 0`),
+				},
+			},
+		})
+	})
+}
+
+func TestGoogleComputeDiskDataSourceDefaultIops(t *testing.T) {
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, googleComputeDiskDataBaseDir, entitySearchRespSuccess),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, googleComputeDiskDataBaseDir, entityActionRespSuccess),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/stats/{id}",
+			ResponseBody: loadTestFile(t, googleComputeDiskDataBaseDir, entityStatsRespSuccess),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
+	defer mockServer.Close()
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+	t.Run("Default disk mbps read write atleast 0", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config:      providerConfig + fmt.Sprintf(googleComputeDiskConfig, entityName, defaultype, defaultSize, -1, defaultProvisionedThroughput),
+					ExpectError: regexp.MustCompile(`Attribute default_provisioned_iops value must be at least 0`),
+				},
+			},
+		})
+	})
+}
+
+func TestGoogleComputeDiskDataSourceDefaultSize(t *testing.T) {
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, googleComputeDiskDataBaseDir, entitySearchRespSuccess),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, googleComputeDiskDataBaseDir, entityActionRespSuccess),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/stats/{id}",
+			ResponseBody: loadTestFile(t, googleComputeDiskDataBaseDir, entityStatsRespSuccess),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
+	defer mockServer.Close()
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+	t.Run("Default disk mbps read write atleast 0", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config:      providerConfig + fmt.Sprintf(googleComputeDiskConfig, entityName, defaultype, -1, defaultSize, defaultProvisionedThroughput),
+					ExpectError: regexp.MustCompile(`Attribute default_size value must be at least 0`),
+				},
+			},
+		})
+	})
+}
+
+// Test for a valid entity using vendor_id
+func TestGoogleComputeDiskDataSourceWithVendorId(t *testing.T) {
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, googleComputeDiskDataBaseDir, entitySearchRespSuccess),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, googleComputeDiskDataBaseDir, entityActionRespSuccess),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/stats/{id}",
+			ResponseBody: loadTestFile(t, googleComputeDiskDataBaseDir, entityStatsRespSuccess),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
+	defer mockServer.Close()
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+
+	for _, tc := range []struct {
+		name                                 string
+		testVendorId                         string
+		expectedVendorId                     string
+		expectedDefaultType                  string
+		expectedCurrentType                  string
+		expectedNewType                      string
+		expectedDefaultProvisionedIops       int
+		expectedCurrentProvisionedIops       int
+		expectedNewProvisionedIops           int
+		expectedDefaultProvisionedThroughput int
+		expectedCurrentProvisionedThroughput int
+		expectedNewProvisionedThroughput     int
+		expectedDefaultSize                  int
+		expectedCurrentSize                  int
+		expectedNewSize                      int
+	}{
+		{
+			name:                                 "Valid VirtualVolume recommendation with vendor_id",
+			testVendorId:                         testVendorId,
+			expectedVendorId:                     testVendorId,
+			expectedDefaultType:                  defaultype,
+			expectedCurrentType:                  currentType,
+			expectedNewType:                      newType,
+			expectedDefaultProvisionedIops:       defaultProvisionedIops,
+			expectedCurrentProvisionedIops:       currentProvisionedIops,
+			expectedNewProvisionedIops:           newProvisionedIops,
+			expectedDefaultProvisionedThroughput: defaultProvisionedThroughput,
+			expectedCurrentProvisionedThroughput: currentProvisionedThroughput,
+			expectedNewProvisionedThroughput:     newProvisionedThroughput,
+			expectedDefaultSize:                  defaultSize,
+			expectedCurrentSize:                  currentSize,
+			expectedNewSize:                      newSize,
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			resource.Test(t, resource.TestCase{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Steps: []resource.TestStep{
+					{
+						Config: providerConfig + fmt.Sprintf(gcpVirtualVolumeConfigWithVendorId, tc.testVendorId, tc.expectedDefaultType, tc.expectedDefaultSize, tc.expectedDefaultProvisionedIops, tc.expectedDefaultProvisionedThroughput),
+						Check: resource.ComposeAggregateTestCheckFunc(
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "vendor_id", tc.expectedVendorId),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "entity_type", volumeEntityType),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "default_type", tc.expectedDefaultType),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "current_type", tc.expectedCurrentType),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "new_type", tc.expectedNewType),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "default_provisioned_iops", fmt.Sprintf("%d", tc.expectedDefaultProvisionedIops)),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "current_provisioned_iops", fmt.Sprintf("%d", tc.expectedCurrentProvisionedIops)),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "new_provisioned_iops", fmt.Sprintf("%d", tc.expectedNewProvisionedIops)),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "default_provisioned_throughput", fmt.Sprintf("%d", tc.expectedDefaultProvisionedThroughput)),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "current_provisioned_throughput", fmt.Sprintf("%d", tc.expectedCurrentProvisionedThroughput)),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "new_provisioned_throughput", fmt.Sprintf("%d", tc.expectedNewProvisionedThroughput)),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "default_size", fmt.Sprintf("%d", tc.expectedDefaultSize)),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "current_size", fmt.Sprintf("%d", tc.expectedCurrentSize)),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "new_size", fmt.Sprintf("%d", tc.expectedNewSize)),
+						),
+					},
+				},
+			})
+		})
+	}
+}
+
+// Test for a valid entity using vendor_id and entity_name
+func TestGoogleComputeDiskDataSourceWithVendorIdAndName(t *testing.T) {
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, googleComputeDiskDataBaseDir, entitySearchRespSuccess),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, googleComputeDiskDataBaseDir, entityActionRespSuccess),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/stats/{id}",
+			ResponseBody: loadTestFile(t, googleComputeDiskDataBaseDir, entityStatsRespSuccess),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
+	defer mockServer.Close()
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+
+	for _, tc := range []struct {
+		name                                 string
+		testVendorId                         string
+		testEntity                           string
+		expectedVendorId                     string
+		expectedEntityName                   string
+		expectedDefaultType                  string
+		expectedCurrentType                  string
+		expectedNewType                      string
+		expectedDefaultProvisionedIops       int
+		expectedCurrentProvisionedIops       int
+		expectedNewProvisionedIops           int
+		expectedDefaultProvisionedThroughput int
+		expectedCurrentProvisionedThroughput int
+		expectedNewProvisionedThroughput     int
+		expectedDefaultSize                  int
+		expectedCurrentSize                  int
+		expectedNewSize                      int
+	}{
+		{
+			name:                                 "Valid VirtualVolume recommendation with vendor_id and entity_name",
+			testVendorId:                         testVendorId,
+			testEntity:                           entityName,
+			expectedVendorId:                     testVendorId,
+			expectedEntityName:                   entityName,
+			expectedDefaultType:                  defaultype,
+			expectedCurrentType:                  currentType,
+			expectedNewType:                      newType,
+			expectedDefaultProvisionedIops:       defaultProvisionedIops,
+			expectedCurrentProvisionedIops:       currentProvisionedIops,
+			expectedNewProvisionedIops:           newProvisionedIops,
+			expectedDefaultProvisionedThroughput: defaultProvisionedThroughput,
+			expectedCurrentProvisionedThroughput: currentProvisionedThroughput,
+			expectedNewProvisionedThroughput:     newProvisionedThroughput,
+			expectedDefaultSize:                  defaultSize,
+			expectedCurrentSize:                  currentSize,
+			expectedNewSize:                      newSize,
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			resource.Test(t, resource.TestCase{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Steps: []resource.TestStep{
+					{
+						Config: providerConfig + fmt.Sprintf(gcpVirtualVolumeConfigWithVendorIdAndName, tc.testVendorId, tc.expectedDefaultType, tc.testEntity, tc.expectedDefaultSize, tc.expectedDefaultProvisionedIops, tc.expectedDefaultProvisionedThroughput),
+						Check: resource.ComposeAggregateTestCheckFunc(
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "vendor_id", tc.expectedVendorId),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "entity_name", tc.expectedEntityName),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "entity_type", volumeEntityType),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "default_type", tc.expectedDefaultType),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "current_type", tc.expectedCurrentType),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "new_type", tc.expectedNewType),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "default_provisioned_iops", fmt.Sprintf("%d", tc.expectedDefaultProvisionedIops)),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "current_provisioned_iops", fmt.Sprintf("%d", tc.expectedCurrentProvisionedIops)),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "new_provisioned_iops", fmt.Sprintf("%d", tc.expectedNewProvisionedIops)),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "default_provisioned_throughput", fmt.Sprintf("%d", tc.expectedDefaultProvisionedThroughput)),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "current_provisioned_throughput", fmt.Sprintf("%d", tc.expectedCurrentProvisionedThroughput)),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "new_provisioned_throughput", fmt.Sprintf("%d", tc.expectedNewProvisionedThroughput)),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "default_size", fmt.Sprintf("%d", tc.expectedDefaultSize)),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "current_size", fmt.Sprintf("%d", tc.expectedCurrentSize)),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "new_size", fmt.Sprintf("%d", tc.expectedNewSize)),
+						),
+					},
+				},
+			})
+		})
+	}
+}
+
+// Test for when neither entity_name nor vendor_id is provided
+func TestGoogleComputeDiskDataSourceWithNoIdentifiers(t *testing.T) {
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, googleComputeDiskDataBaseDir, entitySearchRespSuccess),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, googleComputeDiskDataBaseDir, entityActionRespSuccess),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/stats/{id}",
+			ResponseBody: loadTestFile(t, googleComputeDiskDataBaseDir, entityStatsRespSuccess),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
+	defer mockServer.Close()
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+
+	t.Run("Error when neither entity_name nor vendor_id is provided", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config:      providerConfig + fmt.Sprintf(gcpVirtualVolumeConfigNoIdentifiers, defaultype),
+					ExpectError: regexp.MustCompile(`At least one of these attributes must be configured`),
+				},
+			},
+		})
+	})
+
+}
+
+// Test for an invalid vendor_id
+func TestGoogleComputeDiskDataSourceWithInvalidVendorId(t *testing.T) {
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: "[]",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+	})
+	defer mockServer.Close()
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+
+	for _, tc := range []struct {
+		name                                 string
+		testVendorId                         string
+		expectedVendorId                     string
+		expectedDefaultType                  string
+		expectedCurrentType                  string
+		expectedNewType                      string
+		expectedDefaultProvisionedIops       int
+		expectedCurrentProvisionedIops       int
+		expectedNewProvisionedIops           int
+		expectedDefaultProvisionedThroughput int
+		expectedCurrentProvisionedThroughput int
+		expectedNewProvisionedThroughput     int
+		expectedDefaultSize                  int
+		expectedCurrentSize                  int
+		expectedNewSize                      int
+	}{
+		{
+			name:                                 "Invalid vendor_id",
+			testVendorId:                         testVendorId,
+			expectedVendorId:                     testVendorId,
+			expectedDefaultType:                  defaultype,
+			expectedCurrentType:                  currentType,
+			expectedNewType:                      defaultype,
+			expectedDefaultProvisionedIops:       defaultProvisionedIops,
+			expectedCurrentProvisionedIops:       currentProvisionedIops,
+			expectedNewProvisionedIops:           defaultProvisionedIops,
+			expectedDefaultProvisionedThroughput: defaultProvisionedThroughput,
+			expectedCurrentProvisionedThroughput: currentProvisionedThroughput,
+			expectedNewProvisionedThroughput:     defaultProvisionedThroughput,
+			expectedDefaultSize:                  defaultSize,
+			expectedCurrentSize:                  currentSize,
+			expectedNewSize:                      defaultSize,
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			resource.Test(t, resource.TestCase{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Steps: []resource.TestStep{
+					{
+						Config: providerConfig + fmt.Sprintf(gcpVirtualVolumeConfigWithVendorId, tc.testVendorId, tc.expectedDefaultType, tc.expectedDefaultSize, tc.expectedDefaultProvisionedIops, tc.expectedDefaultProvisionedThroughput),
+						Check: resource.ComposeAggregateTestCheckFunc(
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "vendor_id", tc.expectedVendorId),
+							resource.TestCheckNoResourceAttr(gcpVirtualVolumeDataSourceRef, "entity_type"),
+							resource.TestCheckNoResourceAttr(gcpVirtualVolumeDataSourceRef, "current_type"),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "new_type", tc.expectedNewType),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "default_type", tc.expectedDefaultType),
+							resource.TestCheckNoResourceAttr(gcpVirtualVolumeDataSourceRef, "current_provisioned_iops"),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "default_provisioned_iops", fmt.Sprintf("%d", tc.expectedDefaultProvisionedIops)),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "new_provisioned_iops", fmt.Sprintf("%d", tc.expectedNewProvisionedIops)),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "default_provisioned_throughput", fmt.Sprintf("%d", tc.expectedDefaultProvisionedThroughput)),
+							resource.TestCheckNoResourceAttr(gcpVirtualVolumeDataSourceRef, "current_provisioned_throughput"),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "new_provisioned_throughput", fmt.Sprintf("%d", tc.expectedNewProvisionedThroughput)),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "default_size", fmt.Sprintf("%d", tc.expectedDefaultSize)),
+							resource.TestCheckNoResourceAttr(gcpVirtualVolumeDataSourceRef, "current_size"),
+							resource.TestCheckResourceAttr(gcpVirtualVolumeDataSourceRef, "new_size", fmt.Sprintf("%d", tc.expectedNewSize)),
+						),
+					},
+				},
+			})
+		})
+	}
 }

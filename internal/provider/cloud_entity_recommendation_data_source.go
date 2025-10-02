@@ -8,11 +8,9 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -87,18 +85,10 @@ func (d *CloudEntityRecommendationDataSource) Schema(ctx context.Context, req da
 				MarkdownDescription: "default tier of the cloud entity",
 				Optional:            true,
 				Validators: []validator.String{
-					stringvalidator.LengthAtMost(20), stringvalidator.RegexMatches(regexp.MustCompile(`^[A-Za-z0-9._-]+$`), "must contain only alphanumeric, '.', '-', or '_' characters"),
+					stringvalidator.LengthAtLeast(1),
 				},
 			},
 		},
-	}
-}
-
-func (d *CloudEntityRecommendationDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(
-			path.MatchRoot("default_size"),
-		),
 	}
 }
 
@@ -126,7 +116,18 @@ func (d *CloudEntityRecommendationDataSource) Read(ctx context.Context, req data
 	resp.Diagnostics.Append(req.Config.Get(ctx, &state)...)
 
 	enName, enTyp := state.EntityName.ValueString(), state.EntityType.ValueString()
-	entity, errDiag := GetEntitiesByNameAndType(d.client, enName, enTyp, "CLOUD", "")
+
+	if d.client == nil {
+		// set new values with default values, if client is unset/unreachable
+		state.NewSize = applyDefaultIfEmptyGeneric(
+			state.NewSize,
+			state.DefaultSize,
+		)
+		resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+		return
+	}
+
+	entity, errDiag := GetEntitiesByName(d.client, WithEntityName(enName), WithEntityType(enTyp), WithEnvironmentType("CLOUD"))
 	if errDiag != nil {
 		tflog.Error(ctx, errDiag.Detail())
 		resp.Diagnostics.AddError(errDiag.Summary(), errDiag.Detail())
@@ -136,7 +137,7 @@ func (d *CloudEntityRecommendationDataSource) Read(ctx context.Context, req data
 		tflog.Warn(ctx, errDetail)
 
 		// if entity doesn't exist, update new values with default values
-		state.NewSize = applyDefaultIfEmpty(
+		state.NewSize = applyDefaultIfEmptyGeneric(
 			state.NewSize,
 			state.DefaultSize,
 		)
@@ -160,7 +161,7 @@ func (d *CloudEntityRecommendationDataSource) Read(ctx context.Context, req data
 		return
 	}
 
-	actions, errDiag := GetActionsByEntityUUIDAndType(d.client, entity[0].UUID, "SCALE")
+	actions, errDiag := GetActions(d.client, WithEntityUuid(entity[0].UUID), WithActionTypes([]string{"SCALE"}))
 	if errDiag != nil {
 		tflog.Error(ctx, errDiag.Detail())
 		resp.Diagnostics.AddError(errDiag.Summary(), errDiag.Detail())
@@ -192,11 +193,11 @@ func (d *CloudEntityRecommendationDataSource) Read(ctx context.Context, req data
 	}
 
 	// update new and curr values with default values, if its still empty
-	state.CurrentSize = applyDefaultIfEmpty(
+	state.CurrentSize = applyDefaultIfEmptyGeneric(
 		state.CurrentSize,
 		state.DefaultSize,
 	)
-	state.NewSize = applyDefaultIfEmpty(
+	state.NewSize = applyDefaultIfEmptyGeneric(
 		state.NewSize,
 		state.DefaultSize,
 	)

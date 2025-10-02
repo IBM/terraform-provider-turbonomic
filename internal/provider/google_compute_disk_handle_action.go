@@ -89,29 +89,6 @@ func HandleGoogleComputeDiskCommodityAction(ctx context.Context, commodityAction
 	return HandleGenericVolumeCommodityAction(ctx, commodityActions, adapter)
 }
 
-// set the current state fields with default values if they are empty
-func setDefaultsGoogleComputeDiskToCurrentState(state *GoogleComputeDiskEntityModel) {
-	state.CurrentType = applyDefaultIfEmptyGeneric(state.CurrentType, state.DefaultType)
-	state.CurrentProvisionedIops = applyDefaultIfEmptyGeneric(state.CurrentProvisionedIops, state.DefaultProvisionedIops)
-	state.CurrentProvisionedThroughput = applyDefaultIfEmptyGeneric(state.CurrentProvisionedThroughput, state.DefaultProvisionedThroughput)
-	state.CurrentSize = applyDefaultIfEmptyGeneric(state.CurrentSize, state.DefaultSize)
-}
-
-// set the new state fields with default values if they are empty
-func setDefaultsGoogleComputeDiskToNewState(state *GoogleComputeDiskEntityModel) {
-	state.NewType = applyDefaultIfEmptyGeneric(state.NewType, state.DefaultType)
-	state.NewProvisionedIops = applyDefaultIfEmptyGeneric(state.NewProvisionedIops, state.DefaultProvisionedIops)
-	state.NewProvisionedThroughput = applyDefaultIfEmptyGeneric(state.NewProvisionedThroughput, state.DefaultProvisionedThroughput)
-	state.NewSize = applyDefaultIfEmptyGeneric(state.NewSize, state.DefaultSize)
-}
-
-// apply current values to new values if action/stat projected value is not available
-func setCurrentGoogleComputeDiskToNewState(state *GoogleComputeDiskEntityModel) {
-	state.NewType = applyDefaultIfEmptyGeneric(state.NewType, state.CurrentType)
-	state.NewProvisionedIops = applyDefaultIfEmptyGeneric(state.NewProvisionedIops, state.CurrentProvisionedIops)
-	state.NewProvisionedThroughput = applyDefaultIfEmptyGeneric(state.NewProvisionedThroughput, state.CurrentProvisionedThroughput)
-	state.NewSize = applyDefaultIfEmptyGeneric(state.NewSize, state.CurrentSize)
-}
 func (a *GoogleComputeDiskStateAdapter) UpdateIops(ctx context.Context, value float64, isNew bool) {
 	// Round to nearest integer
 	iopsValue := int64(math.Round(value))

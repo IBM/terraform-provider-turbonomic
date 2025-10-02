@@ -12,6 +12,7 @@ This guide focuses on using Turbonomic data sources with [AWS](https://registry.
 ## AWS EC2 example
 
 The AWS EC2 resource is configured to use the `turbonomic_aws_instance` data source unless null is returned, in which case it uses `<default_instance_type>` by default.
+Either `<vendor_id>` or `<entity_name>` to be provided to uniquely identify an entity.
 
 ```terraform
 provider "aws" {
@@ -21,6 +22,7 @@ provider "aws" {
 data "turbonomic_aws_instance" "example" {
   entity_name           = "<entity_name>"
   default_instance_type = "<default_instance_type>"
+  vendor_id             = "<vendor_id>"
 }
 
 resource "aws_instance" "terraform-demo-ec2" {
@@ -46,19 +48,22 @@ provider "aws" {
 }
 
 data "turbonomic_aws_db_instance" "rdsExample" {
-  entity_name            = "<entity_name>"
-  default_instance_class = "<default_instance_class>"
-  default_storage_type   = "<default_storage_type>"
+  entity_name               = "<entity_name>"
+  default_instance_class    = "<default_instance_class>"
+  default_storage_type      = "<default_storage_type>"
+  default_iops              = var.iops
+  default_allocated_storage = var.allocated_storage
 }
 
 resource "aws_db_instance" "default" {
   identifier           = "<entity_name>"
-  allocated_storage    = 10
+  allocated_storage    = data.turbonomic_aws_db_instance.rdsExample.new_allocated_storage
   db_name              = "mydb"
   engine               = "mysql"
   engine_version       = "8.0"
   instance_class       = data.turbonomic_aws_db_instance.rdsExample.default_instance_class
   storage_type         = data.turbonomic_aws_db_instance.rdsExample.default_storage_type
+  iops                 = data.turbonomic_aws_db_instance.rdsExample.new_iops
   username             = "dbuser"
   password             = "dbpassword"
   parameter_group_name = "default.mysql8.0"
@@ -69,6 +74,7 @@ resource "aws_db_instance" "default" {
 ## AWS EBS example
 
 The AWS EBS resource is configured to use the `turbonomic_aws_ebs_volume` data source unless null is returned, in which case it uses `<default_type>` by default.
+Either `<vendor_id>` or `<entity_name>` to be provided to uniquely identify an entity.
 
 ```terraform
 provider "aws" {
@@ -78,6 +84,7 @@ provider "aws" {
 data "turbonomic_aws_ebs_volume" "example" {
   entity_name        = "<entity_name>"
   default_type       = "<default_type>"
+  vendor_id          = "<vendor_id>"
   default_iops       = var.iops
   default_size       = var.size
   default_throughput = var.throughput

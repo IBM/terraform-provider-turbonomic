@@ -17,6 +17,7 @@ package provider
 
 import (
 	"fmt"
+	"net/http"
 	"regexp"
 	"strings"
 	"testing"
@@ -40,11 +41,20 @@ const (
 )
 
 func TestProviderUsernamePassword(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, cloudTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, cloudTestDataBaseDir, validVmActionRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, cloudTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, cloudTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
 	defer mockServer.Close()
 
 	testConfig := `provider "turbonomic" {
@@ -69,11 +79,26 @@ func TestProviderUsernamePassword(t *testing.T) {
 }
 
 func TestProviderOAuth(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, cloudTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, cloudTestDataBaseDir, validVmActionRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, cloudTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, cloudTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/oauth2/token",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+	}, LoginAndTagRoutes(t)...))
 	defer mockServer.Close()
 
 	testConfig := `provider "turbonomic" {
@@ -206,6 +231,53 @@ func TestProviderUnknownRole(t *testing.T) {
 				{
 					Config:      testConfig + resourceConfig,
 					ExpectError: regexp.MustCompile(`Invalid Attribute Value Match -> Unknown Role`),
+				},
+			},
+		})
+	})
+}
+
+func TestProviderTurboApiNotWorking(t *testing.T) {
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, cloudTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, cloudTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
+	defer mockServer.Close()
+
+	testConfig := `provider "turbonomic" {
+		hostname = "%s"
+		username = "testuser"
+		password = "password"
+		skipverify = true
+	}
+	`
+	providerConfig := fmt.Sprintf(testConfig, "invalid-hostname")
+	dsName := "data.turbonomic_cloud_entity_recommendation.test"
+
+	t.Run("tests no error when turbo api is not working", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config:      providerConfig + fmt.Sprintf(vmConfig, vmName, vmType, vmNewSize),
+					ExpectError: nil,
+					Check: resource.ComposeAggregateTestCheckFunc(
+						resource.TestCheckResourceAttr(dsName, "entity_name", vmName),
+						resource.TestCheckResourceAttr(dsName, "entity_type", vmType),
+						resource.TestCheckNoResourceAttr(dsName, "current_instance_type"),
+						resource.TestCheckResourceAttr(dsName, "new_instance_type", vmNewSize),
+						resource.TestCheckResourceAttr(dsName, "default_size", vmNewSize),
+					),
 				},
 			},
 		})

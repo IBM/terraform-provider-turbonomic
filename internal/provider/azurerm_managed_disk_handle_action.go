@@ -103,30 +103,6 @@ func HandleAzurermManagedDiskCommodityAction(ctx context.Context, commodityActio
 	return HandleGenericVolumeCommodityAction(ctx, commodityActions, adapter)
 }
 
-// set the current state fields with default values if they are empty
-func setDefaultsAzurermManagedDiskToCurrentState(state *AzurermManagedDiskEntityModel) {
-	state.CurrentStorageAccountType = applyDefaultIfEmptyGeneric(state.CurrentStorageAccountType, state.DefaultStorageAccountType)
-	state.CurrentDiskIopsReadWrite = applyDefaultIfEmptyGeneric(state.CurrentDiskIopsReadWrite, state.DefaultDiskIopsReadWrite)
-	state.CurrentDiskMbpsReadWrite = applyDefaultIfEmptyGeneric(state.CurrentDiskMbpsReadWrite, state.DefaultDiskMbpsReadWrite)
-	state.CurrentDiskSizeGb = applyDefaultIfEmptyGeneric(state.CurrentDiskSizeGb, state.DefaultDiskSizeGb)
-}
-
-// set the new state fields with default values if they are empty
-func setDefaultsAzurermManagedDiskToNewState(state *AzurermManagedDiskEntityModel) {
-	state.NewStorageAccountType = applyDefaultIfEmptyGeneric(state.NewStorageAccountType, state.DefaultStorageAccountType)
-	state.NewDiskIopsReadWrite = applyDefaultIfEmptyGeneric(state.NewDiskIopsReadWrite, state.DefaultDiskIopsReadWrite)
-	state.NewDiskMbpsReadWrite = applyDefaultIfEmptyGeneric(state.NewDiskMbpsReadWrite, state.DefaultDiskMbpsReadWrite)
-	state.NewDiskSizeGb = applyDefaultIfEmptyGeneric(state.NewDiskSizeGb, state.DefaultDiskSizeGb)
-}
-
-// apply current values to new values if action/stat projected value is not available
-func setCurrentAzurermManagedDiskToNewState(state *AzurermManagedDiskEntityModel) {
-	state.NewStorageAccountType = applyDefaultIfEmptyGeneric(state.NewStorageAccountType, state.CurrentStorageAccountType)
-	state.NewDiskIopsReadWrite = applyDefaultIfEmptyGeneric(state.NewDiskIopsReadWrite, state.CurrentDiskIopsReadWrite)
-	state.NewDiskMbpsReadWrite = applyDefaultIfEmptyGeneric(state.NewDiskMbpsReadWrite, state.CurrentDiskMbpsReadWrite)
-	state.NewDiskSizeGb = applyDefaultIfEmptyGeneric(state.NewDiskSizeGb, state.CurrentDiskSizeGb)
-}
-
 func (a *AzurermManagedDiskStateAdapter) UpdateIops(ctx context.Context, value float64, isNew bool) {
 	// Round to nearest integer
 	iopsValue := int64(math.Round(value))

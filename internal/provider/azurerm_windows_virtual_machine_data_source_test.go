@@ -29,18 +29,26 @@ const (
 	`
 	azureWindowsVMDataSourceRef = "data.turbonomic_azurerm_windows_virtual_machine.test"
 	azureWindowsVMName          = "test-vm"
-	azureWindowsVMCurrentType   = "standard_b1s"
-	azureWindowsVMDefaultType   = "standard_d2s_v3"
-	azureWindowsVMInvalidType   = "invalid@type#"
+	azureWindowsVMCurrentType   = "Standard_B1s"
+	azureWindowsVMDefaultType   = "Standard_D2s_v3"
 )
 
 // Test for a valid entity
 func TestAzurermWindowsVirtualMachineDataSourceWithValidEntity(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, azureWindowsVMTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, azureWindowsVMTestDataBaseDir, validVmActionRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, azureWindowsVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, azureWindowsVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
@@ -84,8 +92,38 @@ func TestAzurermWindowsVirtualMachineDataSourceWithValidEntity(t *testing.T) {
 
 // Test for an invalid entity
 func TestAzurermWindowsVirtualMachineDataSourceWithInvalidEntity(t *testing.T) {
-	mockServer := createLocalServer(t, "[]", "", "", "")
-	defer mockServer.Close()
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: "[]",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+	})
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
 
@@ -126,11 +164,20 @@ func TestAzurermWindowsVirtualMachineDataSourceWithInvalidEntity(t *testing.T) {
 
 // TODO: Test for an entity that has no actions
 func TestAzurermWindowsVirtualMachineDataSourceWithNoAction(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, azureWindowsVMTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, emptyActionRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, azureWindowsVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, emptyActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
@@ -174,11 +221,20 @@ func TestAzurermWindowsVirtualMachineDataSourceWithNoAction(t *testing.T) {
 
 // Tests when default_size is not specified
 func TestAzurermWindowsVirtualMachineDataSourceWithoutDefaultType(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, azureWindowsVMTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, azureWindowsVMTestDataBaseDir, validVmActionRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, azureWindowsVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, azureWindowsVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
@@ -217,48 +273,100 @@ func TestAzurermWindowsVirtualMachineDataSourceWithoutDefaultType(t *testing.T) 
 	}
 }
 
-// Tests error while retrieving entity tags
+// Tests no error while retrieving entity tags
 func TestAzurermWindowsVirtualMachineDataSourceGetEntityTagsError(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, azureWindowsVMTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, azureWindowsVMTestDataBaseDir, validVmActionRespTestData),
-		"",
-		"")
-	defer mockServer.Close()
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, azureWindowsVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, azureWindowsVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+	})
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
 
-	t.Run("Error while retrieving entity tags", func(t *testing.T) {
+	t.Run("no error while retrieving entity tags", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
 			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
 				{
 					Config:      providerConfig + fmt.Sprintf(azureWindowsVMConfig, azureWindowsVMName, azureWindowsVMDefaultType),
-					ExpectError: regexp.MustCompile(`Unable to retrieve entity tags from Turbonomic`),
+					ExpectError: nil,
 				},
 			},
 		})
 	})
 }
 
-// Tests error while tagging an entity
+// Tests no error while tagging an entity
 func TestAzurermWindowsVirtualMachineDataSourceTagEntityError(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, azureWindowsVMTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, azureWindowsVMTestDataBaseDir, validVmActionRespTestData),
-		"[]",
-		"")
-	defer mockServer.Close()
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, azureWindowsVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, azureWindowsVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "[]",
+			ResponseCode: http.StatusOK,
+		},
+	})
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
 
-	t.Run("Error while tagging an entity", func(t *testing.T) {
+	t.Run("no error while tagging an entity", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
 			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
 				{
 					Config:      providerConfig + fmt.Sprintf(azureWindowsVMConfig, azureWindowsVMName, azureWindowsVMDefaultType),
-					ExpectError: regexp.MustCompile(`Unable to tag an entity in Turbonomic`),
+					ExpectError: nil,
 				},
 			},
 		})
@@ -267,12 +375,38 @@ func TestAzurermWindowsVirtualMachineDataSourceTagEntityError(t *testing.T) {
 
 // Tests no error while tagging already tagged entity with discovered "optimized by" tag value
 func TestAzurermWindowsVirtualMachineDataSourceTagEntityAlreadyTaggedDiscovered(t *testing.T) {
-	mockServer := createLocalServer(t,
-		loadTestFile(t, azureWindowsVMTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, azureWindowsVMTestDataBaseDir, validVmActionRespTestData),
-		`[{"key": "turbonomic_optimized_by","values": ["turbonomic-terraform-provider"]}]`,
-		"")
-	defer mockServer.Close()
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, azureWindowsVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, azureWindowsVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: `[{"key": "turbonomic_optimized_by","values": ["turbonomic-terraform-provider"]}]`,
+			ResponseCode: http.StatusOK,
+		},
+	})
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
 	for _, tc := range []struct {
@@ -314,14 +448,38 @@ func TestAzurermWindowsVirtualMachineDataSourceTagEntityAlreadyTaggedDiscovered(
 
 // Tests no error while tagging already tagged entity with not discovered "optimized by" tag value
 func TestAzurermWindowsVirtualMachineDataSourceTagEntityAlreadyTaggedNotDiscovered(t *testing.T) {
-	mockServer := createLocalServerWithResponse(t,
-		loadTestFile(t, azureWindowsVMTestDataBaseDir, searchRespTestData),
-		loadTestFile(t, azureWindowsVMTestDataBaseDir, validVmActionRespTestData),
-		`[]`,
-		Response{
-			Message:    "Entity service RPC call failed to complete request: INVALID_ARGUMENT: Trying to insert a tag with a key that already exists: turbonomic_optimized_by",
-			HttpStatus: http.StatusBadRequest})
-	defer mockServer.Close()
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, azureWindowsVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, azureWindowsVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "Entity service RPC call failed to complete request: INVALID_ARGUMENT: Trying to insert a tag with a key that already exists: turbonomic_optimized_by",
+			ResponseCode: http.StatusBadRequest,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: `[]`,
+			ResponseCode: http.StatusOK,
+		},
+	})
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
 	for _, tc := range []struct {
@@ -361,15 +519,101 @@ func TestAzurermWindowsVirtualMachineDataSourceTagEntityAlreadyTaggedNotDiscover
 	}
 }
 
-// Tests invalid characters in default_size field
-func TestAzurermWindowsVirtualMachineDataSourceInvalidDefaultTypeCharacters(t *testing.T) {
-	t.Run("Invalid characters in default_size", func(t *testing.T) {
+// Tests if os name filter is set in request body
+func TestAzurermWindowsVirtualMachineDataSourceOSNameFilter(t *testing.T) {
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ExpectedBody: `{"criteriaList":[{"caseSensitive":true,"expType":"EQ","expVal":"test-vm","filterType":"vmsByName"},{"caseSensitive":false,"expType":"EQ","expVal":"AZURE","filterType":"vmsByCloudProvider"},{"caseSensitive":false,"expType":"RXEQ","expVal":"windows.*","filterType":"vmsByGuestName"}],"logicalOperator":"AND","className":"VirtualMachine","environmentType":"CLOUD"}`,
+			ResponseBody: loadTestFile(t, azureWindowsVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, azureWindowsVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
+	defer mockServer.Close()
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+	t.Run("test os filter", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
 			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
 				{
-					Config:      providerConfig + fmt.Sprintf(azureWindowsVMConfig, azureWindowsVMName, azureWindowsVMInvalidType),
-					ExpectError: regexp.MustCompile(`Invalid Attribute Value Match`),
+					Config: providerConfig + fmt.Sprintf(azureWindowsVMConfig, azureWindowsVMName, azureWindowsVMDefaultType),
+					Check: resource.ComposeAggregateTestCheckFunc(
+						resource.TestCheckResourceAttr(azureWindowsVMDataSourceRef, "new_size", azureWindowsVMDefaultType),
+					),
+				},
+			},
+		})
+	})
+}
+
+// Tests if os name filter fails, entity is still getting searched
+func TestAzurermWindowsVirtualMachineDataSourceOSNameFilterErr(t *testing.T) {
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ExpectedBody: `{"criteriaList":[{"caseSensitive":true,"expType":"EQ","expVal":"test-vm","filterType":"vmsByName"},{"caseSensitive":false,"expType":"EQ","expVal":"AZURE","filterType":"vmsByCloudProvider"}],"logicalOperator":"AND","className":"VirtualMachine","environmentType":"CLOUD"}`,
+			ResponseBody: loadTestFile(t, azureWindowsVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, azureWindowsVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
+	defer mockServer.Close()
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+	t.Run("test os filter", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config: providerConfig + fmt.Sprintf(azureWindowsVMConfig, azureWindowsVMName, azureWindowsVMDefaultType),
+					Check: resource.ComposeAggregateTestCheckFunc(
+						resource.TestCheckResourceAttr(azureWindowsVMDataSourceRef, "new_size", azureWindowsVMDefaultType),
+					),
+				},
+			},
+		})
+	})
+}
+
+func TestAzurermWindowsVirtualMachineDataSourceWithEmptyDefaultType(t *testing.T) {
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, azureWindowsVMTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, azureWindowsVMTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
+	defer mockServer.Close()
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+	t.Run("Default machine type should be atleast 1", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config:      providerConfig + fmt.Sprintf(azureWindowsVMConfig, azureWindowsVMName, ""),
+					ExpectError: regexp.MustCompile(`Attribute default_size string length must be at least 1`),
 				},
 			},
 		})

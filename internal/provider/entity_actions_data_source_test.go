@@ -5,6 +5,8 @@ package provider
 
 import (
 	"fmt"
+	"net/http"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -12,6 +14,7 @@ import (
 )
 
 const (
+	HTTPS                           = "https://"
 	entityActionSearchResponseEmpty = "empty_array_response.json"
 	entityActionActionResponseEmpty = "empty_array_response.json"
 	nonExistingEntity               = "NonExistingEntity"
@@ -74,14 +77,23 @@ const (
 // Test entity action data source where the entity does not exist
 func TestEntityActionDataSourceNoInstance(t *testing.T) {
 
-	mockServer := createLocalServer(t,
-		loadTestFile(t, entityActionSearchResponseEmpty),
-		loadTestFile(t, entityActionActionResponseEmpty),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, entityActionSearchResponseEmpty),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, entityActionActionResponseEmpty),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
 	defer mockServer.Close()
 
-	providerConfig := fmt.Sprintf(config, strings.TrimLeft(mockServer.URL, "htps:/"))
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
 
 	for _, tc := range []struct {
 		name               string
@@ -125,14 +137,23 @@ func TestEntityActionDataSourceNoInstance(t *testing.T) {
 // Test entity action data source where the entity exists but has no actions with action filter
 func TestEntityActionDataSourceNoAction(t *testing.T) {
 
-	mockServer := createLocalServer(t,
-		loadTestFile(t, entityActionDir, entityActionSearchResponseHost),
-		loadTestFile(t, entityActionActionResponseEmpty),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, entityActionDir, entityActionSearchResponseHost),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, entityActionActionResponseEmpty),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
 	defer mockServer.Close()
 
-	providerConfig := fmt.Sprintf(config, strings.TrimLeft(mockServer.URL, "htps:/"))
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
 
 	for _, tc := range []struct {
 		name               string
@@ -182,14 +203,23 @@ func TestEntityActionDataSourceNoAction(t *testing.T) {
 // Test entity action data source where the entity exists and has multiple resize actions
 func TestEntityActionDataSourceMultiActions(t *testing.T) {
 
-	mockServer := createLocalServer(t,
-		loadTestFile(t, entityActionDir, entityActionSearchResponseVM),
-		loadTestFile(t, entityActionDir, entityActionMultiActionResponse),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, entityActionDir, entityActionSearchResponseVM),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, entityActionDir, entityActionMultiActionResponse),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
 	defer mockServer.Close()
 
-	providerConfig := fmt.Sprintf(config, strings.TrimLeft(mockServer.URL, "htps:/"))
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
 
 	for _, tc := range []struct {
 		name                string
@@ -249,14 +279,23 @@ func TestEntityActionDataSourceMultiActions(t *testing.T) {
 // Test entity action data source where the entity exists and has compound actions
 func TestEntityActionDataSourceCompoundAction(t *testing.T) {
 
-	mockServer := createLocalServer(t,
-		loadTestFile(t, entityActionDir, entityActionSearchResponseWC),
-		loadTestFile(t, entityActionDir, entityActionCompoundActionResponse),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, entityActionDir, entityActionSearchResponseWC),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, entityActionDir, entityActionCompoundActionResponse),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
 	defer mockServer.Close()
 
-	providerConfig := fmt.Sprintf(config, strings.TrimLeft(mockServer.URL, "htps:/"))
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
 
 	for _, tc := range []struct {
 		name                   string
@@ -328,14 +367,23 @@ func TestEntityActionDataSourceCompoundAction(t *testing.T) {
 // Test entity action data source where the entity exists and has a move action
 func TestEntityActionDataSourceMoveAction(t *testing.T) {
 
-	mockServer := createLocalServer(t,
-		loadTestFile(t, entityActionDir, entityActionMoveSearchResponse),
-		loadTestFile(t, entityActionDir, entityActionMoveActionResponse),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, entityActionDir, entityActionMoveSearchResponse),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, entityActionDir, entityActionMoveActionResponse),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
 	defer mockServer.Close()
 
-	providerConfig := fmt.Sprintf(config, strings.TrimLeft(mockServer.URL, "htps:/"))
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
 
 	for _, tc := range []struct {
 		name               string
@@ -386,14 +434,23 @@ func TestEntityActionDataSourceMoveAction(t *testing.T) {
 // Test entity action data source where the entity exists and has a reconfigure action
 func TestEntityActionDataSourceReconfigureAction(t *testing.T) {
 
-	mockServer := createLocalServer(t,
-		loadTestFile(t, entityActionDir, entityActionReconfigureSearchResponse),
-		loadTestFile(t, entityActionDir, entityActionReconfigureActionResponse),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagsRespTestData),
-		loadTestFile(t, entityTagTestDataBaseDir, entityTagRespTestData))
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, entityActionDir, entityActionReconfigureSearchResponse),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, entityActionDir, entityActionReconfigureActionResponse),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
 	defer mockServer.Close()
 
-	providerConfig := fmt.Sprintf(config, strings.TrimLeft(mockServer.URL, "htps:/"))
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
 
 	for _, tc := range []struct {
 		name               string
@@ -440,6 +497,267 @@ func TestEntityActionDataSourceReconfigureAction(t *testing.T) {
 							resource.TestCheckResourceAttr("data.turbonomic_entity_actions.test", "actions.0.risk.reason_commodities.0", tc.reasonCommodity0),
 							resource.TestCheckResourceAttr("data.turbonomic_entity_actions.test", "actions.0.risk.reason_commodities.1", tc.reasonCommodity1),
 							resource.TestCheckResourceAttr("data.turbonomic_entity_actions.test", "actions.0.target.discovered_by.type", tc.discoveredByType),
+						),
+					},
+				},
+			})
+		})
+	}
+}
+
+// Tests no error while retrieving entity tags
+func TestEntityActionsGetEntityTagsError(t *testing.T) {
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, entityActionDir, entityActionMoveSearchResponse),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, entityActionDir, entityActionMoveActionResponse),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+	})
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+
+	t.Run("Error while retrieving entity tags", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config: providerConfig +
+						`data "turbonomic_entity_actions" "test" {
+							    entity_name  = "` + moveActionEntity + `"
+                                entity_type = "` + moveActionEntityType + `"
+						    }`,
+					ExpectError: regexp.MustCompile(`Unable to retrieve entity tags from Turbonomic`),
+				},
+			},
+		})
+	})
+}
+
+// Tests error while tagging an entity
+func TestEntityActionsDataSourceTagEntityError(t *testing.T) {
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, entityActionDir, entityActionMoveSearchResponse),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, entityActionDir, entityActionMoveActionResponse),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "[]",
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "",
+			ResponseCode: http.StatusOK,
+		},
+	})
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+
+	t.Run("Error while tagging an entity", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config: providerConfig +
+						`data "turbonomic_entity_actions" "test" {
+							    entity_name  = "` + moveActionEntity + `"
+                                entity_type = "` + moveActionEntityType + `"
+						    }`,
+					ExpectError: regexp.MustCompile(`Unable to tag an entity in Turbonomic`),
+				},
+			},
+		})
+	})
+}
+
+// Tests no error while tagging already tagged entity with discovered "optimized by" tag value
+func TestEntityActionsDataSourceTagEntityAlreadyTaggedDiscovered(t *testing.T) {
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, entityActionDir, entityActionMoveSearchResponse),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, entityActionDir, entityActionMoveActionResponse),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: `[{"key": "turbonomic_optimized_by","values": ["turbonomic-terraform-provider"]}]`,
+			ResponseCode: http.StatusOK,
+		},
+	})
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+
+	for _, tc := range []struct {
+		name               string
+		testEntity         string
+		testEntityUuid     string
+		testEntityType     string
+		expectedEntityName string
+		actionUuid         string
+		currentValue       string
+		newValue           string
+	}{
+		{
+			name:               "Test VirtualMachine move Actions",
+			testEntity:         moveActionEntity,
+			testEntityUuid:     moveActionEntityUuid,
+			testEntityType:     moveActionEntityType,
+			expectedEntityName: moveActionEntity,
+			actionUuid:         moveActionUuid,
+			currentValue:       moveActionCurrentValue,
+			newValue:           moveActionNewValue,
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			resource.Test(t, resource.TestCase{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Steps: []resource.TestStep{
+					{
+						Config: providerConfig +
+							`data "turbonomic_entity_actions" "test" {
+							    entity_name  = "` + tc.testEntity + `"
+                                entity_type = "` + tc.testEntityType + `"
+						    }`,
+						Check: resource.ComposeAggregateTestCheckFunc(
+							resource.TestCheckResourceAttr("data.turbonomic_entity_actions.test", "entity_name", tc.expectedEntityName),
+							resource.TestCheckResourceAttr("data.turbonomic_entity_actions.test", "entity_type", tc.testEntityType),
+							resource.TestCheckResourceAttr("data.turbonomic_entity_actions.test", "entity_uuid", tc.testEntityUuid),
+							resource.TestCheckResourceAttr("data.turbonomic_entity_actions.test", "actions.0.uuid", tc.actionUuid),
+							resource.TestCheckResourceAttr("data.turbonomic_entity_actions.test", "actions.0.current_value", tc.currentValue),
+							resource.TestCheckResourceAttr("data.turbonomic_entity_actions.test", "actions.0.new_value", tc.newValue),
+						),
+					},
+				},
+			})
+		})
+	}
+}
+
+// Tests no error while tagging already tagged entity with not discovered "optimized by" tag value
+func TestEntityActionsDataSourceTagEntityAlreadyTaggedNotDiscovered(t *testing.T) {
+	mockServer := mockTurboServer(t, []MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ResponseBody: loadTestFile(t, entityActionDir, entityActionMoveSearchResponse),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, entityActionDir, entityActionMoveActionResponse),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/login",
+			ResponseCode: http.StatusOK,
+			ResponseBody: `{"status":"ok"}`,
+		},
+		{
+			Method:       http.MethodGet,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: `[]`,
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/tags",
+			ResponseBody: "Entity service RPC call failed to complete request: INVALID_ARGUMENT: Trying to insert a tag with a key that already exists: turbonomic_optimized_by",
+			ResponseCode: http.StatusBadRequest,
+		},
+	})
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+	for _, tc := range []struct {
+		name               string
+		testEntity         string
+		testEntityUuid     string
+		testEntityType     string
+		expectedEntityName string
+		actionUuid         string
+		currentValue       string
+		newValue           string
+	}{
+		{
+			name:               "Test VirtualMachine move Actions",
+			testEntity:         moveActionEntity,
+			testEntityUuid:     moveActionEntityUuid,
+			testEntityType:     moveActionEntityType,
+			expectedEntityName: moveActionEntity,
+			actionUuid:         moveActionUuid,
+			currentValue:       moveActionCurrentValue,
+			newValue:           moveActionNewValue,
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			resource.Test(t, resource.TestCase{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Steps: []resource.TestStep{
+					{
+						Config: providerConfig +
+							`data "turbonomic_entity_actions" "test" {
+							    entity_name  = "` + tc.testEntity + `"
+                                entity_type = "` + tc.testEntityType + `"
+						    }`,
+						Check: resource.ComposeAggregateTestCheckFunc(
+							resource.TestCheckResourceAttr("data.turbonomic_entity_actions.test", "entity_name", tc.expectedEntityName),
+							resource.TestCheckResourceAttr("data.turbonomic_entity_actions.test", "entity_type", tc.testEntityType),
+							resource.TestCheckResourceAttr("data.turbonomic_entity_actions.test", "entity_uuid", tc.testEntityUuid),
+							resource.TestCheckResourceAttr("data.turbonomic_entity_actions.test", "actions.0.uuid", tc.actionUuid),
+							resource.TestCheckResourceAttr("data.turbonomic_entity_actions.test", "actions.0.current_value", tc.currentValue),
+							resource.TestCheckResourceAttr("data.turbonomic_entity_actions.test", "actions.0.new_value", tc.newValue),
 						),
 					},
 				},

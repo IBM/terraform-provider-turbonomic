@@ -24,6 +24,6 @@ The AWS RDS resource is configured to use the `turbonomic_aws_db_instance` data 
 ## AWS EBS example
 
 The AWS EBS resource is configured to use the `turbonomic_aws_ebs_volume` data source unless null is returned, in which case it uses `<default_type>` by default.
-`Either `<vendor_id>` or `<entity_name>` to be provided to uniquely identify an entity.
+Either `<vendor_id>` or `<entity_name>` to be provided to uniquely identify an entity.
 
 {{ tffile "examples/aws-ebs/main.tf" }}

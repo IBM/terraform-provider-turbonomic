@@ -523,3 +523,37 @@ func ExtractVendorIdValues(entities turboclient.SearchResults) []string {
 
 	return vendorIdValues
 }
+
+/*
+canExecuteAction checks if the action has an execution schedule.  If is does the function
+checks if the window is open for execution.
+
+Parameters:
+  - actions: The Turbonomic client to use for API calls
+  - options: A variadic list of StatsOption functions to configure the request
+
+Returns:
+  - bool: whether or not the action can be executed right now
+  - string: if false a message on why the action cannot be executed
+*/
+func canExecuteAction(actions turboclient.ActionResults) (bool, string) {
+	if actions[0].ActionMode != "MANUAL" && actions[0].ActionMode != "AUTOMATIC" && actions[0].ActionMode != "EXTERNAL_APPROVAL" {
+
+		return false, fmt.Sprintf("actionMode is set to %s, Turbonomic action is not executable", actions[0].ActionMode)
+	}
+
+	switch actions[0].ActionStateDescription {
+	case "":
+		fallthrough
+	case "READY_ACCEPT_AND_EXECUTE":
+		return true, ""
+	case "READY_ACCEPT_AND_WAIT_FOR_SCHEDULE":
+		if actions[0].ActionSchedule.RemaingTimeActiveInMs > 0 {
+			return true, ""
+		}
+		return false, fmt.Sprintf(
+			"scheduled action execution window is not active, next occurrence will be %s", actions[0].ActionSchedule.NextOccurrence)
+	default:
+		return false, fmt.Sprintf("actionStateDescription is set to %s, Turbonomic action is not executable", actions[0].ActionStateDescription)
+	}
+}

@@ -11,5 +11,7 @@ project {
     ".pre-commit-config.yaml",
     ".travis/***",
     ".travis.yml",
+    ".git",
+    ".github",
   ]
 }

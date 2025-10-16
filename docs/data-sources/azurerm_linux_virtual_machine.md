@@ -34,3 +34,5 @@ data "turbonomic_azurerm_linux_virtual_machine" "example" {
 - `entity_type` (String) type of the Azure VM entity for Linux
 - `entity_uuid` (String) Turbonomic UUID of the Azure VM entity for Linux
 - `new_size` (String) recommended size of the Azure VM entity for Linux
+
+

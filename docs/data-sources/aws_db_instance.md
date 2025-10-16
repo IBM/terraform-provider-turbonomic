@@ -46,3 +46,5 @@ data "turbonomic_aws_db_instance" "testRDS2" {
 - `new_instance_class` (String) recommended instance class of the AWS RDS entity
 - `new_iops` (Number) recommended IOPS of the AWS RDS entity, update is only valid for type of io1, io2 or gp3
 - `new_storage_type` (String) recommended storage type of the AWS RDS entity
+
+

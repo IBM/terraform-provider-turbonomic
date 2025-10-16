@@ -5,6 +5,7 @@
     "actionImpactID": 638917183109157,
     "marketID": 777777,
     "createTime": "2023-04-14T12:34:56Z",
+    "actionMode": "MANUAL",
     "lastModifiedTime": "2023-04-14T12:34:56Z",
     "currentLocation": {
       "uuid": "75947562073584",

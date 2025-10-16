@@ -44,3 +44,5 @@ data "turbonomic_aws_ebs_volume" "example" {
 - `new_size` (Number) recommended size of the volume entity in GiB
 - `new_throughput` (Number) recommended throughput of the volume entity in MiB/s, update is only valid for type of gp3
 - `new_type` (String) recommended type of the volume entity
+
+

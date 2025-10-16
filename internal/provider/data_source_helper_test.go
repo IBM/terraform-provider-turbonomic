@@ -490,3 +490,155 @@ func contains(slice []string, item string) bool {
 	}
 	return false
 }
+
+func TestCanExecuteAction(t *testing.T) {
+	tests := []struct {
+		name           string
+		actions        turboclient.ActionResults
+		expectedResult bool
+		expectedMsg    string
+	}{
+		{
+			name: "RECOMMEND action mode",
+			actions: turboclient.ActionResults{
+				{
+					ActionMode:             "RECOMMEND",
+					ActionStateDescription: "READY_ACCEPT_AND_EXECUTE",
+				},
+			},
+			expectedResult: false,
+			expectedMsg:    "actionMode is set to RECOMMEND, Turbonomic action is not executable",
+		},
+		{
+			name: "Manual mode with ready state",
+			actions: turboclient.ActionResults{
+				{
+					ActionMode:             "MANUAL",
+					ActionStateDescription: "READY_ACCEPT_AND_EXECUTE",
+				},
+			},
+			expectedResult: true,
+			expectedMsg:    "",
+		},
+		{
+			name: "Automatic mode with ready state",
+			actions: turboclient.ActionResults{
+				{
+					ActionMode:             "AUTOMATIC",
+					ActionStateDescription: "READY_ACCEPT_AND_EXECUTE",
+				},
+			},
+			expectedResult: true,
+			expectedMsg:    "",
+		},
+		{
+			name: "Scheduled action with active time window",
+			actions: turboclient.ActionResults{
+				{
+					ActionMode:             "MANUAL",
+					ActionStateDescription: "READY_ACCEPT_AND_WAIT_FOR_SCHEDULE",
+					ActionSchedule: struct {
+						UUID                               string `json:"uuid"`
+						DisplayName                        string `json:"displayName"`
+						NextOccurrence                     string `json:"nextOccurrence"`
+						NextOccurrenceTimestamp            int64  `json:"nextOccurrenceTimestamp"`
+						TimeZoneId                         string `json:"timeZoneId"`
+						Mode                               string `json:"mode"`
+						AcceptedByUserForMaintenanceWindow bool   `json:"acceptedByUserForMaintenanceWindow"`
+						RemaingTimeActiveInMs              int64  `json:"remaingTimeActiveInMs"`
+					}{
+						UUID:                               "test-uuid",
+						DisplayName:                        "Test Schedule",
+						NextOccurrence:                     "2055-01-01T12:00:00Z",
+						NextOccurrenceTimestamp:            1672574400000,
+						TimeZoneId:                         "UTC",
+						Mode:                               "MANUAL",
+						AcceptedByUserForMaintenanceWindow: false,
+						RemaingTimeActiveInMs:              1000,
+					},
+				},
+			},
+			expectedResult: true,
+			expectedMsg:    "",
+		},
+		{
+			name: "Scheduled action with inactive time window",
+			actions: turboclient.ActionResults{
+				{
+					ActionMode:             "MANUAL",
+					ActionStateDescription: "READY_ACCEPT_AND_WAIT_FOR_SCHEDULE",
+					ActionSchedule: struct {
+						UUID                               string `json:"uuid"`
+						DisplayName                        string `json:"displayName"`
+						NextOccurrence                     string `json:"nextOccurrence"`
+						NextOccurrenceTimestamp            int64  `json:"nextOccurrenceTimestamp"`
+						TimeZoneId                         string `json:"timeZoneId"`
+						Mode                               string `json:"mode"`
+						AcceptedByUserForMaintenanceWindow bool   `json:"acceptedByUserForMaintenanceWindow"`
+						RemaingTimeActiveInMs              int64  `json:"remaingTimeActiveInMs"`
+					}{
+						UUID:                               "test-uuid",
+						DisplayName:                        "Test Schedule",
+						NextOccurrence:                     "2055-01-01T12:00:00Z",
+						NextOccurrenceTimestamp:            1672574400000,
+						TimeZoneId:                         "UTC",
+						Mode:                               "MANUAL",
+						AcceptedByUserForMaintenanceWindow: false,
+						RemaingTimeActiveInMs:              0,
+					},
+				},
+			},
+			expectedResult: false,
+			expectedMsg:    "scheduled action execution window is not active, next occurrence will be 2055-01-01T12:00:00Z",
+		},
+		{
+			name: "Action with non-executable state",
+			actions: turboclient.ActionResults{
+				{
+					ActionMode:             "MANUAL",
+					ActionStateDescription: "SCHEDULED_WAITING_FOR_EXTERNAL_APPROVAL",
+				},
+			},
+			expectedResult: false,
+			expectedMsg:    "actionStateDescription is set to SCHEDULED_WAITING_FOR_EXTERNAL_APPROVAL, Turbonomic action is not executable",
+		},
+		// Empty action results case is handled separately
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, msg := canExecuteAction(tt.actions)
+			if result != tt.expectedResult {
+				t.Errorf("Expected result %v, got %v", tt.expectedResult, result)
+			}
+			if msg != tt.expectedMsg {
+				t.Errorf("Expected message %q, got %q", tt.expectedMsg, msg)
+			}
+		})
+	}
+}
+
+// TestCanExecuteActionEdgeCases tests edge cases for the canExecuteAction function
+func TestCanExecuteActionEdgeCases(t *testing.T) {
+	// Test with nil ActionResults
+	t.Run("Nil action results", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r == nil {
+				t.Errorf("Expected panic with nil ActionResults, but no panic occurred")
+			}
+		}()
+
+		canExecuteAction(nil)
+	})
+
+	// Test with empty ActionResults
+	t.Run("Empty action results", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r == nil {
+				t.Errorf("Expected panic with empty ActionResults, but no panic occurred")
+			}
+		}()
+
+		canExecuteAction(turboclient.ActionResults{})
+	})
+}

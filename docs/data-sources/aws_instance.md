@@ -32,3 +32,5 @@ data "turbonomic_aws_instance" "example" {
 - `entity_type` (String) type of the AWS EC2 entity
 - `entity_uuid` (String) Turbonomic UUID of the AWS EC2 entity
 - `new_instance_type` (String) recommended instance type of the AWS EC2 entity
+
+

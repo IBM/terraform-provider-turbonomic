@@ -44,3 +44,5 @@ data "turbonomic_azurerm_managed_disk" "example" {
 - `new_disk_mbps_read_write` (Number) recommended throughput of the volume entity in MiB/s
 - `new_disk_size_gb` (Number) recommended size of the volume entity in GiB
 - `new_storage_account_type` (String) recommended storage type of the Azure Managed Disk entity
+
+

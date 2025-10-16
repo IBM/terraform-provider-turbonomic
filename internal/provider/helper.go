@@ -20,6 +20,7 @@ package provider
 
 import (
 	"math"
+	"strings"
 )
 
 const (
@@ -37,4 +38,12 @@ func convertKibitToMiBps(value float64) float64 {
 // convertMBtoGiB converts a value from MB to GiB and rounds to the nearest integer
 func convertMiBtoGiB(value float64) int64 {
 	return int64(math.Round(value / 1024))
+}
+
+// convertSlicetoUppercase converts a slice os strings to uppercase
+func convertSlicetoUppercase(values []string) []string {
+	for i, value := range values {
+		values[i] = strings.ToUpper(value)
+	}
+	return values
 }

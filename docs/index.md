@@ -14,6 +14,11 @@ entities that are deployed through Terraform. The data source of the provider re
 the tier size based on Turbonomic scaling action recommendations, or the current size
 if no scaling action exists.
 
+You will encounter three distinct value types when working with Turbonomic data sources:
+- current value: The most recently discovered value for the entity, as identified by Turbonomic.
+- new value: The optimal value recommended by Turbonomic based on its analysis.
+- default values: A user-defined fallback value used when the entity does not yet exist in the environment.
+
 ## Example usage
 
 ```terraform
@@ -21,7 +26,7 @@ terraform {
   required_providers {
     turbonomic = {
       source  = "IBM/turbonomic"
-      version = "1.6.0"
+      version = "1.7.0"
     }
   }
 }
@@ -49,7 +54,7 @@ terraform {
   required_providers {
     turbonomic = {
       source  = "IBM/turbonomic"
-      version = "1.6.0"
+      version = "1.7.0"
     }
   }
 }
@@ -76,7 +81,7 @@ terraform {
   required_providers {
     turbonomic = {
       source  = "IBM/turbonomic"
-      version = "1.6.0"
+      version = "1.7.0"
     }
   }
 }
@@ -111,6 +116,38 @@ Naming pattern: `turbonomic_<provider>_<resource_type>`.
 | [`turbonomic_google_compute_disk`](data-sources/google_compute_disk.md)               | Google Cloud   | Persistent Disk           |
 | [`turbonomic_google_compute_instance`](data-sources/google_compute_instance.md)       | Google Cloud   | Compute Engine Instance   |
 
+## Turbonomic policy, schedules and control
+
+The Turbonomic Terraform Provider respects the
+[actions acceptance mode](https://www.ibm.com/docs/en/tarm/8.17.x?topic=actions-action-acceptance-modes) and
+[action execution schedule](https://www.ibm.com/docs/en/tarm/8.17.x?topic=policies-automation-policy-schedules#policy_schedule__ActionExecutionSchedule__title__1)
+configured within the Turbonomic platform.
+
+Specifically, the provider will not return new values from actions to a data sources unless the
+[action's acceptance mode](https://www.ibm.com/docs/en/tarm/8.17.x?topic=actions-action-acceptance-modes) is
+set to either `MANUAL` or `AUTOMATED`. Additionally, the provider adheres to any
+[action execution schedule](https://www.ibm.com/docs/en/tarm/8.17.x?topic=policies-automation-policy-schedules#policy_schedule__ActionExecutionSchedule__title__1)
+defined for a given entity and action type(s), ensuring that actions are only executed in accordance with the specified
+timing and policy constraints.  In all cases, if no action is pending, the current value is returned.
+
+The current value is the last discovered value by Turbonomic.
+
+Below is a table that describes what the Provider will return in relation to the actions acceptance mode and
+action execution schedule.
+
+### Terraform Provider Action Eligibility Matrix
+
+| **Action Mode**              | **Scheduled with Window Open** | **Scheduled with Window Closed** | **Not Scheduled** |
+|-----------------------------|----------------------------------|-----------------------------------|-------------------|
+| **Recommended**             | — Current Value Returned                                             | — Current Value Returned   | — Current Value Returned   |
+| **Manual**                  | ✅ New Value from Action Returned                                    | — Current Value Returned    | ✅ New Value from Action Returned   |
+| **Automated**               | ✅ New Value from Action Returned                                    | — Current Value Returned    | ✅ New Value from Action Returned   |
+| **Automated when approved** | ✅ New Value from Action Returned once approved                      | — Current Value Returned    | ✅ New Value from Action Returned once approved   |
+
+✅ = Action results may be returned<br>
+— = Action results will not be returned
+
+> Note: If no action is pending, the Current Value is retured in all cases.
 
 ## Features and bug requests
 

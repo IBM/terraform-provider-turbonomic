@@ -17,3 +17,4 @@ Use this repository to build the IBM Turbonomic Terraform Provider, which suppli
 ## Using the Provider
 
  To get started using the Turbonomic provider, see the [documentation](https://registry.terraform.io/providers/IBM/turbonomic/latest/docs).
+

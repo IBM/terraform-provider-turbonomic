@@ -44,3 +44,5 @@ data "turbonomic_google_compute_disk" "example" {
 - `new_provisioned_throughput` (Number) recommended throughput of the volume entity in MiB/s, update is only supported by hyperdisk skus
 - `new_size` (Number) recommended size of the volume entity in GiB
 - `new_type` (String) recommended tier of the virtual volume entity
+
+

@@ -8,8 +8,8 @@ description: |-
 
 # turbonomic_cloud_entity_recommendation (Data Source)
 
-The following example demonstrates the syntax for the `turbonomic_cloud_entity_recommendation` data source.
-
+The following example demonstrates the syntax for the `turbonomic_cloud_entity_recommendation` data source. 
+ 
  ~> **NOTE:** `turbonomic_cloud_entity_recommendation` data source has been deprecated in version 1.4.0 and will be removed in future versions.
 
 ## Example Usage
@@ -38,3 +38,5 @@ data "turbonomic_cloud_entity_recommendation" "example" {
 - `current_instance_type` (String) current tier of the cloud entity
 - `entity_uuid` (String) Turbonomic UUID of the cloud entity
 - `new_instance_type` (String) recommended tier of the cloud entity
+
+

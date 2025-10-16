@@ -762,7 +762,10 @@ func (d *entityActionsDataSource) Read(ctx context.Context, req datasource.ReadR
 	tflog.Debug(ctx, fmt.Sprintf("entity id found: %s\n", entity[0].UUID))
 	state.EntityUuid = types.StringValue(entity[0].UUID)
 
-	actions, errDiag := GetFilteredEntityActions(d.client, entity[0].UUID, actTypes, actStates)
+	actions, errDiag := GetFilteredEntityActions(d.client, entity[0].UUID,
+		convertSlicetoUppercase(actTypes),
+		convertSlicetoUppercase(actStates))
+
 	if errDiag != nil {
 		tflog.Error(ctx, errDiag.Detail())
 		resp.Diagnostics.AddError(errDiag.Summary(), errDiag.Detail())

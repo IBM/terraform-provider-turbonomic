@@ -32,3 +32,5 @@ data "turbonomic_google_compute_instance" "example" {
 - `entity_type` (String) type of the Google Compute entity
 - `entity_uuid` (String) Turbonomic UUID of the Google Compute entity
 - `new_machine_type` (String) recommended machine type of the Google Compute entity
+
+

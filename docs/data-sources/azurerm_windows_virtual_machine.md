@@ -34,3 +34,5 @@ data "turbonomic_azurerm_windows_virtual_machine" "example" {
 - `entity_type` (String) type of the Azure VM entity for Windows
 - `entity_uuid` (String) Turbonomic UUID of the Azure VM entity for Windows
 - `new_size` (String) recommended size of the Azure VM entity for Windows
+
+

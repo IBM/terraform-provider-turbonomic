@@ -119,7 +119,7 @@ func (d *GoogleComputeInstanceDataSource) Configure(_ context.Context, req datas
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Data Source Configure Type",
-			fmt.Sprintf("Expected: *turboclient.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("expected: *turboclient.Client, got: %T. please report this issue to the provider developers.", req.ProviderData),
 		)
 
 		return
@@ -150,7 +150,7 @@ func (d *GoogleComputeInstanceDataSource) Read(ctx context.Context, req datasour
 	}
 	entity, errDiag = GetEntitiesByVendorId(d.client, entityArgs...)
 	if errDiag != nil {
-		errDetail := fmt.Sprintf("Entity %s not found in Turbonomic instance when searching by vendor id, searching without it", enName)
+		errDetail := fmt.Sprintf("entity %s not found in Turbonomic instance when searching by vendor id, searching without it", enName)
 		tflog.Warn(ctx, errDetail)
 
 		entityArgs := []EntityOption{
@@ -195,10 +195,17 @@ func (d *GoogleComputeInstanceDataSource) Read(ctx context.Context, req datasour
 		errDetail = fmt.Sprintf("no matching action found for entity id: %s", entity[0].UUID)
 	} else {
 		tflog.Debug(ctx, fmt.Sprintf("action id found: %d\n", actions[0].ActionID))
-		state, err = HandleGoogleComputeInstanceAction(ctx, resp, state, actions)
-		if err != nil {
-			errDetail = fmt.Sprintf("error while trying to retrieve new value, %s", err.Error())
+
+		canExecute, executeMsg := canExecuteAction(actions)
+		if canExecute {
+			state, err = HandleGoogleComputeInstanceAction(ctx, resp, state, actions)
+			if err != nil {
+				errDetail = fmt.Sprintf("error while trying to retrieve new value, %s", err.Error())
+			}
+		} else {
+			errDetail = executeMsg
 		}
+
 	}
 	if len(errDetail) != 0 {
 		tflog.Warn(ctx, errDetail)

@@ -30,6 +30,8 @@ data "turbonomic_google_compute_disk" "example" {
 - `default_size` (Number) default size of the volume entity in GiB
 - `default_type` (String) default tier of the virtual volume entity
 - `entity_name` (String) name of the Google cloud volume entity. This field is used for search operations when a valid vendor_id is not provided
+
+### Conditionally Optional
 - `vendor_id` (String) self_link of the Google cloud volume entity. When provided, this field is used as the primary search criteria, taking precedence over entity_name
 
 ### Read-Only

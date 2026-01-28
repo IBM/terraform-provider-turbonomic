@@ -124,3 +124,62 @@ resource "azurerm_mssql_database" "example" {
   collation   = "SQL_Latin1_General_CP1_CI_AS"
 }
 ```
+
+The `azurerm_resources` data source can be used to get information about existing Azure resources.
+
+```terraform
+data "azurerm_resources" "example" {
+  resource_group_name = "terraformResourceGroup1"
+}
+
+  + azure = {
+      + id                  = "resource-cb4f0cd5-95e4-4620-9eba-debccc294ab1"
+      + name                = null
+      + required_tags       = null
+      + resource_group_name = "terraformResourceGroup1"
+      + resources           = [
+          + {
+              + id                  = "/subscriptions/758ad253-cbf5-4b18-8863-3eed0825bf07/resourceGroups/terraformResourceGroup1/providers/Microsoft.Network/networkInterfaces/terraformNetworkInterface1"
+              + location            = "westeurope"
+              + name                = "terraformNetworkInterface1"
+              + resource_group_name = "terraformResourceGroup1"
+              + tags                = {}
+              + type                = "Microsoft.Network/networkInterfaces"
+            },
+          + {
+              + id                  = "/subscriptions/758ad253-cbf5-4b18-8863-3eed0825bf07/resourceGroups/TERRAFORMRESOURCEGROUP1/providers/Microsoft.Compute/virtualMachines/terraformDemo1"
+              + location            = "westeurope"
+              + name                = "terraformDemo1"
+              + resource_group_name = "TERRAFORMRESOURCEGROUP1"
+              + tags                = {
+                  + turbo_comment = "terraform_development"
+                  + turbo_owner   = "raymileo_at_ibmcom"
+                  + turbo_park    = "true"
+                  + turbo_team    = "appinfra_integrations"
+                  + turbo_ttl     = "070125"
+                  + turbo_use     = "development"
+                }
+              + type                = "Microsoft.Compute/virtualMachines"
+            },
+          + {
+              + id                  = "/subscriptions/758ad253-cbf5-4b18-8863-3eed0825bf07/resourceGroups/TERRAFORMRESOURCEGROUP1/providers/Microsoft.Compute/disks/terraformDemo1_disk1_33c86b70a52a4e04a14c04f1dc633a79"
+              + location            = "westeurope"
+              + name                = "terraformDemo1_disk1_33c86b70a52a4e04a14c04f1dc633a79"
+              + resource_group_name = "TERRAFORMRESOURCEGROUP1"
+              + tags                = {
+                  + turbo_comment = "terraform_development"
+                  + turbo_owner   = "raymileo_at_ibmcom"
+                  + turbo_park    = "true"
+                  + turbo_team    = "appinfra_integrations"
+                  + turbo_ttl     = "070125"
+                  + turbo_use     = "development"
+                }
+              + type                = "Microsoft.Compute/disks"
+            },
+        ]
+      + timeouts            = null
+      + type                = null
+    }
+```
+
+The vendor ID can be found in the `id` attribute and can be used to uniquely identify Azure volumes in Turbonomic, via API calls.

@@ -1,3 +1,10 @@
+## 1.8.0
+BUG FIXES:
+
+- Remove required-together validation for volume data sources
+- Add missing vendor_id suggestion on duplicate entity error message
+- Add warning message for invalid entity in `turbonomic_entity_actions` datasource
+
 ## 1.7.0
 FEATURES:
 

@@ -168,12 +168,7 @@ func (d *GoogleComputeDiskDataSource) Schema(ctx context.Context, req datasource
 
 func (d *GoogleComputeDiskDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(
-			path.MatchRoot("default_type"),
-			path.MatchRoot("default_provisioned_iops"),
-			path.MatchRoot("default_provisioned_throughput"),
-			path.MatchRoot("default_size"),
-		),
+		GoogleComputeDiskValidator{},
 		datasourcevalidator.AtLeastOneOf(
 			path.MatchRoot("entity_name"), path.MatchRoot("vendor_id"),
 		),
@@ -219,7 +214,11 @@ func (d *GoogleComputeDiskDataSource) Read(ctx context.Context, req datasource.R
 		WithEntityTypeForVendorId(enTyp),
 	}
 	entity, errDiag = GetEntitiesByVendorId(d.client, entityArgs...)
-	if errDiag != nil {
+	if len(entity) == 0 || errDiag != nil {
+		if errDiag != nil {
+			tflog.Debug(ctx, fmt.Sprintf("error while searching by vendor id: %s", errDiag.Detail()))
+		}
+
 		errDetail := fmt.Sprintf("entity %s not found in Turbonomic instance when searching by vendor id, searching without it", enName)
 		tflog.Warn(ctx, errDetail)
 
@@ -228,6 +227,7 @@ func (d *GoogleComputeDiskDataSource) Read(ctx context.Context, req datasource.R
 			WithEntityType(enTyp),
 			WithEnvironmentType("CLOUD"),
 			WithCloudType("GCP"),
+			ShowVendorIdString(true),
 		}
 		entity, errDiag = GetEntitiesByName(d.client, entityArgs...)
 	}

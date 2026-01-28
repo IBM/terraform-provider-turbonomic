@@ -148,3 +148,20 @@ func (a *AzurermManagedDiskStateAdapter) GetEntityUuid() string {
 	}
 	return "unknown"
 }
+
+// AzurermManagedDiskValidator implements custom validation for turbonomic_azurerm_managed_disk data source
+// Temporary fix to skip the required together validator
+var _ datasource.ConfigValidator = AzurermManagedDiskValidator{}
+
+type AzurermManagedDiskValidator struct{}
+
+func (v AzurermManagedDiskValidator) Description(_ context.Context) string {
+	return "Validates turbonomic_azurerm_managed_disk configuration."
+}
+
+func (v AzurermManagedDiskValidator) MarkdownDescription(ctx context.Context) string {
+	return v.Description(ctx)
+}
+
+func (v AzurermManagedDiskValidator) ValidateDataSource(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
+}

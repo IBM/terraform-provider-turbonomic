@@ -26,6 +26,59 @@ import (
 var (
 	_ datasource.DataSource              = &entityActionsDataSource{}
 	_ datasource.DataSourceWithConfigure = &entityActionsDataSource{}
+
+	actionTypes      = []string{"START", "MOVE", "SCALE", "ALLOCATE", "SUSPEND", "PROVISION", "RECONFIGURE", "RESIZE", "DELETE", "RIGHT_SIZE", "BUY_RI"}
+	environmentTypes = []string{"HYBRID", "CLOUD", "ONPREM", "UNKNOWN"}
+	actionStates     = []string{"ACCEPTED", "REJECTED", "PRE_IN_PROGRESS", "POST_IN_PROGRESS", "IN_PROGRESS", "SUCCEEDED", "FAILED", "DISABLED", "QUEUED", "CLEARED", "ACCOUNTING", "READY", "FAILING", "BEFORE_EXEC", "IN_PROGRESS_NON_CRITICAL"}
+
+	entityTypes = map[string]string{
+		"applicationcomponentspec": "ApplicationComponentSpec",
+		"applicationcomponent":     "ApplicationComponent",
+		"availabilityzone":         "AvailabilityZone",
+		"billingfamily":            "BillingFamily",
+		"businessaccountfolder":    "BusinessAccountFolder",
+		"businessaccount":          "BusinessAccount",
+		"businessapplication":      "BusinessApplication",
+		"businesstransaction":      "BusinessTransaction",
+		"businessuser":             "BusinessUser",
+		"chassis":                  "Chassis",
+		"cluster":                  "Cluster",
+		"computetier":              "ComputeTier",
+		"containerplatformcluster": "ContainerPlatformCluster",
+		"container":                "Container",
+		"containerpod":             "ContainerPod",
+		"containerspec":            "ContainerSpec",
+		"datacenter":               "DataCenter",
+		"database":                 "Database",
+		"databaseserver":           "DatabaseServer",
+		"databaseservertier":       "DatabaseServerTier",
+		"databasetier":             "DatabaseTier",
+		"desktoppool":              "DesktopPool",
+		"diskarray":                "DiskArray",
+		"documentcollection":       "DocumentCollection",
+		"group":                    "Group",
+		"iomodule":                 "IOModule",
+		"internet":                 "Internet",
+		"logicalpool":              "LogicalPool",
+		"namespace":                "Namespace",
+		"network":                  "Network",
+		"physicalmachine":          "PhysicalMachine",
+		"region":                   "Region",
+		"resourcegroup":            "ResourceGroup",
+		"service":                  "Service",
+		"storage":                  "Storage",
+		"storagecluster":           "StorageCluster",
+		"storagecontroller":        "StorageController",
+		"storagetier":              "StorageTier",
+		"switch":                   "Switch",
+		"viewpod":                  "ViewPod",
+		"virtualdatacenter":        "VirtualDataCenter",
+		"virtualmachine":           "VirtualMachine",
+		"virtualmachinecluster":    "VirtualMachineCluster",
+		"virtualmachinespec":       "VirtualMachineSpec",
+		"virtualvolume":            "VirtualVolume",
+		"workloadcontroller":       "WorkloadController",
+	}
 )
 
 type EntityActionsModel struct {
@@ -227,60 +280,6 @@ type ActionModel struct {
 	} `tfsdk:"compound_actions"`
 	Source   types.String `tfsdk:"source"`
 	ActionID types.Int64  `tfsdk:"action_id"`
-}
-
-var (
-	actionTypes      = []string{"START", "MOVE", "SCALE", "ALLOCATE", "SUSPEND", "PROVISION", "RECONFIGURE", "RESIZE", "DELETE", "RIGHT_SIZE", "BUY_RI"}
-	environmentTypes = []string{"HYBRID", "CLOUD", "ONPREM", "UNKNOWN"}
-	actionStates     = []string{"ACCEPTED", "REJECTED", "PRE_IN_PROGRESS", "POST_IN_PROGRESS", "IN_PROGRESS", "SUCCEEDED", "FAILED", "DISABLED", "QUEUED", "CLEARED", "ACCOUNTING", "READY", "FAILING", "BEFORE_EXEC", "IN_PROGRESS_NON_CRITICAL"}
-)
-var entityTypes = map[string]string{
-	"applicationcomponentspec": "ApplicationComponentSpec",
-	"applicationcomponent":     "ApplicationComponent",
-	"availabilityzone":         "AvailabilityZone",
-	"billingfamily":            "BillingFamily",
-	"businessaccountfolder":    "BusinessAccountFolder",
-	"businessaccount":          "BusinessAccount",
-	"businessapplication":      "BusinessApplication",
-	"businesstransaction":      "BusinessTransaction",
-	"businessuser":             "BusinessUser",
-	"chassis":                  "Chassis",
-	"cluster":                  "Cluster",
-	"computetier":              "ComputeTier",
-	"containerplatformcluster": "ContainerPlatformCluster",
-	"container":                "Container",
-	"containerpod":             "ContainerPod",
-	"containerspec":            "ContainerSpec",
-	"datacenter":               "DataCenter",
-	"database":                 "Database",
-	"databaseserver":           "DatabaseServer",
-	"databaseservertier":       "DatabaseServerTier",
-	"databasetier":             "DatabaseTier",
-	"desktoppool":              "DesktopPool",
-	"diskarray":                "DiskArray",
-	"documentcollection":       "DocumentCollection",
-	"group":                    "Group",
-	"iomodule":                 "IOModule",
-	"internet":                 "Internet",
-	"logicalpool":              "LogicalPool",
-	"namespace":                "Namespace",
-	"network":                  "Network",
-	"physicalmachine":          "PhysicalMachine",
-	"region":                   "Region",
-	"resourcegroup":            "ResourceGroup",
-	"service":                  "Service",
-	"storage":                  "Storage",
-	"storagecluster":           "StorageCluster",
-	"storagecontroller":        "StorageController",
-	"storagetier":              "StorageTier",
-	"switch":                   "Switch",
-	"viewpod":                  "ViewPod",
-	"virtualdatacenter":        "VirtualDataCenter",
-	"virtualmachine":           "VirtualMachine",
-	"virtualmachinecluster":    "VirtualMachineCluster",
-	"virtualmachinespec":       "VirtualMachineSpec",
-	"virtualvolume":            "VirtualVolume",
-	"workloadcontroller":       "WorkloadController",
 }
 
 func NewEntityActionsDataSource() datasource.DataSource {
@@ -622,6 +621,119 @@ func (d *entityActionsDataSource) Schema(ctx context.Context, req datasource.Sch
 	}
 }
 
+func (d *entityActionsDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
+	}
+
+	client, ok := req.ProviderData.(*turboclient.Client)
+	if !ok {
+		resp.Diagnostics.AddError(
+			"Unexpected Data Source Configure Type",
+			fmt.Sprintf("Expected: *turboclient.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+		)
+
+		return
+	}
+
+	d.client = client
+}
+
+func (d *entityActionsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var state EntityActionsModel
+
+	resp.Diagnostics.Append(req.Config.Get(ctx, &state)...)
+	enName, enTyp, envType := state.EntityName.ValueString(), state.EntityType.ValueString(), strings.ToUpper(state.EnvType.ValueString())
+
+	if d.client == nil {
+		resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+		return
+	}
+
+	var actTypes, actStates []string
+	err := state.ActionTypes.ElementsAs(ctx, &actTypes, true)
+	if err.HasError() {
+		tflog.Debug(
+			ctx,
+			"error while setting actTypes",
+			map[string]interface{}{
+				"errors": err.Errors(),
+			},
+		)
+		resp.Diagnostics.Append(err.Errors()...)
+		return
+	}
+	err = state.States.ElementsAs(ctx, &actStates, true)
+	if err.HasError() {
+		tflog.Debug(
+			ctx,
+			"error while setting actStates",
+			map[string]interface{}{
+				"errors": err.Errors(),
+			},
+		)
+		resp.Diagnostics.Append(err.Errors()...)
+		return
+	}
+
+	entity, errDiag := GetEntitiesByName(d.client, WithEntityName(enName), WithEntityType(entityTypes[strings.ToLower(enTyp)]), WithEnvironmentType(envType))
+	if errDiag != nil {
+		tflog.Error(ctx, errDiag.Detail())
+		resp.Diagnostics.AddError(errDiag.Summary(), errDiag.Detail())
+		return
+	} else if len(entity) == 0 {
+		errDetail := fmt.Sprintf("entity %s of type %s not found in Turbonomic instance", enName, enTyp)
+		tflog.Debug(ctx, errDetail)
+		resp.Diagnostics.AddWarning("error while getting the entity", errDetail)
+
+		state.EntityType = types.StringNull()
+		resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+		return
+	}
+
+	tflog.Debug(ctx, fmt.Sprintf("entity id found: %s\n", entity[0].UUID))
+	state.EntityUuid = types.StringValue(entity[0].UUID)
+
+	actions, errDiag := GetFilteredEntityActions(d.client, entity[0].UUID,
+		convertSliceToUppercase(actTypes),
+		convertSliceToUppercase(actStates))
+
+	if errDiag != nil {
+		tflog.Error(ctx, errDiag.Detail())
+		resp.Diagnostics.AddError(errDiag.Summary(), errDiag.Detail())
+		return
+	} else if len(actions) == 0 {
+		errDetail := fmt.Sprintf("no matching action found for entity id: %s", entity[0].UUID)
+		tflog.Debug(ctx, errDetail)
+		resp.Diagnostics.AddWarning("error while getting the actions for the entity", errDetail)
+
+		if err := TagEntity(d.client, state.EntityUuid.ValueString()); err != nil {
+			resp.Diagnostics.AddError("error while tagging an entity", err.Error())
+		}
+
+		resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+		return
+	}
+
+	tflog.Debug(ctx, fmt.Sprintf("actions found: %d\n", len(actions)))
+
+	for _, action := range actions {
+		var tfAction ActionModel
+		if err := copyStructFields(ctx, action, &tfAction); err != nil {
+			resp.Diagnostics.AddError("error coverting actions", err.Error())
+		}
+
+		state.Actions = append(state.Actions, tfAction)
+	}
+
+	if err := TagEntity(d.client, state.EntityUuid.ValueString()); err != nil {
+		resp.Diagnostics.AddError("error while tagging an entity", err.Error())
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+
+}
+
 func insertEntitySchema(includeState bool, includeAspects bool, includeTags bool) map[string]schema.Attribute {
 	attribs := map[string]schema.Attribute{
 		"uuid": schema.StringAttribute{
@@ -703,106 +815,8 @@ func insertEntitySchema(includeState bool, includeAspects bool, includeTags bool
 	return attribs
 }
 
-func (d *entityActionsDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	client, ok := req.ProviderData.(*turboclient.Client)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Data Source Configure Type",
-			fmt.Sprintf("Expected: *turboclient.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-
-		return
-	}
-
-	d.client = client
-}
-
-func (d *entityActionsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var state EntityActionsModel
-
-	resp.Diagnostics.Append(req.Config.Get(ctx, &state)...)
-
-	enName, enTyp, envType := state.EntityName.ValueString(), state.EntityType.ValueString(), strings.ToUpper(state.EnvType.ValueString())
-
-	if d.client == nil {
-		resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
-		return
-	}
-
-	var actTypes, actStates []string
-	err := state.ActionTypes.ElementsAs(ctx, &actTypes, true)
-	if err.HasError() {
-		resp.Diagnostics.Append(err.Errors()...)
-		return
-	}
-	err = state.States.ElementsAs(ctx, &actStates, true)
-	if err.HasError() {
-		resp.Diagnostics.Append(err.Errors()...)
-		return
-	}
-
-	entity, errDiag := GetEntitiesByName(d.client, WithEntityName(enName), WithEntityType(entityTypes[strings.ToLower(enTyp)]), WithEnvironmentType(envType))
-	if errDiag != nil {
-		tflog.Error(ctx, errDiag.Detail())
-		resp.Diagnostics.AddError(errDiag.Summary(), errDiag.Detail())
-		return
-	} else if len(entity) == 0 {
-		errDetail := fmt.Sprintf("entity %s of type %s not found in Turbonomic instance", enName, enTyp)
-		tflog.Warn(ctx, errDetail)
-
-		state.EntityType = types.StringNull()
-		resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
-		return
-	}
-
-	tflog.Debug(ctx, fmt.Sprintf("entity id found: %s\n", entity[0].UUID))
-	state.EntityUuid = types.StringValue(entity[0].UUID)
-
-	actions, errDiag := GetFilteredEntityActions(d.client, entity[0].UUID,
-		convertSlicetoUppercase(actTypes),
-		convertSlicetoUppercase(actStates))
-
-	if errDiag != nil {
-		tflog.Error(ctx, errDiag.Detail())
-		resp.Diagnostics.AddError(errDiag.Summary(), errDiag.Detail())
-		return
-	} else if len(actions) == 0 {
-		errDetail := fmt.Sprintf("no matching action found for entity id: %s", entity[0].UUID)
-		tflog.Trace(ctx, errDetail)
-
-		if err := TagEntity(d.client, state.EntityUuid.ValueString()); err != nil {
-			resp.Diagnostics.AddError("error while tagging an entity", err.Error())
-		}
-
-		resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
-		return
-	}
-
-	tflog.Debug(ctx, fmt.Sprintf("actions found: %d\n", len(actions)))
-
-	for _, action := range actions {
-		var tfAction ActionModel
-		if err := CopyStructFields(ctx, action, &tfAction); err != nil {
-			resp.Diagnostics.AddError("error coverting actions", err.Error())
-		}
-
-		state.Actions = append(state.Actions, tfAction)
-	}
-
-	if err := TagEntity(d.client, state.EntityUuid.ValueString()); err != nil {
-		resp.Diagnostics.AddError("error while tagging an entity", err.Error())
-	}
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
-
-}
-
 // Copy Struct copies the elements from one struct to another
-func CopyStructFields(ctx context.Context, src interface{}, dst interface{}) error {
+func copyStructFields(ctx context.Context, src interface{}, dst interface{}) error {
 	srcVal := reflect.ValueOf(src)
 	srcTyp := reflect.TypeOf(src)
 
@@ -867,7 +881,7 @@ func copyField(ctx context.Context, srcValue, dstValue reflect.Value) error {
 		dstValue.Set(reflect.ValueOf(types.BoolValue(srcValue.Bool())))
 	case reflect.Struct:
 		dstPtr := dstValue.Addr()
-		if err := CopyStructFields(ctx, srcValue.Interface(), dstPtr.Interface()); err != nil {
+		if err := copyStructFields(ctx, srcValue.Interface(), dstPtr.Interface()); err != nil {
 			return err
 		}
 	case reflect.Slice:
@@ -935,7 +949,7 @@ func getNewSliceStruct(ctx context.Context, src reflect.Value, dst reflect.Type)
 		elmSrcValue := src.Index(i)
 		elmDesttype := dst.Elem()
 		dstPtr := reflect.New(elmDesttype)
-		if err := CopyStructFields(ctx, elmSrcValue.Interface(), dstPtr.Interface()); err != nil {
+		if err := copyStructFields(ctx, elmSrcValue.Interface(), dstPtr.Interface()); err != nil {
 			return reflect.Value{}, err
 		}
 		dstValue := dstPtr.Elem()

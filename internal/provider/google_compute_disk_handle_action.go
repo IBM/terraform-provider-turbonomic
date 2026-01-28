@@ -133,3 +133,20 @@ func (a *GoogleComputeDiskStateAdapter) GetEntityUuid() string {
 	}
 	return "unknown"
 }
+
+// GoogleComputeDiskValidator implements custom validation for turbonomic_google_compute_disk data source
+// Temporary fix to skip the required together validator
+var _ datasource.ConfigValidator = GoogleComputeDiskValidator{}
+
+type GoogleComputeDiskValidator struct{}
+
+func (v GoogleComputeDiskValidator) Description(_ context.Context) string {
+	return "Validates turbonomic_google_compute_disk configuration."
+}
+
+func (v GoogleComputeDiskValidator) MarkdownDescription(ctx context.Context) string {
+	return v.Description(ctx)
+}
+
+func (v GoogleComputeDiskValidator) ValidateDataSource(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
+}

@@ -115,3 +115,20 @@ func (a *AwsEbsVolumeStateAdapter) GetEntityUuid() string {
 	}
 	return "unknown"
 }
+
+// AwsEbsVolumeValidator implements custom validation for turbonomic_aws_ebs_volume data source
+// Temporary fix to skip the required together validator
+var _ datasource.ConfigValidator = AwsEbsVolumeValidator{}
+
+type AwsEbsVolumeValidator struct{}
+
+func (v AwsEbsVolumeValidator) Description(_ context.Context) string {
+	return "Validates turbonomic_aws_ebs_volume configuration."
+}
+
+func (v AwsEbsVolumeValidator) MarkdownDescription(ctx context.Context) string {
+	return v.Description(ctx)
+}
+
+func (v AwsEbsVolumeValidator) ValidateDataSource(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
+}

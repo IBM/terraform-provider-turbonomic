@@ -38,6 +38,33 @@ resource "aws_instance" "terraform-demo-ec2" {
 }
 ```
 
+The `aws_instance` resource type exports the unique vendor ID of an Amazon EC2 virtual machine, in the `<id>` attribute.
+
+```terraform
+data "aws_instance" "foo" {
+  instance_id = "i-0021d61fa77f000d0"
+}
+
+  + aws = {
+      + ami                         = "ami-079db87dc4c10ac91"
+      + arn                         = "arn:aws:ec2:us-east-1:192821421245:instance/i-0021d61fa77f000d0"
+      + associate_public_ip_address = false
+      + availability_zone           = "us-east-1d"
+...
+      + id                          = "i-0021d61fa77f000d0"
+      + instance_id                 = "i-0021d61fa77f000d0"
+...
+          + tags                        = {
+          + Name          = "terraform-demo-1"
+          + Turbo_Comment = "Terraform development"
+          + Turbo_Owner   = "first.last@ibm.com"
+          + Turbo_Park    = "True"
+          + Turbo_Team    = "AppInfra_Integrations"
+          + Turbo_Use     = "Development"
+        }
+...
+```
+
 ## AWS RDS example
 
 The AWS RDS resource is configured to use the `turbonomic_aws_db_instance` data source unless null is returned, in which case it defaults to `<default_instance_class>` for the `default_instance_class` and `<default_storage_type>` for the `default_storage_type`.
@@ -75,6 +102,7 @@ resource "aws_db_instance" "default" {
 
 The AWS EBS resource is configured to use the `turbonomic_aws_ebs_volume` data source unless null is returned, in which case it uses `<default_type>` by default.
 Either `<vendor_id>` or `<entity_name>` to be provided to uniquely identify an entity.
+The values of size and throughput fields are mandatory when the iops value is set.
 
 ```terraform
 provider "aws" {
@@ -104,3 +132,5 @@ resource "aws_ebs_volume" "example-ebs-instance" {
   )
 }
 ```
+
+The `aws_ebs_volume` resource exports the unique vendor ID of an Amazon EBS volume, in the `<id>` attribute. That can be used to uniquely identify AWS volumes in Turbonomic, via API calls.

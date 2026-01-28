@@ -14,7 +14,15 @@ import (
 )
 
 const (
-	ebsVolConfig = `
+	standardEbsVolConfig = `
+	data "turbonomic_aws_ebs_volume" "test" {
+		entity_name       = "%s"
+		default_type      = "%s"
+		default_size      = %d
+	}
+	`
+
+	gp3EbsVolConfig = `
 	data "turbonomic_aws_ebs_volume" "test" {
 		entity_name       = "%s"
 		default_type      = "%s"
@@ -26,8 +34,10 @@ const (
 
 	ebsVolEntityName     = "testVM"
 	ebsVolEntityType     = "VirtualVolume"
-	ebsVolCurrType       = "gp3"
-	ebsVolNewType        = "standard"
+	ebsVolGP3Type        = "gp3"
+	ebsVolGP2Type        = "gp2"
+	ebsVolIO1Type        = "io1"
+	ebsVolStdType        = "standard"
 	ebsVolCurrSize       = 4
 	ebsVolNewSize        = 4
 	ebsVolCurrIops       = 3000
@@ -35,7 +45,10 @@ const (
 	ebsVolCurrThroughput = 125
 	ebsVolNewThroughput  = 128
 
-	validEbsActTierResp        = "ebs_action_tier_valid_resp.json"
+	validEbsStandardActTierResp = "ebs_action_tier_valid_resp.json"
+	validEbsGP3ActTierResp      = "ebs_gp3_action_tier_valid_resp.json"
+	validEbsIO1ActTierResp      = "ebs_io1_action_tier_valid_resp.json"
+
 	validEbsStatsResp          = "ebs_stats_valid_resp.json"
 	validEbsSearchRespTestData = "search_success.json"
 
@@ -82,7 +95,7 @@ func TestVolumeWithTierRespDataSource(t *testing.T) {
 		{
 			Method:       http.MethodPost,
 			Path:         "/api/v3/entities/{id}/actions",
-			ResponseBody: loadTestFile(t, ebsTestDataBaseDir, validEbsActTierResp),
+			ResponseBody: loadTestFile(t, ebsTestDataBaseDir, validEbsStandardActTierResp),
 			ResponseCode: http.StatusOK,
 		},
 		{
@@ -105,20 +118,16 @@ func TestVolumeWithTierRespDataSource(t *testing.T) {
 		expectedNewVolumeType     string
 		expectedDefaultType       string
 		expectedDefaultSize       int64
-		expectedDefaultIops       int64
-		expectedDefaultThroughput int64
 	}{
 		{
 			name:                      "Valid Volume Recommendation For Tier",
 			testEntity:                ebsVolEntityName,
 			expectedEntityName:        ebsVolEntityName,
 			expectedEntityType:        ebsVolEntityType,
-			expectedCurrentVolumeType: ebsVolCurrType,
-			expectedNewVolumeType:     ebsVolNewType,
-			expectedDefaultType:       ebsVolNewType,
+			expectedCurrentVolumeType: ebsVolGP3Type,
+			expectedNewVolumeType:     ebsVolStdType,
+			expectedDefaultType:       ebsVolStdType,
 			expectedDefaultSize:       ebsVolNewSize,
-			expectedDefaultIops:       ebsVolNewIops,
-			expectedDefaultThroughput: ebsVolNewThroughput,
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
@@ -126,105 +135,13 @@ func TestVolumeWithTierRespDataSource(t *testing.T) {
 				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 				Steps: []resource.TestStep{
 					{
-						Config: providerConfig + fmt.Sprintf(ebsVolConfig, tc.testEntity, tc.expectedDefaultType, tc.expectedDefaultSize, tc.expectedDefaultIops, tc.expectedDefaultThroughput),
+						Config: providerConfig + fmt.Sprintf(standardEbsVolConfig, tc.testEntity, tc.expectedDefaultType, tc.expectedDefaultSize),
 						Check: resource.ComposeAggregateTestCheckFunc(
 							resource.TestCheckResourceAttr(ebsVolDataSourceRef, "entity_name", tc.expectedEntityName),
 							resource.TestCheckResourceAttr(ebsVolDataSourceRef, "entity_type", tc.expectedEntityType),
 							resource.TestCheckResourceAttr(ebsVolDataSourceRef, "current_type", tc.expectedCurrentVolumeType),
 							resource.TestCheckResourceAttr(ebsVolDataSourceRef, "new_type", tc.expectedNewVolumeType),
 							resource.TestCheckResourceAttr(ebsVolDataSourceRef, "default_type", tc.expectedDefaultType),
-						),
-					},
-				},
-			})
-		})
-	}
-}
-
-// Tests valid volume data source creation when turbo sends tier,iops,throuput and size info in action and stat details
-func TestVolumeWithValidActionRespDataSource(t *testing.T) {
-	mockServer := mockTurboServer(t, append([]MockRoute{
-		{
-			Method:       http.MethodPost,
-			Path:         "/api/v3/search",
-			ResponseBody: loadTestFile(t, ebsTestDataBaseDir, validEbsSearchRespTestData),
-			ResponseCode: http.StatusOK,
-		},
-		{
-			Method:       http.MethodPost,
-			Path:         "/api/v3/entities/{id}/actions",
-			ResponseBody: loadTestFile(t, ebsTestDataBaseDir, validEbsActTierResp),
-			ResponseCode: http.StatusOK,
-		},
-		{
-			Method:       http.MethodPost,
-			Path:         "/api/v3/stats/{id}",
-			ResponseBody: loadTestFile(t, ebsTestDataBaseDir, validEbsStatsResp),
-			ResponseCode: http.StatusOK,
-		},
-	}, LoginAndTagRoutes(t)...))
-	defer mockServer.Close()
-
-	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
-
-	for _, tc := range []struct {
-		name                      string
-		testEntity                string
-		expectedEntityName        string
-		expectedEntityType        string
-		expectedCurrentVolumeType string
-		expectedNewVolumeType     string
-		expectedDefaultType       string
-		expectedCurrentSize       int64
-		expectedNewSize           int64
-		expectedDefaultSize       int64
-		expectedCurrentIops       int64
-		expectedNewIops           int64
-		expectedDefaultIops       int64
-		expectedCurrentThroughput int64
-		expectedNewThroughput     int64
-		expectedDefaultThroughput int64
-	}{
-		{
-			name:                      "Valid Volume Recommendation For Tier,IOPs,Throughput and Size",
-			testEntity:                ebsVolEntityName,
-			expectedEntityName:        ebsVolEntityName,
-			expectedEntityType:        ebsVolEntityType,
-			expectedCurrentVolumeType: ebsVolCurrType,
-			expectedNewVolumeType:     ebsVolNewType,
-			expectedDefaultType:       ebsVolNewType,
-			expectedCurrentSize:       ebsVolCurrSize,
-			expectedNewSize:           ebsVolNewSize,
-			expectedDefaultSize:       ebsVolNewSize,
-			expectedCurrentIops:       ebsVolCurrIops,
-			expectedNewIops:           ebsVolNewIops,
-			expectedDefaultIops:       ebsVolNewIops,
-			expectedCurrentThroughput: ebsVolCurrThroughput,
-			expectedNewThroughput:     ebsVolNewThroughput,
-			expectedDefaultThroughput: ebsVolNewThroughput,
-		},
-	} {
-		t.Run(tc.name, func(t *testing.T) {
-			resource.Test(t, resource.TestCase{
-				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
-				Steps: []resource.TestStep{
-					{
-						Config: providerConfig + fmt.Sprintf(ebsVolConfig, tc.testEntity, tc.expectedDefaultType, tc.expectedDefaultSize, tc.expectedDefaultIops, tc.expectedDefaultThroughput),
-						Check: resource.ComposeAggregateTestCheckFunc(
-							resource.TestCheckResourceAttr(ebsVolDataSourceRef, "entity_name", tc.expectedEntityName),
-							resource.TestCheckResourceAttr(ebsVolDataSourceRef, "entity_type", tc.expectedEntityType),
-							resource.TestCheckResourceAttr(ebsVolDataSourceRef, "current_type", tc.expectedCurrentVolumeType),
-							resource.TestCheckResourceAttr(ebsVolDataSourceRef, "new_type", tc.expectedNewVolumeType),
-							resource.TestCheckResourceAttr(ebsVolDataSourceRef, "default_type", tc.expectedDefaultType),
-							resource.TestCheckResourceAttr(ebsVolDataSourceRef, "current_size", fmt.Sprintf("%d", tc.expectedCurrentSize)),
-							resource.TestCheckResourceAttr(ebsVolDataSourceRef, "new_size", fmt.Sprintf("%d", tc.expectedNewSize)),
-							resource.TestCheckResourceAttr(ebsVolDataSourceRef, "default_size", fmt.Sprintf("%d", tc.expectedDefaultSize)),
-							resource.TestCheckResourceAttr(ebsVolDataSourceRef, "current_iops", fmt.Sprintf("%d", tc.expectedCurrentIops)),
-							resource.TestCheckResourceAttr(ebsVolDataSourceRef, "new_iops", fmt.Sprintf("%d", tc.expectedNewIops)),
-							resource.TestCheckResourceAttr(ebsVolDataSourceRef, "default_iops", fmt.Sprintf("%d", tc.expectedDefaultIops)),
-							resource.TestCheckResourceAttr(ebsVolDataSourceRef, "current_throughput", fmt.Sprintf("%d", tc.expectedCurrentThroughput)),
-							resource.TestCheckResourceAttr(ebsVolDataSourceRef, "new_throughput", fmt.Sprintf("%d", tc.expectedNewThroughput)),
-							resource.TestCheckResourceAttr(ebsVolDataSourceRef, "default_throughput", fmt.Sprintf("%d", tc.expectedDefaultThroughput)),
 						),
 					},
 				},
@@ -284,8 +201,8 @@ func TestVolumeWithEmptySearch(t *testing.T) {
 			testEntity:            ebsVolEntityName,
 			expectedEntityName:    ebsVolEntityName,
 			expectedEntityType:    ebsVolEntityType,
-			expectedNewVolumeType: ebsVolNewType,
-			expectedDefaultType:   ebsVolNewType,
+			expectedNewVolumeType: ebsVolStdType,
+			expectedDefaultType:   ebsVolStdType,
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
@@ -293,7 +210,7 @@ func TestVolumeWithEmptySearch(t *testing.T) {
 				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 				Steps: []resource.TestStep{
 					{
-						Config: providerConfig + fmt.Sprintf(ebsVolConfig, tc.testEntity, tc.expectedDefaultType, ebsVolNewSize, ebsVolNewIops, ebsVolNewThroughput),
+						Config: providerConfig + fmt.Sprintf(standardEbsVolConfig, tc.testEntity, tc.expectedDefaultType, ebsVolNewSize),
 						Check: resource.ComposeAggregateTestCheckFunc(
 							resource.TestCheckResourceAttr(ebsVolDataSourceRef, "entity_name", tc.expectedEntityName),
 							resource.TestCheckNoResourceAttr(ebsVolDataSourceRef, "entity_type"),
@@ -348,9 +265,9 @@ func TestVolumeWithEmptyAction(t *testing.T) {
 			testEntity:                ebsVolEntityName,
 			expectedEntityName:        ebsVolEntityName,
 			expectedEntityType:        ebsVolEntityType,
-			expectedCurrentVolumeType: ebsVolCurrType,
-			expectedNewVolumeType:     ebsVolCurrType,
-			expectedDefaultType:       ebsVolNewType,
+			expectedCurrentVolumeType: ebsVolGP3Type,
+			expectedNewVolumeType:     ebsVolGP3Type,
+			expectedDefaultType:       ebsVolStdType,
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
@@ -358,7 +275,7 @@ func TestVolumeWithEmptyAction(t *testing.T) {
 				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 				Steps: []resource.TestStep{
 					{
-						Config: providerConfig + fmt.Sprintf(ebsVolConfig, tc.testEntity, tc.expectedDefaultType, ebsVolNewSize, ebsVolNewIops, ebsVolNewThroughput),
+						Config: providerConfig + fmt.Sprintf(standardEbsVolConfig, tc.testEntity, tc.expectedDefaultType, ebsVolNewSize),
 						Check: resource.ComposeAggregateTestCheckFunc(
 							resource.TestCheckResourceAttr(ebsVolDataSourceRef, "entity_name", tc.expectedEntityName),
 							resource.TestCheckResourceAttr(ebsVolDataSourceRef, "entity_type", tc.expectedEntityType),
@@ -384,7 +301,7 @@ func TestVolumeDataSourceDefaultSize(t *testing.T) {
 		{
 			Method:       http.MethodPost,
 			Path:         "/api/v3/entities/{id}/actions",
-			ResponseBody: loadTestFile(t, ebsTestDataBaseDir, validEbsActTierResp),
+			ResponseBody: loadTestFile(t, ebsTestDataBaseDir, validEbsStandardActTierResp),
 			ResponseCode: http.StatusOK,
 		},
 		{
@@ -402,7 +319,7 @@ func TestVolumeDataSourceDefaultSize(t *testing.T) {
 			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
 				{
-					Config:      providerConfig + fmt.Sprintf(ebsVolConfig, ebsVolEntityName, ebsVolNewType, -1, ebsVolNewIops, ebsVolNewThroughput),
+					Config:      providerConfig + fmt.Sprintf(standardEbsVolConfig, ebsVolEntityName, ebsVolStdType, -1),
 					ExpectError: regexp.MustCompile(`Attribute default_size value must be at least 0`),
 				},
 			},
@@ -421,7 +338,7 @@ func TestVolumeDataSourceDefaultThroughput(t *testing.T) {
 		{
 			Method:       http.MethodPost,
 			Path:         "/api/v3/entities/{id}/actions",
-			ResponseBody: loadTestFile(t, ebsTestDataBaseDir, validEbsActTierResp),
+			ResponseBody: loadTestFile(t, ebsTestDataBaseDir, validEbsStandardActTierResp),
 			ResponseCode: http.StatusOK,
 		},
 		{
@@ -439,7 +356,7 @@ func TestVolumeDataSourceDefaultThroughput(t *testing.T) {
 			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
 				{
-					Config:      providerConfig + fmt.Sprintf(ebsVolConfig, ebsVolEntityName, ebsVolNewType, ebsVolNewSize, ebsVolNewIops, -1),
+					Config:      providerConfig + fmt.Sprintf(gp3EbsVolConfig, ebsVolEntityName, ebsVolStdType, ebsVolNewSize, ebsVolNewIops, -1),
 					ExpectError: regexp.MustCompile(`Attribute default_throughput value must be at least 0`),
 				},
 			},
@@ -458,7 +375,7 @@ func TestVolumeDataSourceDefaultIops(t *testing.T) {
 		{
 			Method:       http.MethodPost,
 			Path:         "/api/v3/entities/{id}/actions",
-			ResponseBody: loadTestFile(t, ebsTestDataBaseDir, validEbsActTierResp),
+			ResponseBody: loadTestFile(t, ebsTestDataBaseDir, validEbsStandardActTierResp),
 			ResponseCode: http.StatusOK,
 		},
 		{
@@ -476,7 +393,7 @@ func TestVolumeDataSourceDefaultIops(t *testing.T) {
 			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
 				{
-					Config:      providerConfig + fmt.Sprintf(ebsVolConfig, ebsVolEntityName, ebsVolNewType, ebsVolNewSize, -1, ebsVolNewThroughput),
+					Config:      providerConfig + fmt.Sprintf(gp3EbsVolConfig, ebsVolEntityName, ebsVolStdType, ebsVolNewSize, -1, ebsVolNewThroughput),
 					ExpectError: regexp.MustCompile(`Attribute default_iops value must be at least 0`),
 				},
 			},
@@ -496,7 +413,7 @@ func TestAwsEbsVolumeDataSourceWithVendorId(t *testing.T) {
 		{
 			Method:       http.MethodPost,
 			Path:         "/api/v3/entities/{id}/actions",
-			ResponseBody: loadTestFile(t, ebsTestDataBaseDir, validEbsActTierResp),
+			ResponseBody: loadTestFile(t, ebsTestDataBaseDir, validEbsGP3ActTierResp),
 			ResponseCode: http.StatusOK,
 		},
 		{
@@ -531,9 +448,9 @@ func TestAwsEbsVolumeDataSourceWithVendorId(t *testing.T) {
 			name:                      "Valid VirtualVolume recommendation with vendor_id",
 			testVendorId:              "vol-123456789",
 			expectedVendorId:          "vol-123456789",
-			expectedDefaultType:       ebsVolNewType,
-			expectedCurrentType:       ebsVolCurrType,
-			expectedNewType:           ebsVolNewType,
+			expectedDefaultType:       ebsVolGP3Type,
+			expectedCurrentType:       ebsVolGP2Type,
+			expectedNewType:           ebsVolGP3Type,
 			expectedDefaultIops:       ebsVolNewIops,
 			expectedCurrentIops:       ebsVolCurrIops,
 			expectedNewIops:           ebsVolNewIops,
@@ -586,7 +503,7 @@ func TestAwsEbsVolumeDataSourceWithVendorIdAndName(t *testing.T) {
 		{
 			Method:       http.MethodPost,
 			Path:         "/api/v3/entities/{id}/actions",
-			ResponseBody: loadTestFile(t, ebsTestDataBaseDir, validEbsActTierResp),
+			ResponseBody: loadTestFile(t, ebsTestDataBaseDir, validEbsGP3ActTierResp),
 			ResponseCode: http.StatusOK,
 		},
 		{
@@ -625,9 +542,9 @@ func TestAwsEbsVolumeDataSourceWithVendorIdAndName(t *testing.T) {
 			testEntity:                "test-volume",
 			expectedVendorId:          "vol-123456789",
 			expectedEntityName:        "test-volume",
-			expectedDefaultType:       ebsVolNewType,
-			expectedCurrentType:       ebsVolCurrType,
-			expectedNewType:           ebsVolNewType,
+			expectedDefaultType:       ebsVolGP3Type,
+			expectedCurrentType:       ebsVolGP2Type,
+			expectedNewType:           ebsVolGP3Type,
 			expectedDefaultIops:       ebsVolNewIops,
 			expectedCurrentIops:       ebsVolCurrIops,
 			expectedNewIops:           ebsVolNewIops,
@@ -681,7 +598,7 @@ func TestAwsEbsVolumeDataSourceWithNoIdentifiers(t *testing.T) {
 		{
 			Method:       http.MethodPost,
 			Path:         "/api/v3/entities/{id}/actions",
-			ResponseBody: loadTestFile(t, ebsTestDataBaseDir, validEbsActTierResp),
+			ResponseBody: loadTestFile(t, ebsTestDataBaseDir, validEbsStandardActTierResp),
 			ResponseCode: http.StatusOK,
 		},
 		{
@@ -700,7 +617,7 @@ func TestAwsEbsVolumeDataSourceWithNoIdentifiers(t *testing.T) {
 			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
 				{
-					Config:      providerConfig + fmt.Sprintf(awsVirtualVolumeConfigNoIdentifiers, ebsVolNewType),
+					Config:      providerConfig + fmt.Sprintf(awsVirtualVolumeConfigNoIdentifiers, ebsVolStdType),
 					ExpectError: regexp.MustCompile(`At least one of these attributes must be configured`),
 				},
 			},
@@ -768,9 +685,9 @@ func TestAwsEbsVolumeDataSourceWithInvalidVendorId(t *testing.T) {
 			name:                      "Invalid vendor_id",
 			testVendorId:              "vol-123456789",
 			expectedVendorId:          "vol-123456789",
-			expectedDefaultType:       ebsVolNewType,
-			expectedCurrentType:       ebsVolCurrType,
-			expectedNewType:           ebsVolNewType,
+			expectedDefaultType:       ebsVolGP3Type,
+			expectedCurrentType:       ebsVolStdType,
+			expectedNewType:           ebsVolGP3Type,
 			expectedDefaultIops:       ebsVolNewIops,
 			expectedCurrentIops:       ebsVolCurrIops,
 			expectedNewIops:           ebsVolNewIops,

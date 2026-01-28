@@ -40,8 +40,8 @@ func convertMiBtoGiB(value float64) int64 {
 	return int64(math.Round(value / 1024))
 }
 
-// convertSlicetoUppercase converts a slice os strings to uppercase
-func convertSlicetoUppercase(values []string) []string {
+// convertSliceToUppercase converts a slice os strings to uppercase
+func convertSliceToUppercase(values []string) []string {
 	for i, value := range values {
 		values[i] = strings.ToUpper(value)
 	}

@@ -149,7 +149,11 @@ func (d *AwsInstanceDataSource) Read(ctx context.Context, req datasource.ReadReq
 		WithEntityTypeForVendorId(enTyp),
 	}
 	entity, errDiag = GetEntitiesByVendorId(d.client, entityArgs...)
-	if errDiag != nil {
+	if len(entity) == 0 || errDiag != nil {
+		if errDiag != nil {
+			tflog.Debug(ctx, fmt.Sprintf("error while searching by vendor id: %s", errDiag.Detail()))
+		}
+
 		errDetail := fmt.Sprintf("entity %s not found in Turbonomic instance when searching by vendor id, searching without it", enName)
 		tflog.Warn(ctx, errDetail)
 
@@ -158,6 +162,7 @@ func (d *AwsInstanceDataSource) Read(ctx context.Context, req datasource.ReadReq
 			WithEntityType(enTyp),
 			WithEnvironmentType("CLOUD"),
 			WithCloudType("AWS"),
+			ShowVendorIdString(true),
 		}
 		entity, errDiag = GetEntitiesByName(d.client, entityArgs...)
 	}

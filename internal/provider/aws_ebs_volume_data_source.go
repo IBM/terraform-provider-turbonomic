@@ -168,12 +168,7 @@ func (d *AwsEbsVolumeDataSource) Schema(ctx context.Context, req datasource.Sche
 
 func (d *AwsEbsVolumeDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(
-			path.MatchRoot("default_type"),
-			path.MatchRoot("default_iops"),
-			path.MatchRoot("default_throughput"),
-			path.MatchRoot("default_size"),
-		),
+		AwsEbsVolumeValidator{},
 		datasourcevalidator.AtLeastOneOf(
 			path.MatchRoot("entity_name"), path.MatchRoot("vendor_id"),
 		),
@@ -219,7 +214,11 @@ func (d *AwsEbsVolumeDataSource) Read(ctx context.Context, req datasource.ReadRe
 		WithEntityTypeForVendorId(enTyp),
 	}
 	entity, errDiag = GetEntitiesByVendorId(d.client, entityArgs...)
-	if errDiag != nil {
+	if len(entity) == 0 || errDiag != nil {
+		if errDiag != nil {
+			tflog.Debug(ctx, fmt.Sprintf("error while searching by vendor id: %s", errDiag.Detail()))
+		}
+
 		errDetail := fmt.Sprintf("entity %s not found in Turbonomic instance when searching by vendor id, searching without it", enName)
 		tflog.Warn(ctx, errDetail)
 
@@ -228,6 +227,7 @@ func (d *AwsEbsVolumeDataSource) Read(ctx context.Context, req datasource.ReadRe
 			WithEntityType(enTyp),
 			WithEnvironmentType("CLOUD"),
 			WithCloudType("AWS"),
+			ShowVendorIdString(true),
 		}
 		entity, errDiag = GetEntitiesByName(d.client, entityArgs...)
 	}

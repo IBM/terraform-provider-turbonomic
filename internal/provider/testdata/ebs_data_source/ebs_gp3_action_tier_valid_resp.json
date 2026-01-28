@@ -1,0 +1,402 @@
+[
+    {
+        "uuid": "639239686176692",
+        "displayName": "MANUAL",
+        "actionImpactID": 639239686176692,
+        "marketID": 777777,
+        "createTime": "2025-12-18T18:26:11Z",
+        "actionType": "SCALE",
+        "actionState": "READY",
+        "actionMode": "MANUAL",
+        "actionStateDescription": "READY_ACCEPT_AND_EXECUTE",
+        "details": "Scale Volume vol-03bbb2efb05fe1566 from GP2 to GP3 in Development",
+        "importance": 0.0,
+        "target": {
+            "uuid": "76289728312993",
+            "displayName": "vol-03bbb2efb05fe1566",
+            "className": "VirtualVolume",
+            "environmentType": "CLOUD",
+            "discoveredBy": {
+                "uuid": "76281024499680",
+                "displayName": "AWS",
+                "isProbeRegistered": false,
+                "type": "AWS",
+                "readonly": false
+            },
+            "vendorIds": {
+                "AWS": "vol-03bbb2efb05fe1566"
+            },
+            "state": "ACTIVE",
+            "connectedEntities": [
+                {
+                    "uuid": "76289728312993",
+                    "displayName": "vol-03bbb2efb05fe1566",
+                    "className": "VirtualVolume",
+                    "environmentType": "CLOUD",
+                    "discoveredBy": {
+                        "uuid": "76281024499680",
+                        "displayName": "AWS",
+                        "isProbeRegistered": false,
+                        "type": "AWS",
+                        "readonly": false
+                    },
+                    "vendorIds": {
+                        "AWS": "vol-03bbb2efb05fe1566"
+                    },
+                    "state": "ACTIVE"
+                }
+            ],
+            "aspects": {
+                "cloudAspect": {
+                    "businessAccount": {
+                        "uuid": "76281052828538",
+                        "displayName": "Development",
+                        "className": "BusinessAccount"
+                    },
+                    "resourceId": "arn:aws:ec2:ca-central-1:192821421245:volume/vol-03bbb2efb05fe1566",
+                    "type": "CloudAspectApiDTO"
+                }
+            }
+        },
+        "currentEntity": {
+            "uuid": "76281056755984",
+            "displayName": "GP2",
+            "className": "StorageTier",
+            "environmentType": "CLOUD",
+            "discoveredBy": {
+                "uuid": "76281052834176",
+                "displayName": "Standard",
+                "isProbeRegistered": false,
+                "type": "AWS Infrastructure",
+                "readonly": false
+            },
+            "vendorIds": {
+                "Standard": "aws::ST::GP2"
+            },
+            "state": "ACTIVE"
+        },
+        "newEntity": {
+            "uuid": "76281056755978",
+            "displayName": "GP3",
+            "className": "StorageTier",
+            "environmentType": "CLOUD",
+            "discoveredBy": {
+                "uuid": "76281052834176",
+                "displayName": "Standard",
+                "isProbeRegistered": false,
+                "type": "AWS Infrastructure",
+                "readonly": false
+            },
+            "vendorIds": {
+                "Standard": "aws::ST::GP3"
+            },
+            "state": "ACTIVE"
+        },
+        "currentValue": "76281056755984",
+        "newValue": "76281056755978",
+        "template": {
+            "uuid": "76281056755978",
+            "displayName": "GP3",
+            "className": "StorageTier",
+            "discovered": false,
+            "enableMatch": false
+        },
+        "risk": {
+            "subCategory": "Efficiency Improvement",
+            "description": "Cost Reduction",
+            "severity": "MINOR",
+            "importance": 0.0
+        },
+        "stats": [
+            {
+                "name": "costPrice",
+                "filters": [
+                    {
+                        "type": "savingsType",
+                        "value": "savings",
+                        "displayName": null
+                    }
+                ],
+                "units": "$/h",
+                "value": 0.0226027
+            }
+        ],
+        "currentLocation": {
+            "uuid": "76281056751617",
+            "displayName": "aws-Canada (Central)",
+            "className": "Region",
+            "environmentType": "CLOUD",
+            "discoveredBy": {
+                "uuid": "76281052834176",
+                "displayName": "Standard",
+                "category": "Public Cloud",
+                "isProbeRegistered": false,
+                "type": "AWS Infrastructure",
+                "readonly": false
+            },
+            "vendorIds": {
+                "Standard": "aws::ca-central-1::DC::ca-central-1"
+            }
+        },
+        "newLocation": {
+            "uuid": "76281056751617",
+            "displayName": "aws-Canada (Central)",
+            "className": "Region",
+            "environmentType": "CLOUD",
+            "discoveredBy": {
+                "uuid": "76281052834176",
+                "displayName": "Standard",
+                "category": "Public Cloud",
+                "isProbeRegistered": false,
+                "type": "AWS Infrastructure",
+                "readonly": false
+            },
+            "vendorIds": {
+                "Standard": "aws::ca-central-1::DC::ca-central-1"
+            }
+        },
+        "virtualDisks": [
+            {
+                "uuid": "76289728312993",
+                "displayName": "vol-03bbb2efb05fe1566",
+                "tier": "GP2",
+                "stats": [
+                    {
+                        "name": "costPrice",
+                        "filters": [
+                            {
+                                "type": "relation",
+                                "value": "bought",
+                                "displayName": null
+                            },
+                            {
+                                "type": "costComponent",
+                                "value": "STORAGE",
+                                "displayName": null
+                            }
+                        ],
+                        "units": "$/h",
+                        "values": {
+                            "max": 0.12808219,
+                            "min": 0.12808219,
+                            "avg": 0.12808219,
+                            "total": 0.12808219
+                        },
+                        "value": 0.12808219
+                    },
+                    {
+                        "name": "StorageAmount",
+                        "capacity": {
+                            "max": 1000.0,
+                            "min": 1000.0,
+                            "avg": 1000.0,
+                            "total": 1000.0
+                        },
+                        "filters": [
+                            {
+                                "type": "key",
+                                "value": "vol-03bbb2efb05fe1566",
+                                "displayName": null
+                            },
+                            {
+                                "type": "relation",
+                                "value": "bought",
+                                "displayName": null
+                            }
+                        ],
+                        "relatedEntity": {
+                            "uuid": "76281056755984",
+                            "displayName": "GP2",
+                            "className": "StorageTier"
+                        },
+                        "units": "GiB",
+                        "values": {
+                            "max": 1000.0,
+                            "min": 1000.0,
+                            "avg": 1000.0,
+                            "total": 1000.0
+                        },
+                        "value": 1000.0
+                    },
+                    {
+                        "name": "StorageAccess",
+                        "capacity": {
+                            "max": 3000.0,
+                            "min": 3000.0,
+                            "avg": 3000.0,
+                            "total": 3000.0
+                        },
+                        "filters": [
+                            {
+                                "type": "key",
+                                "value": "vol-03bbb2efb05fe1566",
+                                "displayName": null
+                            },
+                            {
+                                "type": "relation",
+                                "value": "bought",
+                                "displayName": null
+                            }
+                        ],
+                        "relatedEntity": {
+                            "uuid": "76281056755984",
+                            "displayName": "GP2",
+                            "className": "StorageTier"
+                        },
+                        "units": "IOPS",
+                        "values": {
+                            "max": 0.0,
+                            "min": 0.0,
+                            "avg": 0.0,
+                            "total": 0.0
+                        },
+                        "value": 0.0
+                    },
+                    {
+                        "name": "IOThroughput",
+                        "capacity": {
+                            "max": 256000.0,
+                            "min": 256000.0,
+                            "avg": 256000.0,
+                            "total": 256000.0
+                        },
+                        "filters": [
+                            {
+                                "type": "key",
+                                "value": "vol-03bbb2efb05fe1566",
+                                "displayName": null
+                            },
+                            {
+                                "type": "relation",
+                                "value": "bought",
+                                "displayName": null
+                            }
+                        ],
+                        "relatedEntity": {
+                            "uuid": "76281056755984",
+                            "displayName": "GP2",
+                            "className": "StorageTier"
+                        },
+                        "units": "KByte/sec",
+                        "values": {
+                            "max": 0.0,
+                            "min": 0.0,
+                            "avg": 0.0,
+                            "total": 0.0
+                        },
+                        "value": 0.0
+                    }
+                ],
+                "attachedVirtualMachine": {
+                    "uuid": "76289728312832",
+                    "displayName": "i-06e3f163e8cc92d40",
+                    "className": "VirtualMachine"
+                },
+                "provider": {
+                    "uuid": "76281056755984",
+                    "displayName": "GP2",
+                    "className": "StorageTier"
+                },
+                "dataCenter": {
+                    "uuid": "76281056751617",
+                    "displayName": "aws-Canada (Central)",
+                    "className": "Region"
+                },
+                "environmentType": "CLOUD",
+                "lastModified": 0,
+                "businessAccount": {
+                    "uuid": "76281052828538",
+                    "displayName": "Development",
+                    "className": "BusinessAccount",
+                    "environmentType": "CLOUD",
+                    "discoveredBy": {
+                        "uuid": "76281024499680",
+                        "displayName": "AWS",
+                        "category": "Public Cloud",
+                        "isProbeRegistered": false,
+                        "type": "AWS",
+                        "readonly": false
+                    },
+                    "vendorIds": {
+                        "AWS": "192821421245"
+                    },
+                    "state": "ACTIVE",
+                    "staleness": "CURRENT"
+                },
+                "snapshotId": "snap-04cc30e32ad764e26",
+                "encryption": "Disabled",
+                "attachmentState": "ATTACHED",
+                "creationTimeStamp": 1766081992822,
+                "resourceId": "arn:aws:ec2:ca-central-1:192821421245:volume/vol-03bbb2efb05fe1566"
+            }
+        ],
+        "compoundActions": [
+            {
+                "displayName": "MANUAL",
+                "actionType": "SCALE",
+                "actionState": "READY",
+                "actionMode": "MANUAL",
+                "details": "Move Volume vol-03bbb2efb05fe1566 from GP2 to GP3",
+                "target": {
+                    "uuid": "76289728312993",
+                    "displayName": "vol-03bbb2efb05fe1566",
+                    "className": "VirtualVolume",
+                    "environmentType": "CLOUD",
+                    "discoveredBy": {
+                        "uuid": "76281024499680",
+                        "displayName": "AWS",
+                        "isProbeRegistered": false,
+                        "type": "AWS",
+                        "readonly": false
+                    },
+                    "vendorIds": {
+                        "AWS": "vol-03bbb2efb05fe1566"
+                    },
+                    "state": "ACTIVE"
+                },
+                "currentEntity": {
+                    "uuid": "76281056755984",
+                    "displayName": "GP2",
+                    "className": "StorageTier",
+                    "environmentType": "CLOUD",
+                    "discoveredBy": {
+                        "uuid": "76281052834176",
+                        "displayName": "Standard",
+                        "isProbeRegistered": false,
+                        "type": "AWS Infrastructure",
+                        "readonly": false
+                    },
+                    "vendorIds": {
+                        "Standard": "aws::ST::GP2"
+                    },
+                    "state": "ACTIVE"
+                },
+                "newEntity": {
+                    "uuid": "76281056755978",
+                    "displayName": "GP3",
+                    "className": "StorageTier",
+                    "environmentType": "CLOUD",
+                    "discoveredBy": {
+                        "uuid": "76281052834176",
+                        "displayName": "Standard",
+                        "isProbeRegistered": false,
+                        "type": "AWS Infrastructure",
+                        "readonly": false
+                    },
+                    "vendorIds": {
+                        "Standard": "aws::ST::GP3"
+                    },
+                    "state": "ACTIVE"
+                },
+                "currentValue": "76281056755984",
+                "newValue": "76281056755978"
+            }
+        ],
+        "executionCharacteristics": {
+            "disruptiveness": "NON_DISRUPTIVE",
+            "reversibility": "REVERSIBLE"
+        },
+        "source": "MARKET",
+        "actionID": 639239686176692
+    }
+]

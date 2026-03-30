@@ -35,10 +35,11 @@ func HandleAwsDbInstanceCurrentState(ctx context.Context, state AwsDbInstanceEnt
 // HandleAwsDbInstanceAction is the default implementation.
 func HandleAwsDbInstanceAction(ctx context.Context, resp *datasource.ReadResponse, state AwsDbInstanceEntityModel, actions turboclient.ActionResults) (AwsDbInstanceEntityModel, error) {
 	for _, action := range actions[0].CompoundActions {
-		if action.CurrentEntity.ClassName == "ComputeTier" {
+		switch action.CurrentEntity.ClassName {
+		case "ComputeTier":
 			state.CurrentInstanceClass = types.StringValue(action.CurrentEntity.DisplayName)
 			state.NewInstanceClass = types.StringValue(action.NewEntity.DisplayName)
-		} else if action.CurrentEntity.ClassName == "StorageTier" {
+		case "StorageTier":
 			state.CurrentStorageType = types.StringValue(action.CurrentEntity.DisplayName)
 			state.NewStorageType = types.StringValue(action.NewEntity.DisplayName)
 		}

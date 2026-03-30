@@ -26,7 +26,7 @@ terraform {
   required_providers {
     turbonomic = {
       source  = "IBM/turbonomic"
-      version = "1.8.0"
+      version = "1.9.0"
     }
   }
 }
@@ -54,7 +54,7 @@ terraform {
   required_providers {
     turbonomic = {
       source  = "IBM/turbonomic"
-      version = "1.8.0"
+      version = "1.9.0"
     }
   }
 }
@@ -81,7 +81,7 @@ terraform {
   required_providers {
     turbonomic = {
       source  = "IBM/turbonomic"
-      version = "1.8.0"
+      version = "1.9.0"
     }
   }
 }

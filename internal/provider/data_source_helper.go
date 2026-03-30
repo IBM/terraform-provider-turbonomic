@@ -434,10 +434,10 @@ func TagEntity(client *turboclient.Client, uuid string) error {
 
 		entityTags, err := client.GetEntityTags(entityTagsReq)
 		if err != nil {
-			return fmt.Errorf("Unable to retrieve entity tags from Turbonomic: %v", err)
+			return fmt.Errorf("unable to retrieve entity tags from Turbonomic: %v", err)
 		}
 
-		var alreadyTagged bool = false
+		var alreadyTagged bool
 		for _, item := range entityTags {
 			if item.Key == OptimizedByTagName {
 				if slices.Contains(item.Values, OptimizedByTagValue) {
@@ -463,7 +463,7 @@ func TagEntity(client *turboclient.Client, uuid string) error {
 				if strings.Contains(err.Error(), TagAlreadyExistsErrorMsg) {
 					return nil
 				}
-				return fmt.Errorf("Unable to tag an entity in Turbonomic: %v", err)
+				return fmt.Errorf("unable to tag an entity in Turbonomic: %v", err)
 			}
 		}
 	}

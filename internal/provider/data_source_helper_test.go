@@ -282,7 +282,11 @@ func TestGetStatsByEntityUUIDAndType(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Error opening test data file: %v", err)
 		}
-		defer jsonFile.Close()
+		defer func() {
+			if err := jsonFile.Close(); err != nil {
+				t.Errorf("Error closing test data file: %v", err)
+			}
+		}()
 
 		jsonData, err := io.ReadAll(jsonFile)
 		if err != nil {

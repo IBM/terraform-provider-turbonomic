@@ -544,9 +544,9 @@ func TestEntityActionsGetEntityTagsError(t *testing.T) {
 					Config: providerConfig +
 						`data "turbonomic_entity_actions" "test" {
 							    entity_name  = "` + moveActionEntity + `"
-                                entity_type = "` + moveActionEntityType + `"
+	                               entity_type = "` + moveActionEntityType + `"
 						    }`,
-					ExpectError: regexp.MustCompile(`Unable to retrieve entity tags from Turbonomic`),
+					ExpectError: regexp.MustCompile(`unable to retrieve entity tags from Turbonomic`),
 				},
 			},
 		})
@@ -598,9 +598,9 @@ func TestEntityActionsDataSourceTagEntityError(t *testing.T) {
 					Config: providerConfig +
 						`data "turbonomic_entity_actions" "test" {
 							    entity_name  = "` + moveActionEntity + `"
-                                entity_type = "` + moveActionEntityType + `"
+	                               entity_type = "` + moveActionEntityType + `"
 						    }`,
-					ExpectError: regexp.MustCompile(`Unable to tag an entity in Turbonomic`),
+					ExpectError: regexp.MustCompile(`unable to tag an entity in Turbonomic`),
 				},
 			},
 		})

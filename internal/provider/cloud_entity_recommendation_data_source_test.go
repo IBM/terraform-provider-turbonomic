@@ -423,7 +423,7 @@ func TestCloudDataSourceGetEntityTagsError(t *testing.T) {
 			Steps: []resource.TestStep{
 				{
 					Config:      providerConfig + resourceConfig,
-					ExpectError: regexp.MustCompile(`Unable to retrieve entity tags from Turbonomic`),
+					ExpectError: regexp.MustCompile(`unable to retrieve entity tags from Turbonomic`),
 				},
 			},
 		})
@@ -478,7 +478,7 @@ func TestCloudDataSourceTagEntityError(t *testing.T) {
 			Steps: []resource.TestStep{
 				{
 					Config:      providerConfig + resourceConfig,
-					ExpectError: regexp.MustCompile(`Unable to tag an entity in Turbonomic`),
+					ExpectError: regexp.MustCompile(`unable to tag an entity in Turbonomic`),
 				},
 			},
 		})

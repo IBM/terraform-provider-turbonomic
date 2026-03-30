@@ -79,7 +79,9 @@ func mockTurboServer(t *testing.T, routes []MockRoute) *httptest.Server {
 			if r.Method == route.Method && matchPath(route.Path, r.URL.Path) {
 				if len(route.ExpectedBody) > 0 {
 					body, _ := io.ReadAll(r.Body)
-					defer r.Body.Close()
+					defer func() {
+						_ = r.Body.Close()
+					}()
 					if !bytes.Equal(bytes.TrimSpace(body), []byte(route.ExpectedBody)) {
 						http.Error(w, fmt.Sprintf("unexpected body: expected: %q, got %q", route.ExpectedBody, string(body)), http.StatusBadRequest)
 						return
@@ -87,7 +89,7 @@ func mockTurboServer(t *testing.T, routes []MockRoute) *httptest.Server {
 				}
 
 				w.WriteHeader(route.ResponseCode)
-				fmt.Fprint(w, route.ResponseBody)
+				_, _ = fmt.Fprint(w, route.ResponseBody)
 				return
 			}
 		}
@@ -166,5 +168,5 @@ func LoginAndTagRoutes(t *testing.T) []MockRoute {
 }
 
 func init() {
-	os.Setenv("TF_ACC", "1")
+	_ = os.Setenv("TF_ACC", "1")
 }

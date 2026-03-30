@@ -1,3 +1,9 @@
+## 1.9.0
+NOTES:
+
+- Update provider to use Go 1.25.0
+- Bump google.golang.org/grpc to v1.79.3
+
 ## 1.8.0
 BUG FIXES:
 

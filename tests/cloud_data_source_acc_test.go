@@ -124,5 +124,5 @@ func TestAccCloudDataSourceOAuth(t *testing.T) {
 }
 
 func init() {
-	os.Setenv("TF_ACC", "1")
+	_ = os.Setenv("TF_ACC", "1")
 }

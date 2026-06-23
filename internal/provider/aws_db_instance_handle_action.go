@@ -80,16 +80,16 @@ func (a *AwsDbInstanceStateAdapter) UpdateIops(ctx context.Context, value float6
 
 	if isNew {
 		a.State.NewIops = types.Int64Value(iopsValue)
-		tflog.Debug(ctx, fmt.Sprintf("Setting new IOPS to %d", iopsValue))
+		tflog.Debug(ctx, fmt.Sprintf("setting new iops to %d", iopsValue))
 	} else {
 		a.State.CurrentIops = types.Int64Value(iopsValue)
-		tflog.Debug(ctx, fmt.Sprintf("Setting current IOPS to %d", iopsValue))
+		tflog.Debug(ctx, fmt.Sprintf("setting current iops to %d", iopsValue))
 	}
 }
 
 func (a *AwsDbInstanceStateAdapter) UpdateThroughput(ctx context.Context, value float64, isNew bool) {
 	// AWS RDS doesn't use throughput
-	tflog.Debug(ctx, fmt.Sprintf("Throughput update not applicable for AWS RDS: %f", value))
+	tflog.Debug(ctx, fmt.Sprintf("throughput update not applicable for aws rds: %f", value))
 }
 
 func (a *AwsDbInstanceStateAdapter) UpdateSize(ctx context.Context, value float64, isNew bool) {
@@ -98,10 +98,10 @@ func (a *AwsDbInstanceStateAdapter) UpdateSize(ctx context.Context, value float6
 
 	if isNew {
 		a.State.NewAllocatedStorage = types.Int64Value(sizeGiB)
-		tflog.Debug(ctx, fmt.Sprintf("Setting new allocated storage to %d GiB (converted from %.0f MB)", sizeGiB, value))
+		tflog.Debug(ctx, fmt.Sprintf("setting new allocated storage to %d GiB (converted from %.0f MB)", sizeGiB, value))
 	} else {
 		a.State.CurrentAllocatedStorage = types.Int64Value(sizeGiB)
-		tflog.Debug(ctx, fmt.Sprintf("Setting current allocated storage to %d GiB (converted from %.0f MB)", sizeGiB, value))
+		tflog.Debug(ctx, fmt.Sprintf("setting current allocated storage to %d GiB (converted from %.0f MB)", sizeGiB, value))
 	}
 }
 

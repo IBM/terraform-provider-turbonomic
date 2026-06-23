@@ -1,3 +1,8 @@
+## 1.10.0
+NOTES:
+
+- Add guide for using turbonomic fallback pattern
+
 ## 1.9.0
 NOTES:
 

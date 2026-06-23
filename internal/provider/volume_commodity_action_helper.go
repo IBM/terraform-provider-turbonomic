@@ -61,7 +61,7 @@ func HandleGenericVolumeCommodityAction(ctx context.Context, commodityActions tu
 			case StorageAmount:
 				processStatistic(ctx, commodityAction.Epoch, statistics, state.UpdateSize)
 			default:
-				tflog.Debug(ctx, fmt.Sprintf("Ignoring unknown statistic: %s", statistics.Name))
+				tflog.Debug(ctx, fmt.Sprintf("ignoring unknown statistic: %s", statistics.Name))
 			}
 		}
 	}

@@ -98,6 +98,7 @@ resource "aws_db_instance" "default" {
   tags                 = provider::turbonomic::get_tag() //tag the resource as optimized by Turbonomic provider
 }
 ```
+
 ## AWS EBS example
 
 The AWS EBS resource is configured to use the `turbonomic_aws_ebs_volume` data source unless null is returned, in which case it uses `<default_type>` by default.

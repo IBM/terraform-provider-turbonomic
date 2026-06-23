@@ -311,7 +311,7 @@ func TestAzurermLinuxVirtualMachineDataSourceGetEntityTagsError(t *testing.T) {
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
 
-	t.Run("Error while retrieving entity tags", func(t *testing.T) {
+	t.Run("error while retrieving entity tags", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
 			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
@@ -608,7 +608,7 @@ func TestAzureLinuxVirtualMachineDataSourceWithEmptyDefaultType(t *testing.T) {
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
-	t.Run("Default size should be atleast 1", func(t *testing.T) {
+	t.Run("default size should be atleast 1", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
 			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{

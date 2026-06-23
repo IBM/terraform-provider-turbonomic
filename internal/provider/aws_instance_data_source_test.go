@@ -385,7 +385,7 @@ func TestAwsInstanceDataSourceTagEntityError(t *testing.T) {
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
 
-	t.Run("no rrror while tagging an entity", func(t *testing.T) {
+	t.Run("no error while tagging an entity", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
 			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{

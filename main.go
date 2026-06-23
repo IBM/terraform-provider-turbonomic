@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	version = "1.9.0"
+	version = "1.10.0"
 	typeName          = "turbonomic"
 	tfProviderAddress = "registry.terraform.io/IBM/turbonomic"
 )

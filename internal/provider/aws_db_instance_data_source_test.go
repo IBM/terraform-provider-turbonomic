@@ -163,7 +163,7 @@ func TestRDSDataSourcNewInstance(t *testing.T) {
 		expectedDefaultStorage     int64
 	}{
 		{
-			name:                       "Non existing RDS instance",
+			name:                       "Non-existing RDS instance",
 			testEntity:                 rdsName,
 			expectedEntityName:         rdsName,
 			expectedCurrentComputeTier: rdsDefaultSizeCompute,
@@ -299,7 +299,7 @@ func TestRDSDataSourceDefaultLengthValidationInstanceClass(t *testing.T) {
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimLeft(mockServer.URL, "htps:/"))
-	t.Run("Default instance class atleast 1", func(t *testing.T) {
+	t.Run("default instance class atleast 1", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
 			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
@@ -335,7 +335,7 @@ func TestRDSDataSourceDefaultLengthValidationStorageType(t *testing.T) {
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimLeft(mockServer.URL, "htps:/"))
-	t.Run("Default storage type atleast 1", func(t *testing.T) {
+	t.Run("default storage type atleast 1", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
 			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{

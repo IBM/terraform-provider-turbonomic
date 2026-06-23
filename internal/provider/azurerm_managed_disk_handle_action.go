@@ -109,10 +109,10 @@ func (a *AzurermManagedDiskStateAdapter) UpdateIops(ctx context.Context, value f
 
 	if isNew {
 		a.State.NewDiskIopsReadWrite = types.Int64Value(iopsValue)
-		tflog.Debug(ctx, fmt.Sprintf("Setting new IOPS to %.0f", value))
+		tflog.Debug(ctx, fmt.Sprintf("setting new iops to %.0f", value))
 	} else {
 		a.State.CurrentDiskIopsReadWrite = types.Int64Value(iopsValue)
-		tflog.Debug(ctx, fmt.Sprintf("Setting current IOPS to %.0f", value))
+		tflog.Debug(ctx, fmt.Sprintf("setting current iops to %.0f", value))
 	}
 }
 
@@ -122,10 +122,10 @@ func (a *AzurermManagedDiskStateAdapter) UpdateThroughput(ctx context.Context, v
 
 	if isNew {
 		a.State.NewDiskMbpsReadWrite = roundedValue
-		tflog.Debug(ctx, fmt.Sprintf("Setting new throughput to %.2f MiB/sec", throughputValue))
+		tflog.Debug(ctx, fmt.Sprintf("setting new throughput to %.2f MiB/sec", throughputValue))
 	} else {
 		a.State.CurrentDiskMbpsReadWrite = roundedValue
-		tflog.Debug(ctx, fmt.Sprintf("Setting current throughput to %.2f MiB/sec", throughputValue))
+		tflog.Debug(ctx, fmt.Sprintf("setting current throughput to %.2f MiB/sec", throughputValue))
 	}
 }
 
@@ -135,10 +135,10 @@ func (a *AzurermManagedDiskStateAdapter) UpdateSize(ctx context.Context, value f
 
 	if isNew {
 		a.State.NewDiskSizeGb = types.Int64Value(sizeGiB)
-		tflog.Debug(ctx, fmt.Sprintf("Setting new size to %d GiB (converted from %.0f MiB)", sizeGiB, value))
+		tflog.Debug(ctx, fmt.Sprintf("setting new size to %d GiB (converted from %.0f MiB)", sizeGiB, value))
 	} else {
 		a.State.CurrentDiskSizeGb = types.Int64Value(sizeGiB)
-		tflog.Debug(ctx, fmt.Sprintf("Setting current size to %d GiB (converted from %.0f MiB)", sizeGiB, value))
+		tflog.Debug(ctx, fmt.Sprintf("setting current size to %d GiB (converted from %.0f MiB)", sizeGiB, value))
 	}
 }
 

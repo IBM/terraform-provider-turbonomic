@@ -77,10 +77,10 @@ func (a *AwsEbsVolumeStateAdapter) UpdateIops(ctx context.Context, value float64
 
 	if isNew {
 		a.State.NewIops = types.Int64Value(iopsValue)
-		tflog.Debug(ctx, fmt.Sprintf("Setting new IOPS to %d", iopsValue))
+		tflog.Debug(ctx, fmt.Sprintf("setting new iops to %d", iopsValue))
 	} else {
 		a.State.CurrentIops = types.Int64Value(iopsValue)
-		tflog.Debug(ctx, fmt.Sprintf("Setting current IOPS to %d", iopsValue))
+		tflog.Debug(ctx, fmt.Sprintf("setting current iops to %d", iopsValue))
 	}
 }
 
@@ -89,10 +89,10 @@ func (a *AwsEbsVolumeStateAdapter) UpdateThroughput(ctx context.Context, value f
 
 	if isNew {
 		a.State.NewThroughput = types.Int64Value(int64(math.Round(throughputValue)))
-		tflog.Debug(ctx, fmt.Sprintf("Setting new throughput to %.2f MiB/sec", throughputValue))
+		tflog.Debug(ctx, fmt.Sprintf("setting new throughput to %.2f MiB/sec", throughputValue))
 	} else {
 		a.State.CurrentThroughput = types.Int64Value(int64(math.Round(throughputValue)))
-		tflog.Debug(ctx, fmt.Sprintf("Setting current throughput to %.2f MiB/sec", throughputValue))
+		tflog.Debug(ctx, fmt.Sprintf("setting current throughput to %.2f MiB/sec", throughputValue))
 	}
 }
 
@@ -102,10 +102,10 @@ func (a *AwsEbsVolumeStateAdapter) UpdateSize(ctx context.Context, value float64
 
 	if isNew {
 		a.State.NewSize = types.Int64Value(sizeGiB)
-		tflog.Debug(ctx, fmt.Sprintf("Setting new size to %d GiB (converted from %.0f MB)", sizeGiB, value))
+		tflog.Debug(ctx, fmt.Sprintf("setting new size to %d GiB (converted from %.0f MB)", sizeGiB, value))
 	} else {
 		a.State.CurrentSize = types.Int64Value(sizeGiB)
-		tflog.Debug(ctx, fmt.Sprintf("Setting current size to %d GiB (converted from %.0f MB)", sizeGiB, value))
+		tflog.Debug(ctx, fmt.Sprintf("setting current size to %d GiB (converted from %.0f MB)", sizeGiB, value))
 	}
 }
 

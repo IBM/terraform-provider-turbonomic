@@ -30,15 +30,13 @@ data "turbonomic_aws_ebs_volume" "example" {
 - `default_throughput` (Number) default throughput of the volume entity in MiB/s, update is only valid for type of gp3
 - `default_type` (String) default type of the volume entity
 - `entity_name` (String) name of the AWS EBS volume entity. This field is used for search operations when a valid vendor_id is not provided
-
-### Conditionally Optional
 - `vendor_id` (String) id of the AWS EBS entity. When provided, this field is used as the primary search criteria, taking precedence over entity_name
 
 ### Read-Only
 
 - `current_iops` (Number) current IOPS of the volume entity, update is only valid for type of io1, io2 or gp3
-- `current_size` (Number) current size of the volume entity in GiB. This field is required when the current_iops is provided
-- `current_throughput` (Number) current throughput of the volume entity in MiB/s, update is only valid for type of gp3. This field is required when the current_iops is provided
+- `current_size` (Number) current size of the volume entity in GiB
+- `current_throughput` (Number) current throughput of the volume entity in MiB/s, update is only valid for type of gp3
 - `current_type` (String) current type of the volume entity
 - `entity_type` (String) type of the volume entity
 - `entity_uuid` (String) turbonomic uuid of the volume entity
@@ -46,5 +44,3 @@ data "turbonomic_aws_ebs_volume" "example" {
 - `new_size` (Number) recommended size of the volume entity in GiB
 - `new_throughput` (Number) recommended throughput of the volume entity in MiB/s, update is only valid for type of gp3
 - `new_type` (String) recommended type of the volume entity
-
-

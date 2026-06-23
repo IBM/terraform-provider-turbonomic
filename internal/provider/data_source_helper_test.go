@@ -211,7 +211,7 @@ func TestGetStatsByEntityUUIDAndType(t *testing.T) {
 
 		_, errDiag := GetStatsByEntityUUIDAndType(client, entityUUID, "VirtualVolume")
 		assert.NotNil(t, errDiag)
-		assert.Contains(t, errDiag.Detail(), "Error fetching stats")
+		assert.Contains(t, errDiag.Detail(), "error fetching stats")
 
 		client.AssertExpectations(t)
 	})
@@ -222,7 +222,7 @@ func TestGetStatsByEntityUUIDAndType(t *testing.T) {
 
 		_, errDiag := GetStatsByEntityUUIDAndType(client, entityUUID, "VirtualVolume")
 		assert.NotNil(t, errDiag)
-		assert.Contains(t, errDiag.Detail(), "No stats found")
+		assert.Contains(t, errDiag.Detail(), "no stats found")
 
 		client.AssertExpectations(t)
 	})
@@ -280,17 +280,17 @@ func TestGetStatsByEntityUUIDAndType(t *testing.T) {
 		// Read the test data file
 		jsonFile, err := os.Open("testdata/ebs_data_source/ebs_stats_valid_resp.json")
 		if err != nil {
-			t.Fatalf("Error opening test data file: %v", err)
+			t.Fatalf("error opening test data file: %v", err)
 		}
 		defer func() {
 			if err := jsonFile.Close(); err != nil {
-				t.Errorf("Error closing test data file: %v", err)
+				t.Errorf("error closing test data file: %v", err)
 			}
 		}()
 
 		jsonData, err := io.ReadAll(jsonFile)
 		if err != nil {
-			t.Fatalf("Error reading test data file: %v", err)
+			t.Fatalf("error reading test data file: %v", err)
 		}
 
 		// We don't need an HTTP server since we're using the mock client directly
@@ -302,14 +302,14 @@ func TestGetStatsByEntityUUIDAndType(t *testing.T) {
 		var mockResponse turboclient.StatsResponse
 		err = json.Unmarshal(jsonData, &mockResponse)
 		if err != nil {
-			t.Fatalf("Error unmarshaling JSON data: %v", err)
+			t.Fatalf("error unmarshaling JSON data: %v", err)
 		}
 
 		client.On("GetStats", mock.Anything).Return(mockResponse, nil).Once()
 
 		stats, errDiag := GetStatsByEntityUUIDAndType(client, "vol-05f7c906f860b4d3c", "VirtualVolume")
 		if errDiag != nil {
-			t.Fatalf("Error getting stats: %v", errDiag)
+			t.Fatalf("error getting stats: %v", errDiag)
 		}
 
 		// Verify the response
@@ -390,7 +390,7 @@ func TestGetStatisticsByEntityType(t *testing.T) {
 
 	t.Run("Unknown entity type", func(t *testing.T) {
 		stats := GetStatisticsByEntityType("UnknownType")
-		assert.Equal(t, 3, len(stats), "Unknown type should default to 3 statistics")
+		assert.Equal(t, 3, len(stats), "unknown type should default to 3 statistics")
 
 		statNames := make([]string, len(stats))
 		for i, stat := range stats {
@@ -511,7 +511,7 @@ func TestCanExecuteAction(t *testing.T) {
 				},
 			},
 			expectedResult: false,
-			expectedMsg:    "actionMode is set to RECOMMEND, Turbonomic action is not executable",
+			expectedMsg:    "actionMode is set to RECOMMEND, turbonomic action is not executable",
 		},
 		{
 			name: "Manual mode with ready state",
@@ -604,7 +604,7 @@ func TestCanExecuteAction(t *testing.T) {
 				},
 			},
 			expectedResult: false,
-			expectedMsg:    "actionStateDescription is set to SCHEDULED_WAITING_FOR_EXTERNAL_APPROVAL, Turbonomic action is not executable",
+			expectedMsg:    "actionStateDescription is set to SCHEDULED_WAITING_FOR_EXTERNAL_APPROVAL, turbonomic action is not executable",
 		},
 		// Empty action results case is handled separately
 	}
@@ -628,7 +628,7 @@ func TestCanExecuteActionEdgeCases(t *testing.T) {
 	t.Run("Nil action results", func(t *testing.T) {
 		defer func() {
 			if r := recover(); r == nil {
-				t.Errorf("Expected panic with nil ActionResults, but no panic occurred")
+				t.Errorf("expected panic with nil ActionResults, but no panic occurred")
 			}
 		}()
 
@@ -639,7 +639,7 @@ func TestCanExecuteActionEdgeCases(t *testing.T) {
 	t.Run("Empty action results", func(t *testing.T) {
 		defer func() {
 			if r := recover(); r == nil {
-				t.Errorf("Expected panic with empty ActionResults, but no panic occurred")
+				t.Errorf("expected panic with empty ActionResults, but no panic occurred")
 			}
 		}()
 

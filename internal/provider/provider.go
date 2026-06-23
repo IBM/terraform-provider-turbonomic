@@ -122,7 +122,7 @@ func (p *turbonomicProvider) Schema(ctx context.Context, req provider.SchemaRequ
 }
 
 func (p *turbonomicProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
-	tflog.Info(ctx, "Configuring Turbonomic client")
+	tflog.Info(ctx, "configuring turbonomic client")
 
 	var config turbonomicProviderModel
 	diags := req.Config.Get(ctx, &config)
@@ -134,54 +134,54 @@ func (p *turbonomicProvider) Configure(ctx context.Context, req provider.Configu
 	if config.Hostname.IsUnknown() {
 		resp.Diagnostics.AddAttributeError(
 			path.Root("hostname"),
-			"Unknown Turbonomic API hostname",
-			"The provider cannot create the Turbonomic API client; unknown configuration value for the Turbonomic API hostname. "+
-				"Either target apply the source of the value first, set the value statically in the configuration, or use the TURBO_HOSTNAME environment variable.",
+			"unknown turbonomic api hostname",
+			"the provider cannot create the turbonomic api client; unknown configuration value for the turbonomic api hostname. "+
+				"either target apply the source of the value first, set the value statically in the configuration, or use the TURBO_HOSTNAME environment variable.",
 		)
 	}
 
 	if config.Username.IsUnknown() {
 		resp.Diagnostics.AddAttributeError(
 			path.Root("username"),
-			"Unknown Turbonomic API username",
-			"The provider cannot create the Turbonomic API client; unknown configuration value for the Turbonomic API username. "+
-				"Either target apply the source of the value first, set the value statically in the configuration, or use the TURBO_USERNAME environment variable.",
+			"unknown turbonomic api username",
+			"the provider cannot create the turbonomic api client; unknown configuration value for the turbonomic api username. "+
+				"either target apply the source of the value first, set the value statically in the configuration, or use the TURBO_USERNAME environment variable.",
 		)
 	}
 
 	if config.Password.IsUnknown() {
 		resp.Diagnostics.AddAttributeError(
 			path.Root("password"),
-			"Unknown Turbonomic API password",
-			"The provider cannot create the Turbonomic API client; unknown configuration value for the Turbonomic API password. "+
-				"Either target apply the source of the value first, set the value statically in the configuration, or use the TURBO_PASSWORD environment variable.",
+			"unknown turbonomic api password",
+			"the provider cannot create the turbonomic api client; unknown configuration value for the turbonomic api password. "+
+				"either target apply the source of the value first, set the value statically in the configuration, or use the TURBO_PASSWORD environment variable.",
 		)
 	}
 
 	if config.ClientId.IsUnknown() {
 		resp.Diagnostics.AddAttributeError(
 			path.Root("client_id"),
-			"Unknown Turbonomic API client_id",
-			"The provider cannot create the Turbonomic API client; unknown configuration value for the Turbonomic API client_id. "+
-				"Either target apply the source of the value first, set the value statically in the configuration, or use the TURBO_CLIENT_ID environment variable.",
+			"unknown turbonomic api client_id",
+			"the provider cannot create the turbonomic api client; unknown configuration value for the turbonomic api client_id. "+
+				"either target apply the source of the value first, set the value statically in the configuration, or use the TURBO_CLIENT_ID environment variable.",
 		)
 	}
 
 	if config.ClientSecret.IsUnknown() {
 		resp.Diagnostics.AddAttributeError(
 			path.Root("client_secret"),
-			"Unknown Turbonomic API client_secret",
-			"The provider cannot create the Turbonomic API client; unknown configuration value for the Turbonomic API client_secret. "+
-				"Either target apply the source of the value first, set the value statically in the configuration, or use the TURBO_CLIENT_SECRET environment variable.",
+			"unknown turbonomic api client_secret",
+			"the provider cannot create the turbonomic api client; unknown configuration value for the turbonomic api client_secret. "+
+				"either target apply the source of the value first, set the value statically in the configuration, or use the TURBO_CLIENT_SECRET environment variable.",
 		)
 	}
 
 	if config.Role.IsUnknown() {
 		resp.Diagnostics.AddAttributeError(
 			path.Root("role"),
-			"Unknown Turbonomic API role",
-			"The provider cannot create the Turbonomic API client; unknown configuration value for the Turbonomic API role. "+
-				"Either target apply the source of the value first, set the value statically in the configuration, or use the TURBO_ROLE environment variable.",
+			"unknown turbonomic api role",
+			"the provider cannot create the turbonomic api client; unknown configuration value for the turbonomic api role. "+
+				"either target apply the source of the value first, set the value statically in the configuration, or use the TURBO_ROLE environment variable.",
 		)
 	}
 
@@ -231,17 +231,17 @@ func (p *turbonomicProvider) Configure(ctx context.Context, req provider.Configu
 	if hostname == "" {
 		resp.Diagnostics.AddAttributeError(
 			path.Root("hostname"),
-			"Missing Turbonomic API Hostname",
-			"The provider cannot create the Turbonomic API client; missing or empty value for the Turbonomic API hostname. "+
-				"Set the hostname value in the configuration or use the TURBO_HOSTNAME environment variable. "+
-				"If either is already set, ensure the value is not empty.",
+			"missing turbonomic api hostname",
+			"the provider cannot create the turbonomic api client; missing or empty value for the Turbonomic API hostname. "+
+				"set the hostname value in the configuration or use the TURBO_HOSTNAME environment variable. "+
+				"if either is already set, ensure the value is not empty.",
 		)
 	}
 
 	if len(StringsWithValues(username, clientId)) != 1 {
 		resp.Diagnostics.AddError(
-			"Invalid Attribute Combination -> Multiple Authentication Methods Provided",
-			"Exactly one of these attributes must be configured: [username, client_id]",
+			"invalid attribute combination -> multiple authentication methods provided",
+			"exactly one of these attributes must be configured: [username, client_id]",
 		)
 	}
 
@@ -249,8 +249,8 @@ func (p *turbonomicProvider) Configure(ctx context.Context, req provider.Configu
 		len(stringsValues) != 2 {
 
 		resp.Diagnostics.AddError(
-			"Invalid Attribute Combination -> Username/Password",
-			"These attributes must be configured together: [username, password]",
+			"invalid attribute combination -> username/password",
+			"these attributes must be configured together: [username, password]",
 		)
 	}
 
@@ -258,8 +258,8 @@ func (p *turbonomicProvider) Configure(ctx context.Context, req provider.Configu
 		len(stringsValues) != 3 {
 
 		resp.Diagnostics.AddError(
-			"Invalid Attribute Combination -> oAuth",
-			"These attributes must be configured together: [client_id, client_secret, role]",
+			"invalid attribute combination -> oAuth",
+			"these attributes must be configured together: [client_id, client_secret, role]",
 		)
 	}
 
@@ -269,9 +269,9 @@ func (p *turbonomicProvider) Configure(ctx context.Context, req provider.Configu
 			"SHARED_OBSERVER", "REPORT_EDITOR"}
 		validRolefmt, _ := json.Marshal(validRoles)
 		if !slices.Contains(validRoles, role) {
-			msg := fmt.Sprintf("Attribute role value must be one of: %s, got: %s", validRolefmt, role)
+			msg := fmt.Sprintf("attribute role value must be one of: %s, got: %s", validRolefmt, role)
 			resp.Diagnostics.AddError(
-				"Invalid Attribute Value Match -> Unknown Role",
+				"invalid attribute value match -> unknown role",
 				msg,
 			)
 		}
@@ -303,8 +303,8 @@ func (p *turbonomicProvider) Configure(ctx context.Context, req provider.Configu
 		}
 	} else {
 		resp.Diagnostics.AddError(
-			"Unable to Create Turbonomic API Client",
-			"No credentials have been passed to the client. This should have been "+
+			"unable to create turbonomic api client",
+			"no credentials have been passed to the client. this should have been "+
 				"caught by the validators",
 		)
 		return
@@ -320,10 +320,10 @@ func (p *turbonomicProvider) Configure(ctx context.Context, req provider.Configu
 
 	if err != nil {
 		resp.Diagnostics.AddWarning(
-			"Unable to Create Turbonomic API Client",
-			"An unexpected error occurred when creating the Turbonomic API client. "+
-				"If the error is not clear, please contact the provider developers.\n\n"+
-				"Turbonomic Client Error: "+err.Error(),
+			"unable to create turbonomic api client",
+			"an unexpected error occurred when creating the turbonomic api client. "+
+				"if the error is not clear, please contact the provider developers.\n\n"+
+				"turbonomic client error: "+err.Error(),
 		)
 	}
 

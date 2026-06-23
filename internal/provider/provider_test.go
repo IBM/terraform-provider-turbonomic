@@ -139,7 +139,7 @@ func TestProviderNoHostname(t *testing.T) {
 			Steps: []resource.TestStep{
 				{
 					Config:      testConfig + resourceConfig,
-					ExpectError: regexp.MustCompile(`Missing Turbonomic API Hostname`),
+					ExpectError: regexp.MustCompile(`missing turbonomic api hostname`),
 				},
 			},
 		})
@@ -162,7 +162,7 @@ func TestProviderMultipleAuth(t *testing.T) {
 			Steps: []resource.TestStep{
 				{
 					Config:      testConfig + resourceConfig,
-					ExpectError: regexp.MustCompile(`Invalid Attribute Combination -> Multiple Authentication Methods Provided`),
+					ExpectError: regexp.MustCompile(`invalid attribute combination -> multiple authentication methods provided`),
 				},
 			},
 		})
@@ -184,7 +184,7 @@ func TestProviderMissingPassword(t *testing.T) {
 			Steps: []resource.TestStep{
 				{
 					Config:      testConfig + resourceConfig,
-					ExpectError: regexp.MustCompile(`Invalid Attribute Combination -> Username/Password`),
+					ExpectError: regexp.MustCompile(`invalid attribute combination -> username/password`),
 				},
 			},
 		})
@@ -206,7 +206,7 @@ func TestProviderMissingClientSecret(t *testing.T) {
 			Steps: []resource.TestStep{
 				{
 					Config:      testConfig + resourceConfig,
-					ExpectError: regexp.MustCompile(`Invalid Attribute Combination -> oAuth`),
+					ExpectError: regexp.MustCompile(`invalid attribute combination -> oAuth`),
 				},
 			},
 		})
@@ -230,7 +230,7 @@ func TestProviderUnknownRole(t *testing.T) {
 			Steps: []resource.TestStep{
 				{
 					Config:      testConfig + resourceConfig,
-					ExpectError: regexp.MustCompile(`Invalid Attribute Value Match -> Unknown Role`),
+					ExpectError: regexp.MustCompile(`invalid attribute value match -> unknown role`),
 				},
 			},
 		})

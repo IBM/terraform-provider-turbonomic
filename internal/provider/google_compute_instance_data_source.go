@@ -118,7 +118,7 @@ func (d *GoogleComputeInstanceDataSource) Configure(_ context.Context, req datas
 	client, ok := req.ProviderData.(*turboclient.Client)
 	if !ok {
 		resp.Diagnostics.AddError(
-			"Unexpected Data Source Configure Type",
+			"unexpected data-source configure type",
 			fmt.Sprintf("expected: *turboclient.Client, got: %T. please report this issue to the provider developers.", req.ProviderData),
 		)
 

@@ -19,6 +19,12 @@ You will encounter three distinct value types when working with Turbonomic data 
 - new value: The optimal value recommended by Turbonomic based on its analysis.
 - default values: A user-defined fallback value used when the entity does not yet exist in the environment.
 
+## Fallback Pattern for Turbonomic Unavailability
+
+For production environments, it's important to handle scenarios where Turbonomic may be temporarily unavailable. The **fallback pattern** uses Terraform's `coalesce()` function to create a robust priority chain.
+
+**See the comprehensive [Fallback Pattern Guide](./turbonomic_fallback_pattern.md) for more information.**
+
 ## Example usage
 
 ```terraform
@@ -26,7 +32,7 @@ terraform {
   required_providers {
     turbonomic = {
       source  = "IBM/turbonomic"
-      version = "1.9.0"
+      version = "1.10.0"
     }
   }
 }
@@ -54,7 +60,7 @@ terraform {
   required_providers {
     turbonomic = {
       source  = "IBM/turbonomic"
-      version = "1.9.0"
+      version = "1.10.0"
     }
   }
 }
@@ -81,7 +87,7 @@ terraform {
   required_providers {
     turbonomic = {
       source  = "IBM/turbonomic"
-      version = "1.9.0"
+      version = "1.10.0"
     }
   }
 }

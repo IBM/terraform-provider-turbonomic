@@ -95,10 +95,10 @@ func (a *GoogleComputeDiskStateAdapter) UpdateIops(ctx context.Context, value fl
 
 	if isNew {
 		a.State.NewProvisionedIops = types.Int64Value(iopsValue)
-		tflog.Debug(ctx, fmt.Sprintf("Setting new IOPS to %.0f", value))
+		tflog.Debug(ctx, fmt.Sprintf("setting new iops to %.0f", value))
 	} else {
 		a.State.CurrentProvisionedIops = types.Int64Value(iopsValue)
-		tflog.Debug(ctx, fmt.Sprintf("Setting current IOPS to %.0f", value))
+		tflog.Debug(ctx, fmt.Sprintf("setting current iops to %.0f", value))
 	}
 }
 
@@ -107,10 +107,10 @@ func (a *GoogleComputeDiskStateAdapter) UpdateThroughput(ctx context.Context, va
 
 	if isNew {
 		a.State.NewProvisionedThroughput = types.Int64Value(int64(math.Round(throughputValue)))
-		tflog.Debug(ctx, fmt.Sprintf("Setting new throughput to %.2f MiB/sec", throughputValue))
+		tflog.Debug(ctx, fmt.Sprintf("setting new throughput to %.2f MiB/sec", throughputValue))
 	} else {
 		a.State.CurrentProvisionedThroughput = types.Int64Value(int64(math.Round(throughputValue)))
-		tflog.Debug(ctx, fmt.Sprintf("Setting current throughput to %.2f MiB/sec", throughputValue))
+		tflog.Debug(ctx, fmt.Sprintf("setting current throughput to %.2f MiB/sec", throughputValue))
 	}
 }
 
@@ -120,10 +120,10 @@ func (a *GoogleComputeDiskStateAdapter) UpdateSize(ctx context.Context, value fl
 
 	if isNew {
 		a.State.NewSize = types.Int64Value(sizeGiB)
-		tflog.Debug(ctx, fmt.Sprintf("Setting new size to %d GiB (converted from %.0f MiB)", sizeGiB, value))
+		tflog.Debug(ctx, fmt.Sprintf("setting new size to %d GiB (converted from %.0f MiB)", sizeGiB, value))
 	} else {
 		a.State.CurrentSize = types.Int64Value(sizeGiB)
-		tflog.Debug(ctx, fmt.Sprintf("Setting current size to %d GiB (converted from %.0f MiB)", sizeGiB, value))
+		tflog.Debug(ctx, fmt.Sprintf("setting current size to %d GiB (converted from %.0f MiB)", sizeGiB, value))
 	}
 }
 

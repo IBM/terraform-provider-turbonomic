@@ -133,7 +133,7 @@ func (d *CloudEntityRecommendationDataSource) Read(ctx context.Context, req data
 		resp.Diagnostics.AddError(errDiag.Summary(), errDiag.Detail())
 		return
 	} else if len(entity) == 0 {
-		errDetail := fmt.Sprintf("Entity %s of type %s not found in Turbonomic instance", enName, enTyp)
+		errDetail := fmt.Sprintf("entity %s of type %s not found in turbonomic instance", enName, enTyp)
 		tflog.Warn(ctx, errDetail)
 
 		// if entity doesn't exist, update new values with default values
@@ -147,7 +147,7 @@ func (d *CloudEntityRecommendationDataSource) Read(ctx context.Context, req data
 		return
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("Entity id found: %s\n", entity[0].UUID))
+	tflog.Debug(ctx, fmt.Sprintf("entity id found: %s\n", entity[0].UUID))
 	state.EntityUuid = types.StringValue(entity[0].UUID)
 
 	// sets current fields in state
@@ -155,7 +155,7 @@ func (d *CloudEntityRecommendationDataSource) Read(ctx context.Context, req data
 	state, err = HandleCloudEntityRecommendationCurrentState(ctx, state, entity)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Unknown storage type for current value",
+			"unknown storage type for current value",
 			err.Error(),
 		)
 		return
@@ -174,19 +174,19 @@ func (d *CloudEntityRecommendationDataSource) Read(ctx context.Context, req data
 		state.NewSize = state.CurrentSize
 
 		if err := TagEntity(d.client, state.EntityUuid.ValueString()); err != nil {
-			resp.Diagnostics.AddError("Error while tagging an entity", err.Error())
+			resp.Diagnostics.AddError("error while tagging an entity", err.Error())
 		}
 
 		resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 		return
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("Action id found: %d\n", actions[0].ActionID))
+	tflog.Debug(ctx, fmt.Sprintf("action id found: %d\n", actions[0].ActionID))
 
 	state, err = HandleCloudEntityRecommendationAction(ctx, resp, state, actions)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Unknown storage type for new value",
+			"unknown storage type for new value",
 			err.Error(),
 		)
 		return
@@ -203,7 +203,7 @@ func (d *CloudEntityRecommendationDataSource) Read(ctx context.Context, req data
 	)
 
 	if err := TagEntity(d.client, state.EntityUuid.ValueString()); err != nil {
-		resp.Diagnostics.AddError("Error while tagging an entity", err.Error())
+		resp.Diagnostics.AddError("error while tagging an entity", err.Error())
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)

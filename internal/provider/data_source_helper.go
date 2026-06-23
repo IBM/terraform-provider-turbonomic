@@ -396,12 +396,12 @@ func GetStats(
 
 	// Validate required fields
 	if statsReq.EntityUUID == "" {
-		errDiag := diag.NewErrorDiagnostic("Invalid entity UUID specified", "Received empty entity UUID")
+		errDiag := diag.NewErrorDiagnostic("invalid entity UUID specified", "received empty entity UUID")
 		return nil, &errDiag
 	}
 
 	if len(statsReq.Statistics) == 0 {
-		errDiag := diag.NewErrorDiagnostic("Invalid statistics specified", "No statistics provided for query")
+		errDiag := diag.NewErrorDiagnostic("invalid statistics specified", "no statistics provided for query")
 		return nil, &errDiag
 	}
 
@@ -409,16 +409,16 @@ func GetStats(
 	stats, err := client.GetStats(statsReq)
 	if err != nil {
 		errDiag := diag.NewErrorDiagnostic(
-			"Unable to retrieve stats from Turbonomic",
-			fmt.Sprintf("Error fetching stats for entity UUID %s: %s", statsReq.EntityUUID, err.Error()),
+			"unable to retrieve stats from turbonomic",
+			fmt.Sprintf("error fetching stats for entity UUID %s: %s", statsReq.EntityUUID, err.Error()),
 		)
 		return nil, &errDiag
 	}
 
 	if len(stats) == 0 {
 		errDiag := diag.NewErrorDiagnostic(
-			"No stats found",
-			fmt.Sprintf("No stats found for entity UUID: %s", statsReq.EntityUUID),
+			"no stats found",
+			fmt.Sprintf("no stats found for entity UUID: %s", statsReq.EntityUUID),
 		)
 		return nil, &errDiag
 	}
@@ -434,7 +434,7 @@ func TagEntity(client *turboclient.Client, uuid string) error {
 
 		entityTags, err := client.GetEntityTags(entityTagsReq)
 		if err != nil {
-			return fmt.Errorf("unable to retrieve entity tags from Turbonomic: %v", err)
+			return fmt.Errorf("unable to retrieve entity tags from turbonomic: %v", err)
 		}
 
 		var alreadyTagged bool
@@ -463,7 +463,7 @@ func TagEntity(client *turboclient.Client, uuid string) error {
 				if strings.Contains(err.Error(), TagAlreadyExistsErrorMsg) {
 					return nil
 				}
-				return fmt.Errorf("unable to tag an entity in Turbonomic: %v", err)
+				return fmt.Errorf("unable to tag an entity in turbonomic: %v", err)
 			}
 		}
 	}
@@ -539,7 +539,7 @@ Returns:
 func canExecuteAction(actions turboclient.ActionResults) (bool, string) {
 	if actions[0].ActionMode != "MANUAL" && actions[0].ActionMode != "AUTOMATIC" && actions[0].ActionMode != "EXTERNAL_APPROVAL" {
 
-		return false, fmt.Sprintf("actionMode is set to %s, Turbonomic action is not executable", actions[0].ActionMode)
+		return false, fmt.Sprintf("actionMode is set to %s, turbonomic action is not executable", actions[0].ActionMode)
 	}
 
 	switch actions[0].ActionStateDescription {
@@ -554,6 +554,6 @@ func canExecuteAction(actions turboclient.ActionResults) (bool, string) {
 		return false, fmt.Sprintf(
 			"scheduled action execution window is not active, next occurrence will be %s", actions[0].ActionSchedule.NextOccurrence)
 	default:
-		return false, fmt.Sprintf("actionStateDescription is set to %s, Turbonomic action is not executable", actions[0].ActionStateDescription)
+		return false, fmt.Sprintf("actionStateDescription is set to %s, turbonomic action is not executable", actions[0].ActionStateDescription)
 	}
 }

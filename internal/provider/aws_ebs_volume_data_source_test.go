@@ -314,7 +314,7 @@ func TestVolumeDataSourceDefaultSize(t *testing.T) {
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
-	t.Run("Default size atleast 0", func(t *testing.T) {
+	t.Run("default size atleast 0", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
 			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
@@ -351,7 +351,7 @@ func TestVolumeDataSourceDefaultThroughput(t *testing.T) {
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
-	t.Run("Default throughput atleast 0", func(t *testing.T) {
+	t.Run("default throughput atleast 0", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
 			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
@@ -388,7 +388,7 @@ func TestVolumeDataSourceDefaultIops(t *testing.T) {
 	defer mockServer.Close()
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
-	t.Run("Default iops atleast 0", func(t *testing.T) {
+	t.Run("default iops atleast 0", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
 			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
@@ -612,7 +612,7 @@ func TestAwsEbsVolumeDataSourceWithNoIdentifiers(t *testing.T) {
 
 	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
 
-	t.Run("Error when neither entity_name nor vendor_id is provided", func(t *testing.T) {
+	t.Run("error when neither entity_name nor vendor_id is provided", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
 			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{

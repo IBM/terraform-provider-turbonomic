@@ -30,8 +30,6 @@ data "turbonomic_azurerm_managed_disk" "example" {
 - `default_disk_size_gb` (Number) default size of the volume entity in GiB
 - `default_storage_account_type` (String) default storage type of the Azure Managed Disk entity
 - `entity_name` (String) name of the Azure Managed Disk entity. This field is used for search operations when a valid vendor_id is not provided
-
-### Conditionally Optional
 - `vendor_id` (String) id of the Azure Managed Disk entity. When provided, this field is used as the primary search criteria, taking precedence over entity_name
 
 ### Read-Only
@@ -46,5 +44,3 @@ data "turbonomic_azurerm_managed_disk" "example" {
 - `new_disk_mbps_read_write` (Number) recommended throughput of the volume entity in MiB/s
 - `new_disk_size_gb` (Number) recommended size of the volume entity in GiB
 - `new_storage_account_type` (String) recommended storage type of the Azure Managed Disk entity
-
-

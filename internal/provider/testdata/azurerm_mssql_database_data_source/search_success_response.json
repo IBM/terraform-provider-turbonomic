@@ -13,7 +13,7 @@
             "readonly": false
         },
         "vendorIds": {
-            "EA - Development 1": "azure::DB::dc073f5c-207c-456b-95c7-c6a6e6583738"
+            "EA - Development 1": "/subscriptions/dc073f5c-207c-456b-95c7-c6a6e6583738/resourceGroups/rg-cods-prod/providers/Microsoft.Sql/servers/cloud-int-a-sqlserver/databases/test-db"
         },
         "state": "ACTIVE",
         "severity": "Minor",

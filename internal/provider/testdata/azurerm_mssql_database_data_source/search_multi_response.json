@@ -1,0 +1,58 @@
+[
+    {
+        "uuid": "75878960778871",
+        "displayName": "cloud-int-a-sqlserver-gp-gen5-4",
+        "className": "Database",
+        "environmentType": "CLOUD",
+        "discoveredBy": {
+            "uuid": "75878940124305",
+            "displayName": "EA - Development 1",
+            "category": "Public Cloud",
+            "type": "Azure Subscription",
+            "readonly": false
+        },
+        "vendorIds": {
+            "EA - Development 1": "/subscriptions/dc073f5c-207c-456b-95c7-c6a6e6583738/resourceGroups/rg-cods-prod/providers/Microsoft.Sql/servers/cloud-int-a-sqlserver/databases/test-db"
+        },
+        "state": "ACTIVE",
+        "severity": "Minor",
+        "costPrice": 1.0141534,
+        "severityBreakdown": { "MINOR": 1 },
+        "template": {
+            "uuid": "75878941049033",
+            "displayName": "GP_Gen5_4",
+            "price": 1.0076,
+            "discovered": false,
+            "enableMatch": false
+        },
+        "staleness": "CURRENT"
+    },
+    {
+        "uuid": "75878960778999",
+        "displayName": "cloud-int-b-sqlserver-gp-gen5-4",
+        "className": "Database",
+        "environmentType": "CLOUD",
+        "discoveredBy": {
+            "uuid": "75878940124305",
+            "displayName": "EA - Development 1",
+            "category": "Public Cloud",
+            "type": "Azure Subscription",
+            "readonly": false
+        },
+        "vendorIds": {
+            "EA - Development 1": "/subscriptions/dc073f5c-207c-456b-95c7-c6a6e6583738/resourceGroups/rg-other/providers/Microsoft.Sql/servers/cloud-int-b-sqlserver/databases/test-db"
+        },
+        "state": "ACTIVE",
+        "severity": "Minor",
+        "costPrice": 0.9,
+        "severityBreakdown": { "MINOR": 1 },
+        "template": {
+            "uuid": "75878941049033",
+            "displayName": "GP_Gen5_4",
+            "price": 0.9,
+            "discovered": false,
+            "enableMatch": false
+        },
+        "staleness": "CURRENT"
+    }
+]

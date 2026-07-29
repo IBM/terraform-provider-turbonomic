@@ -27,12 +27,14 @@ var (
 )
 
 type AzurermMssqlDatabaseEntityModel struct {
-	EntityName     types.String `tfsdk:"entity_name"`
-	EntityType     types.String `tfsdk:"entity_type"`
-	CurrentSkuName types.String `tfsdk:"current_sku_name"`
-	NewSkuName     types.String `tfsdk:"new_sku_name"`
-	DefaultSkuName types.String `tfsdk:"default_sku_name"`
-	EntityUuid     types.String `tfsdk:"entity_uuid"`
+	EntityName        types.String `tfsdk:"entity_name"`
+	ServerName        types.String `tfsdk:"server_name"`
+	ResourceGroupName types.String `tfsdk:"resource_group_name"`
+	EntityType        types.String `tfsdk:"entity_type"`
+	CurrentSkuName    types.String `tfsdk:"current_sku_name"`
+	NewSkuName        types.String `tfsdk:"new_sku_name"`
+	DefaultSkuName    types.String `tfsdk:"default_sku_name"`
+	EntityUuid        types.String `tfsdk:"entity_uuid"`
 }
 
 type AzurermMssqlDatabaseDataSource struct {
@@ -55,6 +57,22 @@ func (d *AzurermMssqlDatabaseDataSource) Schema(ctx context.Context, req datasou
 			"entity_name": schema.StringAttribute{
 				MarkdownDescription: "name of the database entity",
 				Required:            true,
+				Validators: []validator.String{
+					stringvalidator.LengthAtLeast(1),
+				},
+			},
+
+			"server_name": schema.StringAttribute{
+				MarkdownDescription: "name of the Azure SQL server hosting the database, used to disambiguate when multiple databases share the same name",
+				Optional:            true,
+				Validators: []validator.String{
+					stringvalidator.LengthAtLeast(1),
+				},
+			},
+
+			"resource_group_name": schema.StringAttribute{
+				MarkdownDescription: "name of the Azure resource group containing the database, used to disambiguate when multiple databases share the same name",
+				Optional:            true,
 				Validators: []validator.String{
 					stringvalidator.LengthAtLeast(1),
 				},
@@ -127,6 +145,12 @@ func (d *AzurermMssqlDatabaseDataSource) Read(ctx context.Context, req datasourc
 		WithEntityType(enTyp),
 		WithEnvironmentType("CLOUD"),
 		WithCloudType("AZURE"),
+	}
+	if v := state.ServerName.ValueString(); len(v) > 0 {
+		entityArgs = append(entityArgs, WithSearchParam("dbByDatabaseServerName", v))
+	}
+	if v := state.ResourceGroupName.ValueString(); len(v) > 0 {
+		entityArgs = append(entityArgs, WithSearchParam("databaseByResourceGroupName", v))
 	}
 	entity, errDiag = GetEntitiesByName(d.client, entityArgs...)
 

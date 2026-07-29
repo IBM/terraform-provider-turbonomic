@@ -8,8 +8,8 @@ github.com/AlecAivazis/survey/v2 v2.3.7/go.mod h1:xUTIdE4KCOIjsBAE1JYsUPoCqYdZ1r
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/toml v1.2.1 h1:9F2/+DoOYIOksmaJFPw1tGFy1eDnIJXg+UHjuD8lTak=
 github.com/BurntSushi/toml v1.2.1/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
-github.com/IBM/turbonomic-go-client v1.8.0 h1:nbgZBqo89OSlnBVkNAUNBo5hZRvKdDDAZcVFpX0tM2I=
-github.com/IBM/turbonomic-go-client v1.8.0/go.mod h1:7jK6jA5NB8SlGMBI7mYXI/ilzFxezs7Eg+G5pBmrXM8=
+github.com/IBM/turbonomic-go-client v1.9.0 h1:t8GY2B4tllKSz3Jksgi0N+/8nKzP760b0fel2Cog4Bc=
+github.com/IBM/turbonomic-go-client v1.9.0/go.mod h1:7jK6jA5NB8SlGMBI7mYXI/ilzFxezs7Eg+G5pBmrXM8=
 github.com/Kunde21/markdownfmt/v3 v3.1.0 h1:KiZu9LKs+wFFBQKhrZJrFZwtLnCCWJahL+S+E/3VnM0=
 github.com/Kunde21/markdownfmt/v3 v3.1.0/go.mod h1:tPXN1RTyOzJwhfHoon9wUr4HGYmWgVxSQN6VBJDkrVc=
 github.com/MakeNowJust/heredoc v1.0.0 h1:cXCdzVdstXyiTqTvfqk9SDHpKNjxuom+DOlyEeQ4pzQ=

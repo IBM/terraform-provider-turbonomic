@@ -3,7 +3,7 @@ module github.com/IBM/terraform-provider-turbonomic
 go 1.25.8
 
 require (
-	github.com/IBM/turbonomic-go-client v1.8.0
+	github.com/IBM/turbonomic-go-client v1.9.0
 	github.com/hashicorp/copywrite v0.20.0
 	github.com/hashicorp/go-hclog v1.6.3
 	github.com/hashicorp/terraform-plugin-docs v0.21.0

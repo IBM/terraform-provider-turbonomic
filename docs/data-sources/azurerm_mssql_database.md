@@ -23,8 +23,10 @@ variable "sql_admin_password" {
 }
 
 data "turbonomic_azurerm_mssql_database" "example" {
-  entity_name      = "<entity_name>"
-  default_sku_name = "<default_sku_name>"
+  entity_name         = "<entity_name>"
+  default_sku_name    = "<default_sku_name>"
+  server_name         = "<server_name>"         # Optional
+  resource_group_name = "<resource_group_name>" # Optional
 }
 
 # Resource group
@@ -62,6 +64,8 @@ resource "azurerm_mssql_database" "example" {
 ### Optional
 
 - `default_sku_name` (String) default sku name of the database entity
+- `resource_group_name` (String) name of the Azure resource group containing the database, used to disambiguate when multiple databases share the same name
+- `server_name` (String) name of the Azure SQL server hosting the database, used to disambiguate when multiple databases share the same name
 
 ### Read-Only
 
@@ -69,5 +73,3 @@ resource "azurerm_mssql_database" "example" {
 - `entity_type` (String) type of the database entity
 - `entity_uuid` (String) turbonomic uuid of the entity
 - `new_sku_name` (String) recommended sku name of the database entity
-
-

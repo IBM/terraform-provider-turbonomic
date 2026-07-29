@@ -1,3 +1,8 @@
+## 1.11.0
+FEATURES:
+
+- Add `server_name` and `resource_group_name` optional parameters to `turbonomic_azurerm_mssql_database` data-source
+
 ## 1.10.0
 NOTES:
 

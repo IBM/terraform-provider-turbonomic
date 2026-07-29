@@ -26,12 +26,22 @@ const (
 		entity_name  = "%s"
 	}`
 
+	azureMSSQLConfigWithServerAndRG = `
+	data "turbonomic_azurerm_mssql_database" "test" {
+		entity_name         = "%s"
+		default_sku_name    = "%s"
+		server_name         = "%s"
+		resource_group_name = "%s"
+	}`
+
 	azureMSSQLDataSourceRef  = "data.turbonomic_azurerm_mssql_database.test"
 	azureMSSQLName           = "test-db"
 	azureMSSQLCurrentSkuName = "gp_gen5_4"
 	azureMSSQLDefaultSkuName = "gp_gen5_2"
 	azureMSSQLInvalidSkuName = "invalid@type#"
 	azureMSSQLEntityType     = "Database"
+	azureMSSQLServerName     = "cloud-int-a-sqlserver"
+	azureMSSQLResourceGroup  = "rg-cods-prod"
 )
 
 func TestAzurermMssqlDatabaseDataSourceWithValidEntity(t *testing.T) {
@@ -518,4 +528,50 @@ func TestAzurermMssqlDatabaseDataSourceTagEntityAlreadyTaggedNotDiscovered(t *te
 			})
 		})
 	}
+}
+
+// TestAzurermMssqlDatabaseDataSourceWithServerNameAndRG tests that server_name and resource_group_name
+// are forwarded to the Turbonomic search API as extra criteria, not filtered client-side.
+func TestAzurermMssqlDatabaseDataSourceWithServerNameAndRG(t *testing.T) {
+	mockServer := mockTurboServer(t, append([]MockRoute{
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/search",
+			ExpectedBody: `{"criteriaList":[{"caseSensitive":true,"expType":"EQ","expVal":"test-db","filterType":"databaseByName"},{"caseSensitive":false,"expType":"EQ","expVal":"AZURE","filterType":"vmsByCloudProvider"},{"caseSensitive":false,"expType":"EQ","expVal":"cloud-int-a-sqlserver","filterType":"dbByDatabaseServerName"},{"caseSensitive":false,"expType":"EQ","expVal":"rg-cods-prod","filterType":"databaseByResourceGroupName"}],"logicalOperator":"AND","className":"Database","environmentType":"CLOUD"}`,
+			ResponseBody: loadTestFile(t, azureMSSQLTestDataBaseDir, searchRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+		{
+			Method:       http.MethodPost,
+			Path:         "/api/v3/entities/{id}/actions",
+			ResponseBody: loadTestFile(t, azureMSSQLTestDataBaseDir, validVmActionRespTestData),
+			ResponseCode: http.StatusOK,
+		},
+	}, LoginAndTagRoutes(t)...))
+	defer mockServer.Close()
+
+	providerConfig := fmt.Sprintf(config, strings.TrimPrefix(mockServer.URL, "https://"))
+
+	t.Run("Disambiguate by server_name and resource_group_name", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config: providerConfig + fmt.Sprintf(azureMSSQLConfigWithServerAndRG,
+						azureMSSQLName,
+						azureMSSQLDefaultSkuName,
+						azureMSSQLServerName,
+						azureMSSQLResourceGroup,
+					),
+					Check: resource.ComposeAggregateTestCheckFunc(
+						resource.TestCheckResourceAttr(azureMSSQLDataSourceRef, "entity_name", azureMSSQLName),
+						resource.TestCheckResourceAttr(azureMSSQLDataSourceRef, "entity_type", azureMSSQLEntityType),
+						resource.TestCheckResourceAttr(azureMSSQLDataSourceRef, "server_name", azureMSSQLServerName),
+						resource.TestCheckResourceAttr(azureMSSQLDataSourceRef, "resource_group_name", azureMSSQLResourceGroup),
+						resource.TestCheckResourceAttr(azureMSSQLDataSourceRef, "current_sku_name", azureMSSQLCurrentSkuName),
+					),
+				},
+			},
+		})
+	})
 }

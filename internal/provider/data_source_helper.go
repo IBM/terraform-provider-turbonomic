@@ -56,6 +56,20 @@ func WithOSNames(osName ...string) EntityOption {
 	}
 }
 
+// WithSearchParam adds a single filterType→value entry to SearchParameters.
+// The Turbonomic API appends it as an additional EQ criterion on the search request.
+func WithSearchParam(filterType, value string) EntityOption {
+	return func(o *SearchRequestWithOptions) {
+		if len(value) == 0 {
+			return
+		}
+		if o.SearchParameters == nil {
+			o.SearchParameters = make(map[string]string)
+		}
+		o.SearchParameters[filterType] = value
+	}
+}
+
 func ShowVendorIdString(ok bool) EntityOption {
 	return func(o *SearchRequestWithOptions) {
 		o.showVendorID = ok
@@ -110,6 +124,7 @@ func getVendorIdsString(showVendorID bool, entity turboclient.SearchResults) str
 	}
 	return ""
 }
+
 
 type EntityOptionWithVendorId func(*turboclient.SearchRequestByVendorId)
 

@@ -120,6 +120,52 @@ func TestGetEntitiesByName(t *testing.T) {
 	})
 }
 
+func TestWithSearchParam(t *testing.T) {
+	t.Run("filterType is stored in SearchParameters", func(t *testing.T) {
+		opts := SearchRequestWithOptions{}
+		WithSearchParam("dbByDatabaseServerName", "my-server")(&opts)
+		assert.Equal(t, map[string]string{"dbByDatabaseServerName": "my-server"}, opts.SearchParameters)
+	})
+
+	t.Run("multiple calls accumulate in SearchParameters", func(t *testing.T) {
+		opts := SearchRequestWithOptions{}
+		WithSearchParam("dbByDatabaseServerName", "my-server")(&opts)
+		WithSearchParam("databaseByResourceGroupName", "my-rg")(&opts)
+		assert.Equal(t, map[string]string{
+			"dbByDatabaseServerName":      "my-server",
+			"databaseByResourceGroupName": "my-rg",
+		}, opts.SearchParameters)
+	})
+
+	t.Run("empty value is a no-op", func(t *testing.T) {
+		opts := SearchRequestWithOptions{}
+		WithSearchParam("dbByDatabaseServerName", "")(&opts)
+		assert.Nil(t, opts.SearchParameters)
+	})
+
+	t.Run("GetEntitiesByName passes SearchParameters to SearchEntityByName", func(t *testing.T) {
+		mockClient := new(MockT8cClient)
+		expected := turboclient.SearchResults{{UUID: "uuid-1"}}
+
+		mockClient.On("SearchEntityByName", mock.MatchedBy(func(req turboclient.SearchRequest) bool {
+			return req.SearchParameters["dbByDatabaseServerName"] == "my-server" &&
+				req.SearchParameters["databaseByResourceGroupName"] == "my-rg"
+		})).Return(expected, nil).Once()
+
+		entities, errDiag := GetEntitiesByName(mockClient,
+			WithEntityName("myDB"),
+			WithEntityType("Database"),
+			WithEnvironmentType("CLOUD"),
+			WithCloudType("AZURE"),
+			WithSearchParam("dbByDatabaseServerName", "my-server"),
+			WithSearchParam("databaseByResourceGroupName", "my-rg"),
+		)
+		assert.Nil(t, errDiag)
+		assert.Equal(t, expected, entities)
+		mockClient.AssertExpectations(t)
+	})
+}
+
 func TestGetActions(t *testing.T) {
 	entityUUID := "exampleUuid"
 	actionTypes := []string{"exampleAction"}

@@ -1,0 +1,63 @@
+[
+    {
+        "uuid": "639054921252002",
+        "displayName": "SCALE action-orchestrator",
+        "actionImpactID": 639054921252002,
+        "marketID": 777777,
+        "createTime": "2025-08-07T02:42:43Z",
+        "actionType": "SCALE",
+        "actionState": "READY",
+        "actionMode": "MANUAL",
+        "details": "Scale action-orchestrator from 1 to 3",
+        "importance": -1.0,
+        "target": {
+            "uuid": "76084922964120",
+            "displayName": "action-orchestrator",
+            "className": "WorkloadController",
+            "environmentType": "HYBRID",
+            "discoveredBy": {
+                "uuid": "75878878480048",
+                "displayName": "Kubernetes-Turbonomic",
+                "isProbeRegistered": false,
+                "type": "Kubernetes",
+                "readonly": false
+            },
+            "vendorIds": {
+                "Kubernetes-Turbonomic": "a1a1a1a1-0000-0000-0000-000000000001"
+            },
+            "state": "ACTIVE",
+            "aspects": {
+                "workloadControllerAspect": {
+                    "controllerReplicaCount": 1,
+                    "type": "WorkloadControllerAspectApiDTO"
+                }
+            },
+            "tags": {}
+        },
+        "currentEntity": {
+            "uuid": "76084922964120",
+            "displayName": "action-orchestrator",
+            "className": "WorkloadController",
+            "state": "ACTIVE"
+        },
+        "newEntity": {
+            "uuid": "76084922964120",
+            "displayName": "action-orchestrator",
+            "className": "WorkloadController",
+            "state": "ACTIVE"
+        },
+        "currentValue": "1.0",
+        "newValue": "3.0",
+        "valueUnits": "",
+        "risk": {
+            "subCategory": "Performance Assurance",
+            "description": "Scale WorkloadController action-orchestrator",
+            "severity": "CRITICAL",
+            "importance": 0.0,
+            "reasonCommodities": []
+        },
+        "compoundActions": [],
+        "source": "MARKET",
+        "actionID": 639054921252002
+    }
+]

@@ -1,0 +1,26 @@
+---
+page_title: "{{.Name}} Function - {{.RenderedProviderName}}"
+description: |-
+  Returns the standard Turbonomic provider tag object.
+---
+
+# function: {{.Name}}
+
+{{ .Description | trimspace }}
+
+## Example Usage
+
+```terraform
+# Emit the tag object directly
+output "turbonomic_tag" {
+  value = provider::turbonomic::get_tag()
+}
+```
+
+## Signature
+
+{{ .FunctionSignatureMarkdown | trimspace }}
+
+## Arguments
+
+{{ .FunctionArgumentsMarkdown | trimspace }}

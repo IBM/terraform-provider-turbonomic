@@ -331,9 +331,7 @@ Changes to Outputs:
 </details>
 
 
--> **NOTE:** Keep in mind that the actions attribute contains a list of actions. Depending on your query, you might receive multiple
-actions in response. To improve the relevance of your results, we recommend using the input attributes to narrow your
-search as much as possible.
+-> **Note** Keep in mind that the `actions` attribute contains a list of actions. Depending on your query, you might receive multiple actions in response. To improve the relevance of your results, use the input attributes to narrow your search as much as possible.
 
 ## Use case: Resizing a Cosmos DB container's document collection
 
@@ -593,7 +591,7 @@ locals {
 }
 ```
 
--> **Note:** We are still providing a default value of `400` in case we do not have any actions returned from Turbonomic.
+-> **Note** A default value of `400` is provided in case no actions are returned from Turbonomic.
 
 With `throughput_value` now set to Turbonomic's recommended value, we can reference it in the `azurerm_cosmosdb_sql_container`
 resource block to configure the throughput for our Cosmos DB container.

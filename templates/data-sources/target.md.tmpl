@@ -1,0 +1,30 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
+subcategory: "Turbonomic"
+description: |-
+{{ .Description | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+## Example Usage
+
+### All targets
+
+{{ tffile "examples/data-sources/turbonomic_target/data-source.tf" }}
+
+### Filter by probe type
+
+```terraform
+data "turbonomic_target" "aws" {
+  type = "AWS"
+}
+
+output "aws_targets" {
+  value = data.turbonomic_target.aws.targets
+}
+```
+
+{{ .SchemaMarkdown | trimspace }}

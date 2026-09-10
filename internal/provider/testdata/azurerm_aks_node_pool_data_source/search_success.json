@@ -1,0 +1,59 @@
+[
+    {
+        "uuid": "222000000000001",
+        "displayName": "aks-agentpool-12345-vmss000000",
+        "className": "VirtualMachine",
+        "environmentType": "CLOUD",
+        "discoveredBy": {
+            "uuid": "999000000000002",
+            "displayName": "my-aks-cluster",
+            "category": "Cloud",
+            "isProbeRegistered": false,
+            "type": "Azure",
+            "readonly": false
+        },
+        "state": "ACTIVE",
+        "tags": {
+            "aks-managed-poolName": ["agentpool"],
+            "kubernetes.io/cluster": ["my-aks-cluster"]
+        }
+    },
+    {
+        "uuid": "222000000000002",
+        "displayName": "aks-agentpool-12345-vmss000001",
+        "className": "VirtualMachine",
+        "environmentType": "CLOUD",
+        "discoveredBy": {
+            "uuid": "999000000000002",
+            "displayName": "my-aks-cluster",
+            "category": "Cloud",
+            "isProbeRegistered": false,
+            "type": "Azure",
+            "readonly": false
+        },
+        "state": "ACTIVE",
+        "tags": {
+            "aks-managed-poolName": ["agentpool"],
+            "kubernetes.io/cluster": ["my-aks-cluster"]
+        }
+    },
+    {
+        "uuid": "222000000000003",
+        "displayName": "aks-agentpool-12345-vmss000002",
+        "className": "VirtualMachine",
+        "environmentType": "CLOUD",
+        "discoveredBy": {
+            "uuid": "999000000000002",
+            "displayName": "my-aks-cluster",
+            "category": "Cloud",
+            "isProbeRegistered": false,
+            "type": "Azure",
+            "readonly": false
+        },
+        "state": "ACTIVE",
+        "tags": {
+            "aks-managed-poolName": ["agentpool"],
+            "kubernetes.io/cluster": ["my-aks-cluster"]
+        }
+    }
+]

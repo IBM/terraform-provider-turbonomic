@@ -1,0 +1,40 @@
+[
+    {
+        "uuid": "333000000000001",
+        "displayName": "gke-my-cluster-default-pool-abc12345-0001",
+        "className": "VirtualMachine",
+        "environmentType": "CLOUD",
+        "discoveredBy": {
+            "uuid": "999000000000003",
+            "displayName": "my-gke-cluster",
+            "category": "Cloud",
+            "isProbeRegistered": false,
+            "type": "GCP",
+            "readonly": false
+        },
+        "state": "ACTIVE",
+        "tags": {
+            "goog-k8s-node-pool-name": ["default-pool"],
+            "goog-k8s-cluster-name": ["my-gke-cluster"]
+        }
+    },
+    {
+        "uuid": "333000000000002",
+        "displayName": "gke-my-cluster-default-pool-abc12345-0002",
+        "className": "VirtualMachine",
+        "environmentType": "CLOUD",
+        "discoveredBy": {
+            "uuid": "999000000000003",
+            "displayName": "my-gke-cluster",
+            "category": "Cloud",
+            "isProbeRegistered": false,
+            "type": "GCP",
+            "readonly": false
+        },
+        "state": "ACTIVE",
+        "tags": {
+            "goog-k8s-node-pool-name": ["default-pool"],
+            "goog-k8s-cluster-name": ["my-gke-cluster"]
+        }
+    }
+]

@@ -1,3 +1,37 @@
+## 2.0.0
+
+FEATURES:
+
+- **New Resource:** `turbonomic_target` - Manage probe targets (cloud accounts, Kubernetes clusters, vCenter, Instana, ServiceNow, and more) with secure write-only credential fields.
+- **New Resource:** `turbonomic_group` - Manage static or dynamic entity groups with rich filter criteria.
+- **New Resource:** `turbonomic_schedule` - Create and manage action execution schedules (one-time, daily, weekly, monthly recurrence). Reference via `schedule_uuid` in `turbonomic_settings_policy`.
+- **New Resource:** `turbonomic_user` - Manage local user accounts with role assignments and group scope. Write-only `password` attribute never stored in state.
+- **New Resource:** `turbonomic_workflow` - Manage WEBHOOK workflows for pre/post/replace action automation. Write-only `webhook_password` never stored in state.
+- **New Resource:** `turbonomic_parking_policy` - Suspend cloud workloads on a timespan schedule to reduce idle costs. References `turbonomic_timespan` data source.
+- **New Resource:** `turbonomic_filter` - Local state-only resource for composable, reusable filter criteria. Combine with `concat()` into any `turbonomic_group`.
+- **New Resource:** `turbonomic_placement_policy` - Manage VM placement constraints (BIND_TO_GROUP, MERGE, AT_MOST_N, MUST_NOT_RUN_TOGETHER, and more).
+- **New Resource:** `turbonomic_settings_policy` - Manage automation policies: action modes, scaling limits, utilisation thresholds, scoped to groups with optional schedule.
+- **New Data Source:** `turbonomic_target` - Look up existing targets by name, type, or category.
+- **New Data Source:** `turbonomic_group` - Look up groups by display name or type.
+- **New Data Source:** `turbonomic_schedule` - Look up existing action execution schedules by display name.
+- **New Data Source:** `turbonomic_user` - List users filtered by username, role, or login provider. Requires ADMINISTRATOR or SITE_ADMIN privileges.
+- **New Data Source:** `turbonomic_role` - List Turbonomic roles; filter by name.
+- **New Data Source:** `turbonomic_probe` - List registered probe types; filter by type or category.
+- **New Data Source:** `turbonomic_timespan` - List timespan (parking) schedules; filter by display name.
+- **New Data Source:** `turbonomic_workflow` - List discovered workflows; filter by type or display name.
+- **New Data Source:** `turbonomic_placement_policy` - Look up placement policies by name, type, or enabled state.
+- **New Data Source:** `turbonomic_settings_policy` - Look up automation policies by name or entity type.
+- **New Data Source:** `turbonomic_kubernetes_workload` - WorkloadController RESIZE (per-container CPU/memory) and SCALE (replica count) recommendations.
+- **New Data Source:** `turbonomic_kubernetes_namespace` - RESIZE quota recommendations for CPU/memory limit and request quotas across a Kubernetes namespace.
+- **New Data Source:** `turbonomic_kubernetes_pod` - MOVE action recommendations for Kubernetes pods, returning current and recommended destination node.
+- **New Data Source:** `turbonomic_kubernetes_node` - PROVISION, SUSPEND, and RECONFIGURE action recommendations for Kubernetes nodes.
+- **New Data Source:** `turbonomic_kubernetes_volume` - SCALE action recommendations for Kubernetes PersistentVolumeClaims, returning recommended storage size in GiB.
+- **New Data Source:** `turbonomic_aws_eks_node_group` - Recommended node count for AWS EKS node groups.
+- **New Data Source:** `turbonomic_azurerm_aks_node_pool` - Recommended node count for Azure AKS node pools.
+- **New Data Source:** `turbonomic_google_gke_node_pool` - Recommended node count for Google GKE node pools.
+- **New Data Source:** `turbonomic_aws_eks_cluster` - Smart Parking state recommendations for AWS EKS clusters.
+- **New Data Source:** `turbonomic_azurerm_aks_cluster` - Smart Parking state recommendations for Azure AKS clusters.
+
 ## 1.11.0
 FEATURES:
 

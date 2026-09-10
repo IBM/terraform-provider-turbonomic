@@ -262,22 +262,14 @@ func TestProviderTurboApiNotWorking(t *testing.T) {
 	}
 	`
 	providerConfig := fmt.Sprintf(testConfig, "invalid-hostname")
-	dsName := "data.turbonomic_cloud_entity_recommendation.test"
 
-	t.Run("tests no error when turbo api is not working", func(t *testing.T) {
+	t.Run("tests error when turbo api is not reachable", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
 			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
 				{
 					Config:      providerConfig + fmt.Sprintf(vmConfig, vmName, vmType, vmNewSize),
-					ExpectError: nil,
-					Check: resource.ComposeAggregateTestCheckFunc(
-						resource.TestCheckResourceAttr(dsName, "entity_name", vmName),
-						resource.TestCheckResourceAttr(dsName, "entity_type", vmType),
-						resource.TestCheckNoResourceAttr(dsName, "current_instance_type"),
-						resource.TestCheckResourceAttr(dsName, "new_instance_type", vmNewSize),
-						resource.TestCheckResourceAttr(dsName, "default_size", vmNewSize),
-					),
+					ExpectError: regexp.MustCompile(`Unable to create Turbonomic API client`),
 				},
 			},
 		})

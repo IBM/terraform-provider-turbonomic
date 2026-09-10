@@ -14,6 +14,7 @@ import (
 
 // Constants for entity types and filter types
 const (
+	VirtualMachineEntityType = "VirtualMachine"
 	VirtualVolumeEntityType  = "VirtualVolume"
 	DatabaseServerEntityType = "DatabaseServer"
 	RelationFilterType       = "relation"
@@ -82,7 +83,7 @@ returns zero or one matching entity or throws an error
 */
 func GetEntitiesByName(client turboclient.T8cClient, options ...EntityOption) (turboclient.SearchResults, *diag.ErrorDiagnostic) {
 	if client == nil {
-		errDiag := diag.NewErrorDiagnostic("Internal error", "Internal error occurred while fetching entities")
+		errDiag := diag.NewErrorDiagnostic("internal error", "internal error occurred while fetching entities")
 		return nil, &errDiag
 	}
 
@@ -97,18 +98,18 @@ func GetEntitiesByName(client turboclient.T8cClient, options ...EntityOption) (t
 	}
 
 	if len(opts.Name) == 0 {
-		errDiag := diag.NewErrorDiagnostic("Internal error", "Empty entity name specified")
+		errDiag := diag.NewErrorDiagnostic("internal error", "empty entity name specified")
 		return nil, &errDiag
 	}
 
 	entity, err := client.SearchEntityByName(opts.SearchRequest)
 	if err != nil {
-		errDiag := diag.NewErrorDiagnostic("Unable to search Turbonomic", err.Error())
+		errDiag := diag.NewErrorDiagnostic("unable to search turbonomic", err.Error())
 		return nil, &errDiag
 	} else if len(entity) > 1 {
 		errDiag := diag.NewErrorDiagnostic(
-			"Multiple Entities with provided name found",
-			fmt.Sprintf("Multiple Entities with the name %s of type %s found in Turbonomic instance.%s",
+			"multiple entities with provided name found",
+			fmt.Sprintf("multiple entities with the name %s of type %s found in turbonomic instance.%s",
 				opts.Name,
 				opts.EntityType,
 				getVendorIdsString(opts.showVendorID, entity)))
@@ -125,6 +126,39 @@ func getVendorIdsString(showVendorID bool, entity turboclient.SearchResults) str
 	return ""
 }
 
+
+// GetAllEntitiesByCloudType searches for all entities of the given entityType scoped to a cloud
+// provider type (e.g. "AWS", "AZURE", "GCP") and environment type (e.g. "CLOUD"). Unlike
+// GetEntitiesByName it does NOT require a name filter and returns all matching entities.
+func GetAllEntitiesByCloudType(client turboclient.T8cClient, entityType, cloudType, environmentType string) (turboclient.SearchResults, *diag.ErrorDiagnostic) {
+	if client == nil {
+		errDiag := diag.NewErrorDiagnostic("internal error", "internal error occurred while fetching entities")
+		return nil, &errDiag
+	}
+
+	criteriaList := []turboclient.Criteria{
+		{
+			CaseSensitive: false,
+			ExpType:       "EQ",
+			ExpVal:        cloudType,
+			FilterType:    "vmsByCloudProvider",
+		},
+	}
+
+	searchDTO := turboclient.SearchDTO{
+		CriteriaList:    criteriaList,
+		LogicalOperator: "AND",
+		ClassName:       entityType,
+		EnvironmentType: environmentType,
+	}
+
+	results, err := client.SearchEntities(searchDTO, turboclient.CommonReqParams{})
+	if err != nil {
+		errDiag := diag.NewErrorDiagnostic("unable to search turbonomic", err.Error())
+		return nil, &errDiag
+	}
+	return results, nil
+}
 
 type EntityOptionWithVendorId func(*turboclient.SearchRequestByVendorId)
 
@@ -148,7 +182,7 @@ Returns:
 */
 func GetEntitiesByVendorId(client turboclient.T8cClient, options ...EntityOptionWithVendorId) (turboclient.SearchResults, *diag.ErrorDiagnostic) {
 	if client == nil {
-		errDiag := diag.NewErrorDiagnostic("Internal error", "Internal error occurred while fetching entities")
+		errDiag := diag.NewErrorDiagnostic("internal error", "internal error occurred while fetching entities")
 		return nil, &errDiag
 	}
 
@@ -161,13 +195,13 @@ func GetEntitiesByVendorId(client turboclient.T8cClient, options ...EntityOption
 	}
 
 	if len(opts.VendorId) == 0 {
-		errDiag := diag.NewErrorDiagnostic("Internal error", "Empty vendor id specified")
+		errDiag := diag.NewErrorDiagnostic("internal error", "empty vendor id specified")
 		return nil, &errDiag
 	}
 
 	entity, err := client.SearchEntityByVendorId(opts)
 	if err != nil {
-		errDiag := diag.NewErrorDiagnostic("Unable to search Turbonomic", err.Error())
+		errDiag := diag.NewErrorDiagnostic("unable to search turbonomic", err.Error())
 		return nil, &errDiag
 	}
 
@@ -200,7 +234,7 @@ returns zero or one matching action or throws an error
 */
 func GetActions(client turboclient.T8cClient, options ...ActionOption) (turboclient.ActionResults, *diag.ErrorDiagnostic) {
 	if client == nil {
-		errDiag := diag.NewErrorDiagnostic("Internal error", "Internal error occurred while fetching action")
+		errDiag := diag.NewErrorDiagnostic("internal error", "internal error occurred while fetching action")
 		return nil, &errDiag
 	}
 
@@ -213,7 +247,7 @@ func GetActions(client turboclient.T8cClient, options ...ActionOption) (turbocli
 	}
 
 	if len(opts.Uuid) == 0 || len(opts.ActionType) == 0 {
-		errDiag := diag.NewErrorDiagnostic("Invalid entity name or action type specified", fmt.Sprintf("Received invalid action uuid: %s / type: %v",
+		errDiag := diag.NewErrorDiagnostic("invalid entity name or action type specified", fmt.Sprintf("received invalid action uuid: %s / type: %v",
 			opts.Uuid,
 			opts.ActionType))
 		return nil, &errDiag
@@ -221,10 +255,10 @@ func GetActions(client turboclient.T8cClient, options ...ActionOption) (turbocli
 
 	actions, err := client.GetActionsByUUID(opts)
 	if err != nil {
-		errDiag := diag.NewErrorDiagnostic("Unable to retrieve actions from Turbonomic", err.Error())
+		errDiag := diag.NewErrorDiagnostic("unable to retrieve actions from turbonomic", err.Error())
 		return nil, &errDiag
 	} else if len(actions) > 1 {
-		errDiag := diag.NewErrorDiagnostic("Multiple Entities with provided name found", fmt.Sprintf("Action with uuid: %s / type: %v returned more than one result",
+		errDiag := diag.NewErrorDiagnostic("multiple entities with provided name found", fmt.Sprintf("action with uuid: %s / type: %v returned more than one result",
 			opts.Uuid,
 			opts.ActionType))
 		return nil, &errDiag
@@ -239,11 +273,11 @@ returns zero, one or more matching actions or throws an error
 */
 func GetFilteredEntityActions(client turboclient.T8cClient, entityUuid string, actionType []string, actionState []string) (turboclient.ActionResults, *diag.ErrorDiagnostic) {
 	if client == nil {
-		errDiag := diag.NewErrorDiagnostic("Internal error", "Internal error occurred while fetching action")
+		errDiag := diag.NewErrorDiagnostic("internal error", "internal error occurred while fetching action")
 		return nil, &errDiag
 	}
 	if len(entityUuid) == 0 {
-		errDiag := diag.NewErrorDiagnostic("Invalid entity name specified", fmt.Sprintf("Received invalid action uuid: %s / type: %s / state: %s",
+		errDiag := diag.NewErrorDiagnostic("invalid entity name specified", fmt.Sprintf("received invalid action uuid: %s / type: %s / state: %s",
 			entityUuid,
 			actionType,
 			actionState))
@@ -256,7 +290,7 @@ func GetFilteredEntityActions(client turboclient.T8cClient, entityUuid string, a
 		ActionType:  actionType,
 	})
 	if err != nil {
-		errDiag := diag.NewErrorDiagnostic("Unable to retrieve actions from Turbonomic", err.Error())
+		errDiag := diag.NewErrorDiagnostic("unable to retrieve actions from turbonomic", err.Error())
 		return nil, &errDiag
 	}
 
@@ -395,7 +429,7 @@ func GetStats(
 ) (turboclient.StatsResponse, *diag.ErrorDiagnostic) {
 	// Validate client
 	if client == nil {
-		errDiag := diag.NewErrorDiagnostic("Internal error", "Internal error occurred while fetching stats: nil client")
+		errDiag := diag.NewErrorDiagnostic("internal error", "internal error occurred while fetching stats: nil client")
 		return nil, &errDiag
 	}
 

@@ -1,0 +1,98 @@
+[
+    {
+        "uuid": "831000000000001",
+        "displayName": "MANUAL",
+        "actionType": "RESIZE",
+        "actionState": "READY",
+        "actionMode": "MANUAL",
+        "details": "Resize vCPU Limit Quota, vMem Limit Quota for Namespace production",
+        "target": {
+            "uuid": "75878878702732",
+            "displayName": "production",
+            "className": "Namespace",
+            "environmentType": "HYBRID",
+            "discoveredBy": {
+                "uuid": "75878878480048",
+                "displayName": "Kubernetes-Turbonomic",
+                "isProbeRegistered": false,
+                "type": "Kubernetes",
+                "readonly": false
+            },
+            "state": "ACTIVE",
+            "tags": {}
+        },
+        "currentValue": null,
+        "newValue": null,
+        "risk": {
+            "subCategory": "Performance Assurance",
+            "description": "VCPULimitQuota Congestion, VMemLimitQuota Congestion",
+            "severity": "CRITICAL",
+            "importance": 0.0,
+            "reasonCommodities": ["VCPULimitQuota", "VMemLimitQuota"]
+        },
+        "compoundActions": [
+            {
+                "displayName": "MANUAL",
+                "actionType": "RESIZE",
+                "actionState": "READY",
+                "actionMode": "MANUAL",
+                "details": "vCPU Limit Quota Congestion in production",
+                "target": {
+                    "uuid": "75878878702732",
+                    "displayName": "production",
+                    "className": "Namespace",
+                    "environmentType": "HYBRID",
+                    "discoveredBy": {
+                        "uuid": "75878878480048",
+                        "displayName": "Kubernetes-Turbonomic",
+                        "isProbeRegistered": false,
+                        "type": "Kubernetes",
+                        "readonly": false
+                    },
+                    "state": "ACTIVE",
+                    "tags": {}
+                },
+                "currentValue": "1000.0",
+                "newValue": "1500.0",
+                "valueUnits": "mCores",
+                "resizeAttribute": "CAPACITY",
+                "risk": {
+                    "importance": 0.0,
+                    "reasonCommodities": ["VCPULimitQuota"]
+                }
+            },
+            {
+                "displayName": "MANUAL",
+                "actionType": "RESIZE",
+                "actionState": "READY",
+                "actionMode": "MANUAL",
+                "details": "vMem Limit Quota Congestion in production",
+                "target": {
+                    "uuid": "75878878702732",
+                    "displayName": "production",
+                    "className": "Namespace",
+                    "environmentType": "HYBRID",
+                    "discoveredBy": {
+                        "uuid": "75878878480048",
+                        "displayName": "Kubernetes-Turbonomic",
+                        "isProbeRegistered": false,
+                        "type": "Kubernetes",
+                        "readonly": false
+                    },
+                    "state": "ACTIVE",
+                    "tags": {}
+                },
+                "currentValue": "2097152.0",
+                "newValue": "4194304.0",
+                "valueUnits": "KB",
+                "resizeAttribute": "CAPACITY",
+                "risk": {
+                    "importance": 0.0,
+                    "reasonCommodities": ["VMemLimitQuota"]
+                }
+            }
+        ],
+        "source": "MARKET",
+        "actionID": 831000000000001
+    }
+]

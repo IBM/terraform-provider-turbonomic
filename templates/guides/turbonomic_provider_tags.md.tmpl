@@ -1,5 +1,4 @@
 ---
-layout: ""
 page_title: "Turbonomic provider tags"
 description: |-
  This guide focuses on different tags used in turbonomic provider.

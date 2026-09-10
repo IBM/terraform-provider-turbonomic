@@ -626,17 +626,17 @@ func (d *entityActionsDataSource) Configure(_ context.Context, req datasource.Co
 		return
 	}
 
-	client, ok := req.ProviderData.(*turboclient.Client)
+	data, ok := req.ProviderData.(*providerData)
 	if !ok {
 		resp.Diagnostics.AddError(
-			"Unexpected Data Source Configure Type",
-			fmt.Sprintf("Expected: *turboclient.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			"unexpected data source configure type",
+			fmt.Sprintf("expected: *turboclient.Client, got: %T. please report this issue to the provider developers.", req.ProviderData),
 		)
 
 		return
 	}
 
-	d.client = client
+	d.client = data.Client.(*turboclient.Client)
 }
 
 func (d *entityActionsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
@@ -682,7 +682,7 @@ func (d *entityActionsDataSource) Read(ctx context.Context, req datasource.ReadR
 		resp.Diagnostics.AddError(errDiag.Summary(), errDiag.Detail())
 		return
 	} else if len(entity) == 0 {
-		errDetail := fmt.Sprintf("entity %s of type %s not found in Turbonomic instance", enName, enTyp)
+		errDetail := fmt.Sprintf("entity %s of type %s not found in turbonomic instance", enName, enTyp)
 		tflog.Debug(ctx, errDetail)
 		resp.Diagnostics.AddWarning("error while getting the entity", errDetail)
 
@@ -840,17 +840,17 @@ func copyStructFields(ctx context.Context, src interface{}, dst interface{}) err
 		dstField := dstTyp.Field(i)
 		dstValue := dstVal.Field(i)
 
-		msg := fmt.Sprintf("setting field: %s of Type: %s with PkgPath of: %s\n", dstField.Name, dstField.Type, dstField.PkgPath)
+		msg := fmt.Sprintf("setting field: %s of type: %s with pkgPath of: %s\n", dstField.Name, dstField.Type, dstField.PkgPath)
 		tflog.Trace(ctx, msg)
 
 		srcFieldValue := srcVal.FieldByName(dstField.Name)
 		if !srcFieldValue.IsValid() {
-			msg := fmt.Sprintf("field Name: %s, is invalid: field value: %s\n", dstField.Name, srcFieldValue)
+			msg := fmt.Sprintf("field name: %s, is invalid: field value: %s\n", dstField.Name, srcFieldValue)
 			tflog.Debug(ctx, msg)
 			continue
 		}
 		if !dstValue.CanSet() {
-			msg := fmt.Sprintf("field Name: %s, cannot be set: field value: %s\n", dstField.Name, srcFieldValue)
+			msg := fmt.Sprintf("field name: %s, cannot be set: field value: %s\n", dstField.Name, srcFieldValue)
 			tflog.Error(ctx, msg)
 			continue
 		}
@@ -866,7 +866,7 @@ func copyStructFields(ctx context.Context, src interface{}, dst interface{}) err
 // copyField copies a single field based on the source type
 func copyField(ctx context.Context, srcValue, dstValue reflect.Value) error {
 
-	msg := fmt.Sprintf("Field Kind: %s", srcValue.Kind())
+	msg := fmt.Sprintf("field kind: %s", srcValue.Kind())
 	tflog.Trace(ctx, msg)
 	switch srcValue.Kind() {
 	case reflect.String:
@@ -892,7 +892,7 @@ func copyField(ctx context.Context, srcValue, dstValue reflect.Value) error {
 			dstValue.Set(reflect.ValueOf(getRawJson(srcValue)))
 			return nil
 		}
-		msg := fmt.Sprintf("Slice Field Kind: %s", srcType.Elem().Kind())
+		msg := fmt.Sprintf("slice field kind: %s", srcType.Elem().Kind())
 		tflog.Trace(ctx, msg)
 
 		switch srcType.Elem().Kind() {

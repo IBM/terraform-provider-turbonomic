@@ -40,8 +40,8 @@ func (f *GetTagFunction) Metadata(ctx context.Context, req function.MetadataRequ
 
 func (f *GetTagFunction) Definition(ctx context.Context, req function.DefinitionRequest, resp *function.DefinitionResponse) {
 	resp.Definition = function.Definition{
-		Summary:     "Get turbonomic tag",
-		Description: "Returns turbonomic tag - {turbonomic_optimized_by = \"turbonomic-terraform-provider\"} to mark the resource as optimized by Turbonomic provider",
+		Summary:     "Returns the standard Turbonomic provider tag object.",
+		Description: "Returns the tag object `{ turbonomic_optimized_by = \"turbonomic-terraform-provider\" }`. Apply this tag to cloud resources so Turbonomic can identify them as managed by the Terraform provider.",
 		Parameters:  []function.Parameter{},
 		Return: function.ObjectReturn{
 			AttributeTypes: tagType,

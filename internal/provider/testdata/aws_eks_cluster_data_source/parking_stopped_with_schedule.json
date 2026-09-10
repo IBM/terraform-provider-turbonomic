@@ -1,0 +1,15 @@
+{
+    "uuid": "88112345678901",
+    "displayName": "Kubernetes-my-eks-cluster",
+    "provider": "AWS",
+    "state": "STOPPED",
+    "entityType": "ContainerPlatformCluster",
+    "cloudServiceName": "AMAZON_ELASTIC_KUBERNETES_SERVICE",
+    "cost": 0.0,
+    "onDemandRateWhenRunning": 1.5000,
+    "smartParkingRecommendation": {
+        "uuid": "schedule-uuid-002",
+        "displayName": "Business Hours Schedule"
+    },
+    "projectedSavings": 1.5000
+}

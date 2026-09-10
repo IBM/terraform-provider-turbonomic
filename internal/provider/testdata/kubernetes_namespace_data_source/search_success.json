@@ -1,0 +1,25 @@
+[
+    {
+        "uuid": "75878878702732",
+        "displayName": "production",
+        "className": "Namespace",
+        "environmentType": "HYBRID",
+        "discoveredBy": {
+            "uuid": "75878878480048",
+            "displayName": "Kubernetes-Turbonomic",
+            "category": "Container Platform",
+            "isProbeRegistered": false,
+            "type": "Kubernetes",
+            "readonly": false
+        },
+        "state": "ACTIVE",
+        "providers": [
+            {
+                "uuid": "75878878111111",
+                "displayName": "Kubernetes-Turbonomic",
+                "className": "ContainerPlatformCluster"
+            }
+        ],
+        "tags": {}
+    }
+]

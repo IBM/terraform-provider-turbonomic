@@ -1,0 +1,32 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
+subcategory: "Turbonomic"
+description: |-
+{{ .Description | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+## Example Usage
+
+### All groups
+
+{{ tffile "examples/data-sources/turbonomic_group/data-source.tf" }}
+
+### Filter by display name
+
+{{ tffile "examples/data-sources/turbonomic_group/by_name.tf" }}
+
+### Filter by group type
+
+{{ tffile "examples/data-sources/turbonomic_group/by_type.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+## Notes
+
+- **Exact name matching.** The `display_name` filter performs a case-sensitive exact match. Use the `turbonomic_group` resource to manage groups whose names you control.
+- **Pagination is handled automatically.** The data source fetches all pages from the Turbonomic API and returns the full filtered result in a single list.
+- **Reference groups in policies.** The most common use of this data source is to read a group's `uuid` and pass it to a policy or action resource.

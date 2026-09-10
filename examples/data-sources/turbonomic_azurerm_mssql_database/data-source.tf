@@ -9,8 +9,10 @@ variable "sql_admin_password" {
 }
 
 data "turbonomic_azurerm_mssql_database" "example" {
-  entity_name      = "<entity_name>"
-  default_sku_name = "<default_sku_name>"
+  entity_name         = "<entity_name>"
+  default_sku_name    = "<default_sku_name>"
+  server_name         = "<server_name>"         # Optional
+  resource_group_name = "<resource_group_name>" # Optional
 }
 
 # Resource group

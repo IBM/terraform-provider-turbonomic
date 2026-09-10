@@ -1,0 +1,96 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
+subcategory: "Turbonomic"
+description: |-
+{{ .Description | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+## Example Usage
+
+### Static group
+
+{{ tffile "examples/resources/turbonomic_group/static.tf" }}
+
+### Dynamic group  - filter by name regex
+
+{{ tffile "examples/resources/turbonomic_group/dynamic_by_name.tf" }}
+
+### Dynamic group  - filter by tag
+
+{{ tffile "examples/resources/turbonomic_group/dynamic_by_tag.tf" }}
+
+### Dynamic group  - multiple criteria (AND)
+
+{{ tffile "examples/resources/turbonomic_group/dynamic_multi_criteria.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+## Filter shorthand reference
+
+The `filter_entity` + `filter_field` shorthand resolves to an internal Turbonomic `filterType` at plan time. Supported combinations:
+
+| `filter_entity` | `filter_field` | Resolved `filterType` |
+|---|---|---|
+| `vm` | `name` | `vmsByName` |
+| `vm` | `tag` | `vmsByTag` |
+| `vm` | `state` | `vmsByState` |
+| `vm` | `guest_os` | `vmsByGuestName` |
+| `vm` | `cloud_provider` | `vmsByCloudProvider` |
+| `vm` | `pm` | `vmsByPMName` |
+| `vm` | `cluster` | `vmsByClusterName` |
+| `vm` | `dc` | `vmsByDCnested` |
+| `vm` | `vdc` | `vmsByVDC` |
+| `vm` | `network` | `vmsByNetwork` |
+| `vm` | `storage` | `vmsByStorage` |
+| `vm` | `business_account` | `vmsByBusinessAccountUuid` |
+| `pm` | `name` | `pmsByName` |
+| `pm` | `tag` | `pmsByTag` |
+| `pm` | `state` | `pmsByState` |
+| `pm` | `cluster` | `pmsByClusterName` |
+| `storage` | `name` | `storageByName` |
+| `storage` | `tag` | `storageByTag` |
+| `storage` | `state` | `storageByState` |
+| `storage` | `pm_cluster` | `storageByPMCluster` |
+| `db` | `name` | `databaseByName` |
+| `db` | `tag` | `databaseByTag` |
+| `db` | `cloud_provider` | `databaseByCloudProvider` |
+| `db` | `business_account` | `databaseByBusinessAccountUuid` |
+| `db_server` | `name` | `databaseServerByName` |
+| `db_server` | `tag` | `databaseServerByTag` |
+| `db_server` | `business_account` | `databaseServerByBusinessAccountUuid` |
+| `container` | `name` | `containersByName` |
+| `container` | `namespace` | `containersByNamespace` |
+| `namespace` | `name` | `namespacesByName` |
+| `cluster` | `name` | `clustersByName` |
+| `cluster` | `tag` | `clustersByTag` |
+| `storage_cluster` | `name` | `storageClustersByName` |
+| `vm_cluster` | `name` | `virtualMachineClustersByName` |
+| `container_platform_cluster` | `name` | `containerPlatformClustersByName` |
+| `resource_group` | `name` | `resourceGroupByName` |
+| `resource_group` | `tag` | `resourceGroupByTag` |
+| `resource_group` | `business_account` | `resourceGroupByBusinessAccountUuid` |
+| `business_account` | `name` | `businessAccountByName` |
+| `volume` | `storage` | `volumeByStorage` |
+| `volume` | `resource_group` | `volumeByResourceGroupName` |
+
+For filter combinations not listed here, set `filter_type` directly with the raw Turbonomic filter key.
+
+## Notes
+
+- **Static vs dynamic.** Set `is_static = true` and populate `member_uuid_list` for a fixed membership group. Set `is_static = false` (default) and populate `criteria_list` for a dynamic membership group.
+- **`filter_type` is resolved at plan time.** When `filter_entity` + `filter_field` are set, `ModifyPlan` computes `filter_type` before apply so the plan has no unknown values.
+- **`logical_operator` applies across all criteria.** All criteria in a single group are joined by the same operator (`AND`, `OR`, or `XOR`).
+- **`environment_type` and `cloud_type` are computed.** These fields are derived by Turbonomic from the group members and cannot be set in configuration.
+- **Import.** Import an existing group using its UUID: `terraform import turbonomic_group.example <uuid>`.
+
+{{ if .HasImport -}}
+## Import
+
+Import is supported using the following syntax:
+
+{{codefile "shell" .ImportFile}}
+{{- end }}

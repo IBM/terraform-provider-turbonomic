@@ -1,0 +1,160 @@
+[
+    {
+        "uuid": "639054921252001",
+        "displayName": "RESIZE action-orchestrator",
+        "actionImpactID": 639054921252001,
+        "marketID": 777777,
+        "createTime": "2025-08-07T02:42:43Z",
+        "actionType": "RESIZE",
+        "actionState": "READY",
+        "actionMode": "MANUAL",
+        "details": "Resize VMemRequest, VMem, VCPURequest for action-orchestrator",
+        "importance": -1.0,
+        "target": {
+            "uuid": "76084922964120",
+            "displayName": "action-orchestrator",
+            "className": "WorkloadController",
+            "environmentType": "HYBRID",
+            "discoveredBy": {
+                "uuid": "75878878480048",
+                "displayName": "Kubernetes-Turbonomic",
+                "isProbeRegistered": false,
+                "type": "Kubernetes",
+                "readonly": false
+            },
+            "vendorIds": {
+                "Kubernetes-Turbonomic": "a1a1a1a1-0000-0000-0000-000000000001"
+            },
+            "state": "ACTIVE",
+            "aspects": {
+                "workloadControllerAspect": {
+                    "controllerReplicaCount": 1,
+                    "type": "WorkloadControllerAspectApiDTO"
+                }
+            },
+            "tags": {}
+        },
+        "currentEntity": {
+            "uuid": "76084922964120",
+            "displayName": "action-orchestrator",
+            "className": "WorkloadController",
+            "state": "ACTIVE"
+        },
+        "newEntity": {
+            "uuid": "76084922964120",
+            "displayName": "action-orchestrator",
+            "className": "WorkloadController",
+            "state": "ACTIVE"
+        },
+        "risk": {
+            "subCategory": "Performance Assurance",
+            "description": "VMemRequest Congestion, VMem Limit Congestion, Underutilized VCPURequest",
+            "severity": "CRITICAL",
+            "importance": 0.0,
+            "reasonCommodities": ["VMemRequest", "VMem", "VCPURequest"]
+        },
+        "compoundActions": [
+            {
+                "displayName": "MANUAL",
+                "actionType": "RESIZE",
+                "actionState": "READY",
+                "actionMode": "MANUAL",
+                "details": "VMemRequest resize in action-orchestrator",
+                "target": {
+                    "uuid": "76084922964122",
+                    "displayName": "action-orchestrator",
+                    "className": "ContainerSpec",
+                    "environmentType": "HYBRID",
+                    "discoveredBy": {
+                        "uuid": "75878878480048",
+                        "displayName": "Kubernetes-Turbonomic",
+                        "isProbeRegistered": false,
+                        "type": "Kubernetes",
+                        "readonly": false
+                    },
+                    "vendorIds": {
+                        "Kubernetes-Turbonomic": "a1a1a1a1-0000-0000-0000-000000000001/action-orchestrator"
+                    },
+                    "state": "ACTIVE",
+                    "tags": {}
+                },
+                "currentValue": "393216.0",
+                "newValue": "720896.0",
+                "valueUnits": "KB",
+                "resizeAttribute": "CAPACITY",
+                "risk": {
+                    "importance": 0.0,
+                    "reasonCommodities": ["VMemRequest"]
+                }
+            },
+            {
+                "displayName": "MANUAL",
+                "actionType": "RESIZE",
+                "actionState": "READY",
+                "actionMode": "MANUAL",
+                "details": "VMem resize in action-orchestrator",
+                "target": {
+                    "uuid": "76084922964122",
+                    "displayName": "action-orchestrator",
+                    "className": "ContainerSpec",
+                    "environmentType": "HYBRID",
+                    "discoveredBy": {
+                        "uuid": "75878878480048",
+                        "displayName": "Kubernetes-Turbonomic",
+                        "isProbeRegistered": false,
+                        "type": "Kubernetes",
+                        "readonly": false
+                    },
+                    "vendorIds": {
+                        "Kubernetes-Turbonomic": "a1a1a1a1-0000-0000-0000-000000000001/action-orchestrator"
+                    },
+                    "state": "ACTIVE",
+                    "tags": {}
+                },
+                "currentValue": "786432.0",
+                "newValue": "1048576.0",
+                "valueUnits": "KB",
+                "resizeAttribute": "CAPACITY",
+                "risk": {
+                    "importance": 0.0,
+                    "reasonCommodities": ["VMem"]
+                }
+            },
+            {
+                "displayName": "MANUAL",
+                "actionType": "RESIZE",
+                "actionState": "READY",
+                "actionMode": "MANUAL",
+                "details": "VCPURequest resize in action-orchestrator",
+                "target": {
+                    "uuid": "76084922964122",
+                    "displayName": "action-orchestrator",
+                    "className": "ContainerSpec",
+                    "environmentType": "HYBRID",
+                    "discoveredBy": {
+                        "uuid": "75878878480048",
+                        "displayName": "Kubernetes-Turbonomic",
+                        "isProbeRegistered": false,
+                        "type": "Kubernetes",
+                        "readonly": false
+                    },
+                    "vendorIds": {
+                        "Kubernetes-Turbonomic": "a1a1a1a1-0000-0000-0000-000000000001/action-orchestrator"
+                    },
+                    "state": "ACTIVE",
+                    "tags": {}
+                },
+                "currentValue": "200.0",
+                "newValue": "100.0",
+                "valueUnits": "mCores",
+                "resizeAttribute": "CAPACITY",
+                "risk": {
+                    "importance": 0.0,
+                    "reasonCommodities": ["VCPURequest"]
+                }
+            }
+        ],
+        "source": "MARKET",
+        "actionID": 639054921252001
+    }
+]

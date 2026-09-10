@@ -1,0 +1,17 @@
+[
+    {
+        "uuid": "76257897421745",
+        "displayName": "Kubernetes-aks-parking-private",
+        "className": "ContainerPlatformCluster",
+        "environmentType": "CLOUD",
+        "discoveredBy": {
+            "uuid": "999000000000010",
+            "displayName": "azure-subscription-1",
+            "category": "Cloud",
+            "isProbeRegistered": false,
+            "type": "Azure",
+            "readonly": false
+        },
+        "state": "ACTIVE"
+    }
+]

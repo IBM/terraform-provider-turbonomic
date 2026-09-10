@@ -1,0 +1,17 @@
+[
+    {
+        "uuid": "85100000000001",
+        "displayName": "ip-10-0-1-42.ec2.internal",
+        "className": "VirtualMachine",
+        "environmentType": "HYBRID",
+        "discoveredBy": {
+            "uuid": "75878878480048",
+            "displayName": "Kubernetes-Turbonomic",
+            "category": "Container Platform",
+            "type": "Kubernetes",
+            "readonly": false
+        },
+        "state": "ACTIVE",
+        "tags": {}
+    }
+]

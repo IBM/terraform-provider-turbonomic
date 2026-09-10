@@ -23,6 +23,28 @@ import (
 	"strings"
 )
 
+// nullableAttr is satisfied by types.String, types.Bool, types.Int64, types.Float64, etc.
+// The extract function is passed separately because the Terraform framework uses concrete
+// method names (ValueString, ValueBool, …) rather than a shared interface.
+type nullableAttr[T any] interface {
+	IsNull() bool
+	IsUnknown() bool
+}
+
+// setIfKnown assigns *dest to extract(src) when src is non-null and non-unknown.
+// It replaces the repeated pattern:
+//
+//	if !plan.Foo.IsNull() && !plan.Foo.IsUnknown() {
+//	    v := plan.Foo.ValueXxx()
+//	    dest = &v
+//	}
+func setIfKnown[T any, S nullableAttr[T]](dest **T, src S, extract func(S) T) {
+	if !src.IsNull() && !src.IsUnknown() {
+		v := extract(src)
+		*dest = &v
+	}
+}
+
 const (
 	// Tag key and value for "optimized by" tag
 	OptimizedByTagName       = "turbonomic_optimized_by"
@@ -46,4 +68,22 @@ func convertSliceToUppercase(values []string) []string {
 		values[i] = strings.ToUpper(value)
 	}
 	return values
+}
+
+// ptrToString safely dereferences a *string for use in log messages.
+// Returns an empty string when the pointer is nil.
+func ptrToString(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}
+
+// ptrToBool safely dereferences a *bool for use in log messages.
+// Returns false when the pointer is nil.
+func ptrToBool(b *bool) bool {
+	if b == nil {
+		return false
+	}
+	return *b
 }

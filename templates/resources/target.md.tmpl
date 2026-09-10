@@ -1,0 +1,78 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
+subcategory: "Turbonomic"
+description: |-
+{{ .Description | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+-> **Note** Requires Terraform 1.10+ when using `input_fields_wo` with ephemeral values.
+
+## Example Usage
+
+### vCenter (Hypervisor)
+
+{{ tffile "examples/resources/turbonomic_target/vcenter.tf" }}
+
+### AWS  - access key authentication
+
+{{ tffile "examples/resources/turbonomic_target/aws.tf" }}
+
+### GCP
+
+{{ tffile "examples/resources/turbonomic_target/gcp.tf" }}
+
+### Azure Service Principal
+
+{{ tffile "examples/resources/turbonomic_target/azure.tf" }}
+
+### HCP Terraform
+
+{{ tffile "examples/resources/turbonomic_target/terraform_hcp.tf" }}
+
+### ServiceNow
+
+{{ tffile "examples/resources/turbonomic_target/servicenow.tf" }}
+
+### Instana
+
+{{ tffile "examples/resources/turbonomic_target/instana.tf" }}
+
+### Secret rotation with Vault (ephemeral)
+
+{{ tffile "examples/resources/turbonomic_target/vault_ephemeral.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+## Finding input field names
+
+Input field names are specific to each probe and are not validated by the provider  - they are forwarded to the Turbonomic API as-is. To see the exact field names required for a given probe type, query the target specs endpoint on your Turbonomic instance:
+
+```shell
+curl -sk -b <session-cookie> \
+  "https://<turbonomic-host>/api/v3/targets/specs" \
+  | jq '.[] | select(.type == "<ProbeType>")'
+```
+
+Replace `<ProbeType>` with the exact `type` value (e.g. `vCenter`, `AWS`, `Terraform`).
+
+## Notes
+
+- **Field names are probe-specific.** Each probe type exposes different `InputField` names. Use the target specs endpoint (see above) to discover the correct names for any probe type.
+- **All field values are strings.** Even numeric or boolean probe fields (e.g. `port`, `iamRole`, `validateServerCertificates`) must be passed as string values.
+- **Write-only credentials are never stored in state.** To rotate a secret, update `input_fields_wo` and increment `input_fields_wo_version`  - this is the recommended secret rotation pattern.
+- **Health attributes are populated after discovery.** On initial creation the health fields will be empty until Turbonomic completes its first discovery cycle. Run `terraform refresh` or a subsequent `terraform apply` to pick up the updated health status.
+- **Probe must be registered.** Creating a target for a probe type that is not registered in the Turbonomic instance will result in an API error. Verify the probe is running before applying.
+
+{{ if .HasImport -}}
+## Import
+
+Import is supported using the following syntax:
+
+{{codefile "shell" .ImportFile}}
+
+After import, `input_fields_wo` will be empty in state because write-only values are never persisted. Populate `input_fields_wo` and increment `input_fields_wo_version` in your configuration, then run `terraform apply` to re-send the credentials.
+{{- end }}

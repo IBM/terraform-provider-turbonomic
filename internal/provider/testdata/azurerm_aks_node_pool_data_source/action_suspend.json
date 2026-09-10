@@ -1,0 +1,11 @@
+[
+    {
+        "actionID": 2001,
+        "actionType": "SUSPEND",
+        "actionState": "READY",
+        "actionMode": "MANUAL",
+        "currentValue": "",
+        "newValue": "",
+        "valueUnits": ""
+    }
+]

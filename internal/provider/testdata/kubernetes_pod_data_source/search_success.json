@@ -1,0 +1,30 @@
+[
+    {
+        "uuid": "84200000000001",
+        "displayName": "production/api-server-abc12",
+        "className": "ContainerPod",
+        "environmentType": "HYBRID",
+        "discoveredBy": {
+            "uuid": "75878878480048",
+            "displayName": "Kubernetes-Turbonomic",
+            "category": "Container Platform",
+            "isProbeRegistered": false,
+            "type": "Kubernetes",
+            "readonly": false
+        },
+        "state": "ACTIVE",
+        "providers": [
+            {
+                "uuid": "84100000000001",
+                "displayName": "api-server",
+                "className": "WorkloadController"
+            },
+            {
+                "uuid": "84300000000001",
+                "displayName": "ip-10-0-1-42.ec2.internal",
+                "className": "VirtualMachine"
+            }
+        ],
+        "tags": {}
+    }
+]

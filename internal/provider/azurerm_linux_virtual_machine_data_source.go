@@ -96,17 +96,17 @@ func (d *AzurermLinuxVirtualMachineDataSource) Configure(_ context.Context, req 
 		return
 	}
 
-	client, ok := req.ProviderData.(*turboclient.Client)
+	data, ok := req.ProviderData.(*providerData)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"unexpected data-source configure type",
-			fmt.Sprintf("expected: *turboclient.Client, got: %T. please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("expected: *providerData, got: %T. please report this issue to the provider developers.", req.ProviderData),
 		)
 
 		return
 	}
 
-	d.client = client
+	d.client = data.Client.(*turboclient.Client)
 }
 
 func (d *AzurermLinuxVirtualMachineDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
@@ -133,7 +133,7 @@ func (d *AzurermLinuxVirtualMachineDataSource) Read(ctx context.Context, req dat
 	}
 	entity, errDiag = GetEntitiesByName(d.client, append(entityArgs, WithOSNames("linux", "rhel"))...)
 	if errDiag != nil {
-		errDetail := fmt.Sprintf("entity %s of type: %s and osNames: %s not found in Turbonomic instance, searching without osNames", enName, enTyp, "[Linux Rhel]")
+		errDetail := fmt.Sprintf("entity %s of type: %s and osNames: %s not found in turbonomic instance, searching without osNames", enName, enTyp, "[Linux Rhel]")
 		tflog.Warn(ctx, errDetail)
 		entity, errDiag = GetEntitiesByName(d.client, entityArgs...)
 	}
@@ -143,7 +143,7 @@ func (d *AzurermLinuxVirtualMachineDataSource) Read(ctx context.Context, req dat
 	if errDiag != nil {
 		errDetail = errDiag.Detail()
 	} else if len(entity) == 0 {
-		errDetail = fmt.Sprintf("entity %s of type %s not found in Turbonomic instance", enName, enTyp)
+		errDetail = fmt.Sprintf("entity %s of type %s not found in turbonomic instance", enName, enTyp)
 	} else {
 		tflog.Debug(ctx, fmt.Sprintf("entity id found: %s\n", entity[0].UUID))
 		state.EntityUuid = types.StringValue(entity[0].UUID)

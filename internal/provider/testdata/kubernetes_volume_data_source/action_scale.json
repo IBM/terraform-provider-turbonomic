@@ -1,0 +1,57 @@
+[
+    {
+        "uuid": "639054921300001",
+        "displayName": "SCALE pvc-0513e11e-7798-47ae-abf5-e91fd8722beb",
+        "actionImpactID": 639054921300001,
+        "marketID": 777777,
+        "createTime": "2025-08-07T02:42:43Z",
+        "actionType": "SCALE",
+        "actionState": "READY",
+        "actionMode": "RECOMMEND",
+        "details": "Scale Volume pvc-0513e11e-7798-47ae-abf5-e91fd8722beb from 10 GB to 20 GB",
+        "importance": -1.0,
+        "target": {
+            "uuid": "76581453684439",
+            "displayName": "pvc-0513e11e-7798-47ae-abf5-e91fd8722beb",
+            "className": "VirtualVolume",
+            "environmentType": "HYBRID",
+            "discoveredBy": {
+                "uuid": "76261914146176",
+                "displayName": "Kubernetes-VC14-OCP-GPU",
+                "isProbeRegistered": false,
+                "type": "Kubernetes",
+                "readonly": false
+            },
+            "vendorIds": {
+                "Kubernetes-VC14-OCP-GPU": "f16fca3d-2cfe-4247-bfed-2eaf6c3f45d1"
+            },
+            "state": "ACTIVE",
+            "tags": {}
+        },
+        "currentEntity": {
+            "uuid": "76581453684439",
+            "displayName": "pvc-0513e11e-7798-47ae-abf5-e91fd8722beb",
+            "className": "VirtualVolume",
+            "state": "ACTIVE"
+        },
+        "newEntity": {
+            "uuid": "76581453684439",
+            "displayName": "pvc-0513e11e-7798-47ae-abf5-e91fd8722beb",
+            "className": "VirtualVolume",
+            "state": "ACTIVE"
+        },
+        "currentValue": "10240.0",
+        "newValue": "20480.0",
+        "valueUnits": "",
+        "risk": {
+            "subCategory": "Performance Assurance",
+            "description": "Scale VirtualVolume pvc-0513e11e-7798-47ae-abf5-e91fd8722beb",
+            "severity": "CRITICAL",
+            "importance": 0.0,
+            "reasonCommodities": []
+        },
+        "compoundActions": [],
+        "source": "MARKET",
+        "actionID": 639054921300001
+    }
+]

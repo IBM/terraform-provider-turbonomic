@@ -1,0 +1,17 @@
+[
+    {
+        "uuid": "88112345678901",
+        "displayName": "Kubernetes-my-eks-cluster",
+        "className": "ContainerPlatformCluster",
+        "environmentType": "CLOUD",
+        "discoveredBy": {
+            "uuid": "999000000000020",
+            "displayName": "aws-account-123456789",
+            "category": "Cloud",
+            "isProbeRegistered": false,
+            "type": "AWS",
+            "readonly": false
+        },
+        "state": "ACTIVE"
+    }
+]

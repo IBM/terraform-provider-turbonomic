@@ -1,0 +1,30 @@
+[
+    {
+        "uuid": "76581453684439",
+        "displayName": "pvc-0513e11e-7798-47ae-abf5-e91fd8722beb",
+        "className": "VirtualVolume",
+        "environmentType": "HYBRID",
+        "discoveredBy": {
+            "uuid": "76261914146176",
+            "displayName": "Kubernetes-VC14-OCP-GPU",
+            "category": "Container Platform",
+            "isProbeRegistered": false,
+            "type": "Kubernetes",
+            "subType": "RedHatOpenShift",
+            "readonly": false
+        },
+        "vendorIds": {
+            "Kubernetes-VC14-OCP-GPU": "f16fca3d-2cfe-4247-bfed-2eaf6c3f45d1"
+        },
+        "state": "ACTIVE",
+        "severity": "Normal",
+        "consumers": [
+            {
+                "uuid": "76581453682230",
+                "displayName": "keycloak/keycloak-2-nw97g",
+                "className": "ContainerPod"
+            }
+        ],
+        "tags": {}
+    }
+]

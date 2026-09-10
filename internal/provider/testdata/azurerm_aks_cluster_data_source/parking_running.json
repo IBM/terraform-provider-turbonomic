@@ -1,0 +1,12 @@
+{
+    "uuid": "76257897421745",
+    "displayName": "Kubernetes-aks-parking-private",
+    "provider": "AZURE",
+    "state": "RUNNING",
+    "entityType": "ContainerPlatformCluster",
+    "cloudServiceName": "AZURE_KUBERNETES_SERVICE",
+    "cost": 2.1832,
+    "onDemandRateWhenRunning": 2.1832,
+    "smartParkingRecommendation": {},
+    "projectedSavings": 0.0
+}

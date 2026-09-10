@@ -1,5 +1,4 @@
 ---
-layout: ""
 page_title: "Provider: IBM Turbonomic"
 description: |-
   The Turbonomic provider supplies data resources to interact with the Turbonomic API.
@@ -15,35 +14,15 @@ the tier size based on Turbonomic scaling action recommendations, or the current
 if no scaling action exists.
 
 You will encounter three distinct value types when working with Turbonomic data sources:
-- current value: The most recently discovered value for the entity, as identified by Turbonomic.
-- new value: The optimal value recommended by Turbonomic based on its analysis.
-- default values: A user-defined fallback value used when the entity does not yet exist in the environment.
+- **current value**  - The most recently discovered value for the entity, as identified by Turbonomic.
+- **new value**  - The optimal value recommended by Turbonomic based on its analysis.
+- **default value**  - A user-defined fallback value used when the entity does not yet exist in the environment.
 
-## Fallback Pattern for Turbonomic Unavailability
+## Fallback pattern for Turbonomic unavailability
 
-For production environments, it's important to handle scenarios where Turbonomic may be temporarily unavailable. The **fallback pattern** uses Terraform's `coalesce()` function to create a robust priority chain.
+When Turbonomic is temporarily unavailable, the **fallback pattern** uses `coalesce()` to keep the existing instance type rather than resetting to a default.
 
-**See the comprehensive [Fallback Pattern Guide](./turbonomic_fallback_pattern.md) for more information.**
-
-## Example usage
-
-```terraform
-terraform {
-  required_providers {
-    turbonomic = {
-      source  = "IBM/turbonomic"
-      version = "1.11.0"
-    }
-  }
-}
-
-provider "turbonomic" {
-  hostname   = var.hostname
-  username   = var.username
-  password   = var.password
-  skipverify = var.skipverify
-}
-```
+See the [Fallback pattern guide](guides/turbonomic_fallback_pattern.md) for a full example.
 
 ## Authentication and configuration
 
@@ -60,7 +39,7 @@ terraform {
   required_providers {
     turbonomic = {
       source  = "IBM/turbonomic"
-      version = "1.11.0"
+      version = "2.0.0"
     }
   }
 }
@@ -75,9 +54,7 @@ provider "turbonomic" {
 
 #### Example using OAuth 2.0 credentials
 
-In order to authenticate to Turbonomic's API using OAuth 2.0, you first need to create an OAuth client.
-For more information, see [Creating and authenticating an OAuth 2.0 client](https://www.ibm.com/docs/en/tarm/8.15.0?topic=cookbook-authenticating-oauth-20-clients-api#cookbook_administration_oauth_authentication__title__4)
-to create the client. The output from the preceding documentation will result in the following parameters:
+To use OAuth 2.0, first [create an OAuth client](https://www.ibm.com/docs/en/tarm/8.15.0?topic=cookbook-authenticating-oauth-20-clients-api#cookbook_administration_oauth_authentication__title__4) in Turbonomic. That process gives you:
 - clientId
 - clientSecret
 - role
@@ -87,7 +64,7 @@ terraform {
   required_providers {
     turbonomic = {
       source  = "IBM/turbonomic"
-      version = "1.11.0"
+      version = "2.0.0"
     }
   }
 }
@@ -101,68 +78,7 @@ provider "turbonomic" {
 }
 ```
 
--> **NOTE:** Valid roles are ADMINISTRATOR, SITE_ADMIN, AUTOMATOR, DEPLOYER, ADVISOR, OBSERVER, OPERATIONAL_OBSERVER, SHARED_ADVISOR and SHARED_OBSERVER.
-
-## Naming convention for Data Sources
-Each data source is named to clearly indicate the cloud provider and the resource type.
-
-Naming pattern: `turbonomic_<provider>_<resource_type>`.
-
-### Supported Data Sources
-| Name                                                                                  | Cloud Provider | Resource Type             |
-|---------------------------------------------------------------------------------------|----------------|---------------------------|
-| [`turbonomic_aws_db_instance`](data-sources/aws_db_instance.md)                       | AWS            | RDS Instance              |
-| [`turbonomic_aws_ebs_volume`](data-sources/aws_ebs_volume.md)                         | AWS            | EBS Volume              |
-| [`turbonomic_aws_instance`](data-sources/aws_instance.md)                             | AWS            | EC2 Instance              |
-| [`turbonomic_azurerm_linux_virtual_machine`](data-sources/azurerm_linux_virtual_machine.md) | Azure          | Linux Virtual Machine     |
-| [`turbonomic_azurerm_managed_disk`](data-sources/azurerm_managed_disk.md)             | Azure          | Managed Disk              |
-| [`turbonomic_azurerm_mssql_database`](data-sources/azurerm_mssql_database.md)         | Azure          | MS SQL Database           |
-| [`turbonomic_azurerm_windows_virtual_machine`](data-sources/azurerm_windows_virtual_machine.md) | Azure          | Windows Virtual Machine   |
-| [`turbonomic_entity_actions`](data-sources/entity_actions.md)                         | Multicloud     | Generic Action Search     |
-| [`turbonomic_google_compute_disk`](data-sources/google_compute_disk.md)               | Google Cloud   | Persistent Disk           |
-| [`turbonomic_google_compute_instance`](data-sources/google_compute_instance.md)       | Google Cloud   | Compute Engine Instance   |
-
-## Turbonomic policy, schedules and control
-
-The Turbonomic Terraform Provider respects the
-[actions acceptance mode](https://www.ibm.com/docs/en/tarm/8.17.x?topic=actions-action-acceptance-modes) and
-[action execution schedule](https://www.ibm.com/docs/en/tarm/8.17.x?topic=policies-automation-policy-schedules#policy_schedule__ActionExecutionSchedule__title__1)
-configured within the Turbonomic platform.
-
-Specifically, the provider will not return new values from actions to a data sources unless the
-[action's acceptance mode](https://www.ibm.com/docs/en/tarm/8.17.x?topic=actions-action-acceptance-modes) is
-set to either `MANUAL` or `AUTOMATED`. Additionally, the provider adheres to any
-[action execution schedule](https://www.ibm.com/docs/en/tarm/8.17.x?topic=policies-automation-policy-schedules#policy_schedule__ActionExecutionSchedule__title__1)
-defined for a given entity and action type(s), ensuring that actions are only executed in accordance with the specified
-timing and policy constraints.  In all cases, if no action is pending, the current value is returned.
-
-The current value is the last discovered value by Turbonomic.
-
-Below is a table that describes what the Provider will return in relation to the actions acceptance mode and
-action execution schedule.
-
-### Terraform Provider Action Eligibility Matrix
-
-| **Action Mode**              | **Scheduled with Window Open** | **Scheduled with Window Closed** | **Not Scheduled** |
-|-----------------------------|----------------------------------|-----------------------------------|-------------------|
-| **Recommended**             | — Current Value Returned                                             | — Current Value Returned   | — Current Value Returned   |
-| **Manual**                  | ✅ New Value from Action Returned                                    | — Current Value Returned    | ✅ New Value from Action Returned   |
-| **Automated**               | ✅ New Value from Action Returned                                    | — Current Value Returned    | ✅ New Value from Action Returned   |
-| **Automated when approved** | ✅ New Value from Action Returned once approved                      | — Current Value Returned    | ✅ New Value from Action Returned once approved   |
-
-✅ = Action results may be returned<br>
-— = Action results will not be returned
-
-> Note: If no action is pending, the Current Value is retured in all cases.
-
-## Features and bug requests
-
-If you have a bug or feature request, then use one of the following resources to create an issue:
-
-* If an existing feature of the provider is working in an unexpected way, [raise a support case] (https://ibm.biz/turbonomic-support).
-
-* If you'd like the provider to support a new feature, [raise an idea] (https://ibm.biz/turbonomic-ideas)
- to the Turbonomic product team.
+-> **Note** Valid roles are `ADMINISTRATOR`, `SITE_ADMIN`, `AUTOMATOR`, `DEPLOYER`, `ADVISOR`, `OBSERVER`, `OPERATIONAL_OBSERVER`, `SHARED_ADVISOR`, and `SHARED_OBSERVER`.
 
 <!-- schema generated by tfplugindocs -->
 ## Schema
@@ -176,3 +92,39 @@ If you have a bug or feature request, then use one of the following resources to
 - `role` (String) the OAuth 2.0 role that can be used to access the Turbonomic instance; use TURBO_ROLE to set with an environment variable
 - `skipverify` (Boolean) boolean on whether to verify the SSL or TLS certificate for the hostname
 - `username` (String) username to access the Turbonomic Instance; use TURBO_USERNAME to set with an environment variable
+
+## Turbonomic policy, schedules and control
+
+The provider respects the [action acceptance mode](https://www.ibm.com/docs/en/tarm/8.17.x?topic=actions-action-acceptance-modes) and [action execution schedule](https://www.ibm.com/docs/en/tarm/8.17.x?topic=policies-automation-policy-schedules#policy_schedule__ActionExecutionSchedule__title__1) configured in Turbonomic.
+
+The provider only returns a new value from an action when the acceptance mode is `MANUAL` or `AUTOMATED`. It also honours any execution schedule for that entity and action type  - actions outside a scheduled window are not surfaced. When no action is pending, the current (last-discovered) value is returned.
+
+### Terraform provider action eligibility matrix
+
+The behaviour depends on the action mode and whether a schedule window is currently open:
+
+| Action Mode | Schedule Window Open | Schedule Window Closed | No Schedule |
+|---|---|---|---|
+| **Recommended** | Current value returned | Current value returned | Current value returned |
+| **Manual** | New value from action returned | Current value returned | New value from action returned |
+| **Automated** | New value from action returned | Current value returned | New value from action returned |
+| **Automated when approved** | New value from action returned once approved | Current value returned | New value from action returned once approved |
+
+-> **Note** If no action is pending, the current value is returned in all cases.
+
+## Managing Turbonomic as Code
+
+~> **Note** Turbonomic-native resources and data sources are in PREVIEW and may have breaking changes before general availability.
+
+The provider includes resources and data sources for managing Turbonomic configuration directly in Terraform  - groups, policies, schedules, users, workflows, targets, and parking policies  - without touching the Turbonomic web UI.
+
+See the [Turbonomic as Code guide](guides/turbonomic.md) for a full walkthrough.
+
+## Features and bug requests
+
+If you have a bug or feature request, then use one of the following resources to create an issue:
+
+* If an existing feature of the provider is working in an unexpected way, [raise a support case](https://ibm.biz/turbonomic-support).
+
+* If you'd like the provider to support a new feature, [raise an idea](https://ibm.biz/turbonomic-ideas)
+ to the Turbonomic product team.

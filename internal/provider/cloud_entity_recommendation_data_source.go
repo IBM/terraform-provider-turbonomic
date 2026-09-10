@@ -47,7 +47,8 @@ func (d *CloudEntityRecommendationDataSource) Metadata(ctx context.Context, req 
 
 func (d *CloudEntityRecommendationDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "The following example demonstrates the syntax for the `turbonomic_cloud_entity_recommendation` data source. \n \n ~> **NOTE:** `turbonomic_cloud_entity_recommendation` data source has been deprecated in version 1.4.0 and will be removed in future versions.",
+		DeprecationMessage: "`turbonomic_cloud_entity_recommendation` data source is to be deprecated and will be removed in a future version. Use the resource-specific data sources instead (e.g. `turbonomic_aws_instance`, `turbonomic_azurerm_linux_virtual_machine`).",
+		Description:        "The following example demonstrates the syntax for the `turbonomic_cloud_entity_recommendation` data source. \n \n !> **Warning** `turbonomic_cloud_entity_recommendation` data source is to be deprecated and will be removed in a future version.",
 		Attributes: map[string]schema.Attribute{
 
 			"entity_uuid": schema.StringAttribute{
@@ -97,17 +98,17 @@ func (d *CloudEntityRecommendationDataSource) Configure(_ context.Context, req d
 		return
 	}
 
-	client, ok := req.ProviderData.(*turboclient.Client)
+	data, ok := req.ProviderData.(*providerData)
 	if !ok {
 		resp.Diagnostics.AddError(
-			"Unexpected Data Source Configure Type",
-			fmt.Sprintf("Expected: *turboclient.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			"unexpected data source configure type",
+			fmt.Sprintf("expected: *turboclient.Client, got: %T. please report this issue to the provider developers.", req.ProviderData),
 		)
 
 		return
 	}
 
-	d.client = client
+	d.client = data.Client.(*turboclient.Client)
 }
 
 func (d *CloudEntityRecommendationDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {

@@ -1,0 +1,34 @@
+[
+    {
+        "uuid": "851000000000099",
+        "displayName": "Suspend VirtualMachine ip-10-0-1-42.ec2.internal",
+        "actionType": "SUSPEND",
+        "actionState": "READY",
+        "actionMode": "MANUAL",
+        "details": "Suspend VirtualMachine ip-10-0-1-42.ec2.internal",
+        "target": {
+            "uuid": "85100000000001",
+            "displayName": "ip-10-0-1-42.ec2.internal",
+            "className": "VirtualMachine",
+            "environmentType": "HYBRID",
+            "discoveredBy": {
+                "uuid": "75878878480048",
+                "displayName": "Kubernetes-Turbonomic",
+                "isProbeRegistered": false,
+                "type": "Kubernetes",
+                "readonly": false
+            },
+            "state": "ACTIVE",
+            "tags": {}
+        },
+        "risk": {
+            "subCategory": "Efficiency Improvement",
+            "description": "Underutilized node",
+            "severity": "MINOR",
+            "importance": 0.0,
+            "reasonCommodities": []
+        },
+        "source": "MARKET",
+        "actionID": 851000000000099
+    }
+]

@@ -1,11 +1,10 @@
 ---
-layout: ""
-page_title: "Fallback Pattern for Turbonomic Unavailability"
+page_title: "Fallback pattern for Turbonomic unavailability"
 description: |-
  This guide demonstrates how to handle Turbonomic unavailability gracefully using Terraform's coalesce() function across AWS, Azure, and Google Cloud.
 ---
 
-# Fallback Pattern for Turbonomic Unavailability
+# Fallback pattern for Turbonomic unavailability
 
 You can use a Terraform fallback pattern to handle scenarios where Turbonomic recommendations are temporarily unavailable or when you manage both new and existing cloud resources.
 
@@ -28,15 +27,15 @@ The fallback order is:
 
 This approach helps prevent unintended resize operations when Turbonomic data is unavailable.
 
-## The Pattern
+## The pattern
 
 The key to this pattern is using `coalesce()` to create a priority chain:
 
 ```
-Turbonomic recommendation → Cloud provider current instance type → Default fallback
+Turbonomic recommendation -> Cloud provider current instance type -> Default fallback
 ```
 
-### How It Works
+### How it works
 
 1. **First priority**: Use Turbonomic's recommendation if available
 2. **Second priority**: If Turbonomic is unavailable or returns null, use the existing cloud provider instance type
@@ -44,7 +43,7 @@ Turbonomic recommendation → Cloud provider current instance type → Default f
 
 ## Implementation
 
-### Step 1: Configure the Turbonomic Data Source
+### Step 1: Configure the Turbonomic data source
 
 Set `default_instance_type = null` (or omit it entirely) in the Turbonomic data source. This allows the data source to return `null` when Turbonomic is unavailable, enabling the fallback chain:
 
@@ -56,7 +55,7 @@ data "turbonomic_aws_instance" "example" {
 }
 ```
 
-### Step 2: Query Existing Cloud Provider Resource (Optional)
+### Step 2: Query existing cloud provider resource (optional)
 
 If managing an existing VM, query its current configuration:
 
@@ -66,7 +65,7 @@ data "aws_instance" "existing" {
 }
 ```
 
-### Step 3: Use coalesce() in Resource Configuration
+### Step 3: Use coalesce() in resource configuration
 
 Apply the fallback chain using `coalesce()`:
 
@@ -88,11 +87,11 @@ resource "aws_instance" "terraform-demo-ec2" {
 }
 ```
 
-## Examples by Cloud Provider
+## Examples by cloud provider
 
 The fallback pattern works consistently across all major cloud providers. Below are examples for each.
 
-### AWS EC2 Instance Example
+### AWS EC2 instance example
 
 ```terraform
 provider "aws" {
@@ -149,7 +148,7 @@ output "current_instance_type" {
 }
 ```
 
-### Azure Virtual Machine Example
+### Azure virtual machine example
 
 ```terraform
 provider "azurerm" {
@@ -227,7 +226,7 @@ output "current_vm_size" {
 }
 ```
 
-### Google Cloud Compute Instance Example
+### Google Cloud compute instance example
 
 ```terraform
 provider "google" {
@@ -299,7 +298,7 @@ output "current_machine_type" {
 }
 ```
 
-## Scenario Behavior
+## Scenario behavior
 
 The fallback pattern behaves differently depending on whether the virtual machine already exists and whether Turbonomic recommendations are available.
 

@@ -1,0 +1,50 @@
+[
+    {
+        "uuid": "842000000000099",
+        "displayName": "Move api-server-abc12 from ip-10-0-1-42 to ip-10-0-2-55",
+        "actionType": "MOVE",
+        "actionState": "READY",
+        "actionMode": "MANUAL",
+        "details": "Move ContainerPod production/api-server-abc12 from ip-10-0-1-42.ec2.internal to ip-10-0-2-55.ec2.internal",
+        "target": {
+            "uuid": "84200000000001",
+            "displayName": "production/api-server-abc12",
+            "className": "ContainerPod",
+            "environmentType": "HYBRID",
+            "discoveredBy": {
+                "uuid": "75878878480048",
+                "displayName": "Kubernetes-Turbonomic",
+                "isProbeRegistered": false,
+                "type": "Kubernetes",
+                "readonly": false
+            },
+            "state": "ACTIVE",
+            "tags": {}
+        },
+        "currentEntity": {
+            "uuid": "84300000000001",
+            "displayName": "ip-10-0-1-42.ec2.internal",
+            "className": "VirtualMachine",
+            "environmentType": "HYBRID",
+            "state": "ACTIVE"
+        },
+        "newEntity": {
+            "uuid": "84300000000002",
+            "displayName": "ip-10-0-2-55.ec2.internal",
+            "className": "VirtualMachine",
+            "environmentType": "HYBRID",
+            "state": "ACTIVE"
+        },
+        "currentValue": "84300000000001",
+        "newValue": "84300000000002",
+        "risk": {
+            "subCategory": "Efficiency Improvement",
+            "description": "Move pod to reduce imbalance",
+            "severity": "MINOR",
+            "importance": 0.0,
+            "reasonCommodities": []
+        },
+        "source": "MARKET",
+        "actionID": 842000000000099
+    }
+]

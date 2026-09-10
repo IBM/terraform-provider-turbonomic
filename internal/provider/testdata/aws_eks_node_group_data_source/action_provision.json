@@ -1,0 +1,11 @@
+[
+    {
+        "actionID": 1001,
+        "actionType": "PROVISION",
+        "actionState": "READY",
+        "actionMode": "MANUAL",
+        "currentValue": "",
+        "newValue": "",
+        "valueUnits": ""
+    }
+]

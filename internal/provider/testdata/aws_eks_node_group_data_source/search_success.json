@@ -1,0 +1,40 @@
+[
+    {
+        "uuid": "111000000000001",
+        "displayName": "ip-10-0-1-101.ec2.internal",
+        "className": "VirtualMachine",
+        "environmentType": "CLOUD",
+        "discoveredBy": {
+            "uuid": "999000000000001",
+            "displayName": "my-eks-cluster",
+            "category": "Cloud",
+            "isProbeRegistered": false,
+            "type": "AWS",
+            "readonly": false
+        },
+        "state": "ACTIVE",
+        "tags": {
+            "eks:nodegroup-name": ["my-node-group"],
+            "eks:cluster-name": ["my-eks-cluster"]
+        }
+    },
+    {
+        "uuid": "111000000000002",
+        "displayName": "ip-10-0-1-102.ec2.internal",
+        "className": "VirtualMachine",
+        "environmentType": "CLOUD",
+        "discoveredBy": {
+            "uuid": "999000000000001",
+            "displayName": "my-eks-cluster",
+            "category": "Cloud",
+            "isProbeRegistered": false,
+            "type": "AWS",
+            "readonly": false
+        },
+        "state": "ACTIVE",
+        "tags": {
+            "eks:nodegroup-name": ["my-node-group"],
+            "eks:cluster-name": ["my-eks-cluster"]
+        }
+    }
+]

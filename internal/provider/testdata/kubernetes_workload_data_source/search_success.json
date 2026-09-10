@@ -1,0 +1,35 @@
+[
+    {
+        "uuid": "76084922964120",
+        "displayName": "action-orchestrator",
+        "className": "WorkloadController",
+        "environmentType": "HYBRID",
+        "discoveredBy": {
+            "uuid": "75878878480048",
+            "displayName": "Kubernetes-Turbonomic",
+            "category": "Container Platform",
+            "isProbeRegistered": false,
+            "type": "Kubernetes",
+            "readonly": false
+        },
+        "vendorIds": {
+            "Kubernetes-Turbonomic": "a1a1a1a1-0000-0000-0000-000000000001"
+        },
+        "state": "ACTIVE",
+        "aspects": {
+            "workloadControllerAspect": {
+                "controllerType": "DEPLOYMENT_INFO",
+                "controllerReplicaCount": 1,
+                "type": "WorkloadControllerAspectApiDTO"
+            }
+        },
+        "providers": [
+            {
+                "uuid": "75878878702732",
+                "displayName": "turbonomic",
+                "className": "Namespace"
+            }
+        ],
+        "tags": {}
+    }
+]

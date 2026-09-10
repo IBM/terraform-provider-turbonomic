@@ -25,6 +25,7 @@ import (
 
 	turboclient "github.com/IBM/turbonomic-go-client"
 	turboLogging "github.com/IBM/turbonomic-go-client/logging"
+	v2 "github.com/IBM/turbonomic-go-client/v2"
 
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -43,6 +44,12 @@ var (
 	_ provider.Provider              = &turbonomicProvider{}
 	_ provider.ProviderWithFunctions = &turbonomicProvider{}
 )
+
+// providerData contains both v1 and v2 clients.
+type providerData struct {
+	Client   turboclient.T8cClient
+	V2Client *v2.Client
+}
 
 type turbonomicProvider struct {
 	version  string
@@ -319,16 +326,52 @@ func (p *turbonomicProvider) Configure(ctx context.Context, req provider.Configu
 		turboLogging.WithLogger(&logAdapter))
 
 	if err != nil {
-		resp.Diagnostics.AddWarning(
-			"unable to create turbonomic api client",
-			"an unexpected error occurred when creating the turbonomic api client. "+
-				"if the error is not clear, please contact the provider developers.\n\n"+
-				"turbonomic client error: "+err.Error(),
+		resp.Diagnostics.AddError(
+			"Unable to create Turbonomic API client",
+			"An unexpected error occurred when creating the Turbonomic API client. "+
+				"Verify that the hostname is reachable and that the credentials are correct.\n\n"+
+				"Error: "+err.Error(),
 		)
+		return
 	}
 
-	resp.DataSourceData = client
-	resp.ResourceData = client
+	// Create v2 client for group operations using the same HTTP client as v1
+	// This ensures they share the same authenticated session
+	var v2Client *v2.Client
+	if concreteClient, ok := client.(*turboclient.Client); ok && concreteClient != nil && concreteClient.HTTPClient != nil {
+		v2Client, err = v2.NewClientWithHTTPClient(
+			concreteClient.HTTPClient,
+			hostname,
+			v2.ApiInfo{
+				ApiOrigin: "terraform-provider",
+				Version:   p.version,
+			},
+		)
+		if err != nil {
+			resp.Diagnostics.AddWarning(
+				"Unable to create v2 client for group operations",
+				"The v2 client could not be initialized. Group resources will not be available. "+
+					"Error: "+err.Error(),
+			)
+			tflog.Error(ctx, "failed to create v2 client", map[string]interface{}{
+				"error": err.Error(),
+			})
+		} else {
+			tflog.Info(ctx, "successfully created v2 client for group operations")
+		}
+	} else {
+		tflog.Warn(ctx, "v1 client does not provide HTTP client, v2 client cannot be created")
+	}
+
+	// ResourceData and DataSourceData both receive providerData so all
+	// resources and data sources receive the same struct.
+	data := &providerData{
+		Client:   client,
+		V2Client: v2Client,
+	}
+
+	resp.DataSourceData = data
+	resp.ResourceData = data
 }
 
 func StringsWithValues(ss ...string) []string {
@@ -343,7 +386,17 @@ func StringsWithValues(ss ...string) []string {
 }
 
 func (p *turbonomicProvider) Resources(ctx context.Context) []func() resource.Resource {
-	return nil
+	return []func() resource.Resource{
+		NewFilterResource,
+		NewGroupResource,
+		NewTargetResource,
+		NewPlacementPolicyResource,
+		NewSettingsPolicyResource,
+		NewScheduleResource,
+		NewUserResource,
+		NewWorkflowResource,
+		NewParkingPolicyResource,
+	}
 }
 
 func (p *turbonomicProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
@@ -359,6 +412,26 @@ func (p *turbonomicProvider) DataSources(ctx context.Context) []func() datasourc
 		NewAzurermWindowsVirtualMachineDataSource,
 		NewGoogleComputeInstanceDataSource,
 		NewAzurermMssqlDatabaseDataSource,
+		NewTargetDataSource,
+		NewGroupDataSource,
+		NewScheduleDataSource,
+		NewUserDataSource,
+		NewPlacementPolicyDataSource,
+		NewSettingsPolicyDataSource,
+		NewRoleDataSource,
+		NewProbeDataSource,
+		NewTimespanDataSource,
+		NewWorkflowDataSource,
+		NewKubernetesWorkloadDataSource,
+		NewKubernetesNamespaceDataSource,
+		NewKubernetesPodDataSource,
+		NewKubernetesNodeDataSource,
+		NewKubernetesVolumeDataSource,
+		NewAwsEKSNodeGroupDataSource,
+		NewAzurermAKSNodePoolDataSource,
+		NewGoogleGKENodePoolDataSource,
+		NewAwsEKSClusterDataSource,
+		NewAzurermAKSClusterDataSource,
 	}
 }
 

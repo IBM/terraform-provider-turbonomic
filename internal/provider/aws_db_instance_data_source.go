@@ -173,17 +173,17 @@ func (d *AwsDbInstanceDataSource) Configure(_ context.Context, req datasource.Co
 		return
 	}
 
-	client, ok := req.ProviderData.(*turboclient.Client)
+	data, ok := req.ProviderData.(*providerData)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"unexpected data-source configure type",
-			fmt.Sprintf("expected: *turboclient.Client, got: %T. please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("expected: *providerData, got: %T. please report this issue to the provider developers.", req.ProviderData),
 		)
 
 		return
 	}
 
-	d.client = client
+	d.client = data.Client.(*turboclient.Client)
 }
 
 func (d *AwsDbInstanceDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
@@ -215,7 +215,7 @@ func (d *AwsDbInstanceDataSource) Read(ctx context.Context, req datasource.ReadR
 	if errDiag != nil {
 		errDetail = errDiag.Detail()
 	} else if len(entity) == 0 {
-		errDetail = fmt.Sprintf("entity %s of type %s not found in Turbonomic instance", enName, enTyp)
+		errDetail = fmt.Sprintf("entity %s of type %s not found in turbonomic instance", enName, enTyp)
 	} else {
 		tflog.Debug(ctx, fmt.Sprintf("entity id found: %s\n", entity[0].UUID))
 		state.EntityUuid = types.StringValue(entity[0].UUID)
